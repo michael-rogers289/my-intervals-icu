@@ -1,0 +1,575 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXContainerItemProxy section */
+		1760FCD42EBFFC6D00AAD022 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1760FCBE2EBFFC6800AAD022 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 1760FCC52EBFFC6800AAD022;
+			remoteInfo = "My Intervals.icu";
+		};
+		1760FCDE2EBFFC6D00AAD022 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1760FCBE2EBFFC6800AAD022 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 1760FCC52EBFFC6800AAD022;
+			remoteInfo = "My Intervals.icu";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		1760FCC62EBFFC6900AAD022 /* My Intervals.icu.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "My Intervals.icu.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		1760FCD32EBFFC6D00AAD022 /* My Intervals.icuTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "My Intervals.icuTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		1760FCDD2EBFFC6D00AAD022 /* My Intervals.icuUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "My Intervals.icuUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		1760FCC82EBFFC6900AAD022 /* My Intervals.icu */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = "My Intervals.icu";
+			sourceTree = "<group>";
+		};
+		1760FCD62EBFFC6D00AAD022 /* My Intervals.icuTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = "My Intervals.icuTests";
+			sourceTree = "<group>";
+		};
+		1760FCE02EBFFC6D00AAD022 /* My Intervals.icuUITests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = "My Intervals.icuUITests";
+			sourceTree = "<group>";
+		};
+/* End PBXFileSystemSynchronizedRootGroup section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		1760FCC32EBFFC6800AAD022 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1760FCD02EBFFC6D00AAD022 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1760FCDA2EBFFC6D00AAD022 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		1760FCBD2EBFFC6800AAD022 = {
+			isa = PBXGroup;
+			children = (
+				1760FCC82EBFFC6900AAD022 /* My Intervals.icu */,
+				1760FCD62EBFFC6D00AAD022 /* My Intervals.icuTests */,
+				1760FCE02EBFFC6D00AAD022 /* My Intervals.icuUITests */,
+				1760FCC72EBFFC6900AAD022 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		1760FCC72EBFFC6900AAD022 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				1760FCC62EBFFC6900AAD022 /* My Intervals.icu.app */,
+				1760FCD32EBFFC6D00AAD022 /* My Intervals.icuTests.xctest */,
+				1760FCDD2EBFFC6D00AAD022 /* My Intervals.icuUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		1760FCC52EBFFC6800AAD022 /* My Intervals.icu */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1760FCE72EBFFC6D00AAD022 /* Build configuration list for PBXNativeTarget "My Intervals.icu" */;
+			buildPhases = (
+				1760FCC22EBFFC6800AAD022 /* Sources */,
+				1760FCC32EBFFC6800AAD022 /* Frameworks */,
+				1760FCC42EBFFC6800AAD022 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				1760FCC82EBFFC6900AAD022 /* My Intervals.icu */,
+			);
+			name = "My Intervals.icu";
+			packageProductDependencies = (
+			);
+			productName = "My Intervals.icu";
+			productReference = 1760FCC62EBFFC6900AAD022 /* My Intervals.icu.app */;
+			productType = "com.apple.product-type.application";
+		};
+		1760FCD22EBFFC6D00AAD022 /* My Intervals.icuTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1760FCEA2EBFFC6D00AAD022 /* Build configuration list for PBXNativeTarget "My Intervals.icuTests" */;
+			buildPhases = (
+				1760FCCF2EBFFC6D00AAD022 /* Sources */,
+				1760FCD02EBFFC6D00AAD022 /* Frameworks */,
+				1760FCD12EBFFC6D00AAD022 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				1760FCD52EBFFC6D00AAD022 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				1760FCD62EBFFC6D00AAD022 /* My Intervals.icuTests */,
+			);
+			name = "My Intervals.icuTests";
+			packageProductDependencies = (
+			);
+			productName = "My Intervals.icuTests";
+			productReference = 1760FCD32EBFFC6D00AAD022 /* My Intervals.icuTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		1760FCDC2EBFFC6D00AAD022 /* My Intervals.icuUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1760FCED2EBFFC6D00AAD022 /* Build configuration list for PBXNativeTarget "My Intervals.icuUITests" */;
+			buildPhases = (
+				1760FCD92EBFFC6D00AAD022 /* Sources */,
+				1760FCDA2EBFFC6D00AAD022 /* Frameworks */,
+				1760FCDB2EBFFC6D00AAD022 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				1760FCDF2EBFFC6D00AAD022 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				1760FCE02EBFFC6D00AAD022 /* My Intervals.icuUITests */,
+			);
+			name = "My Intervals.icuUITests";
+			packageProductDependencies = (
+			);
+			productName = "My Intervals.icuUITests";
+			productReference = 1760FCDD2EBFFC6D00AAD022 /* My Intervals.icuUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		1760FCBE2EBFFC6800AAD022 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 2610;
+				LastUpgradeCheck = 2610;
+				TargetAttributes = {
+					1760FCC52EBFFC6800AAD022 = {
+						CreatedOnToolsVersion = 26.1;
+					};
+					1760FCD22EBFFC6D00AAD022 = {
+						CreatedOnToolsVersion = 26.1;
+						TestTargetID = 1760FCC52EBFFC6800AAD022;
+					};
+					1760FCDC2EBFFC6D00AAD022 = {
+						CreatedOnToolsVersion = 26.1;
+						TestTargetID = 1760FCC52EBFFC6800AAD022;
+					};
+				};
+			};
+			buildConfigurationList = 1760FCC12EBFFC6800AAD022 /* Build configuration list for PBXProject "My Intervals.icu" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 1760FCBD2EBFFC6800AAD022;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 1760FCC72EBFFC6900AAD022 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				1760FCC52EBFFC6800AAD022 /* My Intervals.icu */,
+				1760FCD22EBFFC6D00AAD022 /* My Intervals.icuTests */,
+				1760FCDC2EBFFC6D00AAD022 /* My Intervals.icuUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		1760FCC42EBFFC6800AAD022 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1760FCD12EBFFC6D00AAD022 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1760FCDB2EBFFC6D00AAD022 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		1760FCC22EBFFC6800AAD022 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1760FCCF2EBFFC6D00AAD022 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1760FCD92EBFFC6D00AAD022 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		1760FCD52EBFFC6D00AAD022 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 1760FCC52EBFFC6800AAD022 /* My Intervals.icu */;
+			targetProxy = 1760FCD42EBFFC6D00AAD022 /* PBXContainerItemProxy */;
+		};
+		1760FCDF2EBFFC6D00AAD022 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 1760FCC52EBFFC6800AAD022 /* My Intervals.icu */;
+			targetProxy = 1760FCDE2EBFFC6D00AAD022 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		1760FCE52EBFFC6D00AAD022 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.1;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		1760FCE62EBFFC6D00AAD022 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.1;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		1760FCE82EBFFC6D00AAD022 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.michaelrogers.engineering.My-Intervals-icu";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		1760FCE92EBFFC6D00AAD022 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.michaelrogers.engineering.My-Intervals-icu";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		1760FCEB2EBFFC6D00AAD022 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.1;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.michaelrogers.engineering.My-Intervals-icuTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/My Intervals.icu.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/My Intervals.icu";
+			};
+			name = Debug;
+		};
+		1760FCEC2EBFFC6D00AAD022 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.1;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.michaelrogers.engineering.My-Intervals-icuTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/My Intervals.icu.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/My Intervals.icu";
+			};
+			name = Release;
+		};
+		1760FCEE2EBFFC6D00AAD022 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.michaelrogers.engineering.My-Intervals-icuUITests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = "My Intervals.icu";
+			};
+			name = Debug;
+		};
+		1760FCEF2EBFFC6D00AAD022 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.michaelrogers.engineering.My-Intervals-icuUITests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = "My Intervals.icu";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		1760FCC12EBFFC6800AAD022 /* Build configuration list for PBXProject "My Intervals.icu" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1760FCE52EBFFC6D00AAD022 /* Debug */,
+				1760FCE62EBFFC6D00AAD022 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		1760FCE72EBFFC6D00AAD022 /* Build configuration list for PBXNativeTarget "My Intervals.icu" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1760FCE82EBFFC6D00AAD022 /* Debug */,
+				1760FCE92EBFFC6D00AAD022 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		1760FCEA2EBFFC6D00AAD022 /* Build configuration list for PBXNativeTarget "My Intervals.icuTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1760FCEB2EBFFC6D00AAD022 /* Debug */,
+				1760FCEC2EBFFC6D00AAD022 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		1760FCED2EBFFC6D00AAD022 /* Build configuration list for PBXNativeTarget "My Intervals.icuUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1760FCEE2EBFFC6D00AAD022 /* Debug */,
+				1760FCEF2EBFFC6D00AAD022 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 1760FCBE2EBFFC6800AAD022 /* Project object */;
+}
