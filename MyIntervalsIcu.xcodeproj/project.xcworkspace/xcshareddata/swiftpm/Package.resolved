@@ -1,0 +1,33 @@
+{
+  "originHash" : "fbbf3bf1a0dc3d6cf238f3a508b2623e62064a3d96ed1c513ecd6b8540ca74fa",
+  "pins" : [
+    {
+      "identity" : "grdb.swift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/groue/GRDB.swift",
+      "state" : {
+        "revision" : "b83108d10f42680d78f23fe4d4d80fc88dab3212",
+        "version" : "7.11.1"
+      }
+    },
+    {
+      "identity" : "reercodable",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/reers/ReerCodable.git",
+      "state" : {
+        "revision" : "cf8027e1a1d93f5fbfb3d8b692113e28fbfbe3a7",
+        "version" : "1.8.1"
+      }
+    },
+    {
+      "identity" : "swift-syntax",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-syntax.git",
+      "state" : {
+        "branch" : "main",
+        "revision" : "c14c494c9edf67fc92f3060dc3203ecc0bbf47c2"
+      }
+    }
+  ],
+  "version" : 3
+}

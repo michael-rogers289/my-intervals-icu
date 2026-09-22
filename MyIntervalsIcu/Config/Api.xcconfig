@@ -1,0 +1,12 @@
+//
+//  Api.xcconfig
+//  MyIntervalsIcu
+//
+//  Created by Michael Rogers on 11/8/25.
+//
+
+// Configuration settings file format documentation can be found at:
+// https://developer.apple.com/documentation/xcode/adding-a-build-configuration-file-to-your-project
+
+ATHLETE_ID=i407755
+API_KEY=kjd8wlhgjfr9aqynuzjbi9vv

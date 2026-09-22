@@ -6,43 +6,65 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		171C5A2B2FB362A100DDB710 /* Blade in Frameworks */ = {isa = PBXBuildFile; productRef = 171C5A2A2FB362A100DDB710 /* Blade */; };
+		173CA3742EC10145008FEAA6 /* ReerCodable in Frameworks */ = {isa = PBXBuildFile; productRef = 173CA3732EC10145008FEAA6 /* ReerCodable */; };
+		17FAF8322EC7950A006A11B4 /* GRDB in Frameworks */ = {isa = PBXBuildFile; productRef = 17FAF8312EC7950A006A11B4 /* GRDB */; };
+		D87375713001E41C0016B550 /* SqlDsl in Frameworks */ = {isa = PBXBuildFile; productRef = D87375703001E41C0016B550 /* SqlDsl */; };
+		D87375753001EA630016B550 /* CodingKeysMacro in Frameworks */ = {isa = PBXBuildFile; productRef = D87375743001EA630016B550 /* CodingKeysMacro */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		1760FCD42EBFFC6D00AAD022 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 1760FCBE2EBFFC6800AAD022 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 1760FCC52EBFFC6800AAD022;
-			remoteInfo = "My Intervals.icu";
+			remoteInfo = MyIntervalsIcu;
 		};
 		1760FCDE2EBFFC6D00AAD022 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 1760FCBE2EBFFC6800AAD022 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 1760FCC52EBFFC6800AAD022;
-			remoteInfo = "My Intervals.icu";
+			remoteInfo = MyIntervalsIcu;
 		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		1760FCC62EBFFC6900AAD022 /* My Intervals.icu.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "My Intervals.icu.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		1760FCD32EBFFC6D00AAD022 /* My Intervals.icuTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "My Intervals.icuTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
-		1760FCDD2EBFFC6D00AAD022 /* My Intervals.icuUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "My Intervals.icuUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		1760FCC62EBFFC6900AAD022 /* MyIntervalsIcu.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MyIntervalsIcu.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		1760FCD32EBFFC6D00AAD022 /* MyIntervalsIcuTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MyIntervalsIcuTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		1760FCDD2EBFFC6D00AAD022 /* MyIntervalsIcuUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MyIntervalsIcuUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		173CA36C2EC0364C008FEAA6 /* Exceptions for "MyIntervalsIcu" folder in "MyIntervalsIcu" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Config/Api.xcconfig,
+				Info.plist,
+			);
+			target = 1760FCC52EBFFC6800AAD022 /* MyIntervalsIcu */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		1760FCC82EBFFC6900AAD022 /* My Intervals.icu */ = {
+		1760FCC82EBFFC6900AAD022 /* MyIntervalsIcu */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = "My Intervals.icu";
+			exceptions = (
+				173CA36C2EC0364C008FEAA6 /* Exceptions for "MyIntervalsIcu" folder in "MyIntervalsIcu" target */,
+			);
+			path = MyIntervalsIcu;
 			sourceTree = "<group>";
 		};
-		1760FCD62EBFFC6D00AAD022 /* My Intervals.icuTests */ = {
+		1760FCD62EBFFC6D00AAD022 /* MyIntervalsIcuTests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = "My Intervals.icuTests";
+			path = MyIntervalsIcuTests;
 			sourceTree = "<group>";
 		};
-		1760FCE02EBFFC6D00AAD022 /* My Intervals.icuUITests */ = {
+		1760FCE02EBFFC6D00AAD022 /* MyIntervalsIcuUITests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = "My Intervals.icuUITests";
+			path = MyIntervalsIcuUITests;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -52,6 +74,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				171C5A2B2FB362A100DDB710 /* Blade in Frameworks */,
+				D87375713001E41C0016B550 /* SqlDsl in Frameworks */,
+				D87375753001EA630016B550 /* CodingKeysMacro in Frameworks */,
+				17FAF8322EC7950A006A11B4 /* GRDB in Frameworks */,
+				173CA3742EC10145008FEAA6 /* ReerCodable in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -75,9 +102,9 @@
 		1760FCBD2EBFFC6800AAD022 = {
 			isa = PBXGroup;
 			children = (
-				1760FCC82EBFFC6900AAD022 /* My Intervals.icu */,
-				1760FCD62EBFFC6D00AAD022 /* My Intervals.icuTests */,
-				1760FCE02EBFFC6D00AAD022 /* My Intervals.icuUITests */,
+				1760FCC82EBFFC6900AAD022 /* MyIntervalsIcu */,
+				1760FCD62EBFFC6D00AAD022 /* MyIntervalsIcuTests */,
+				1760FCE02EBFFC6D00AAD022 /* MyIntervalsIcuUITests */,
 				1760FCC72EBFFC6900AAD022 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -85,9 +112,9 @@
 		1760FCC72EBFFC6900AAD022 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				1760FCC62EBFFC6900AAD022 /* My Intervals.icu.app */,
-				1760FCD32EBFFC6D00AAD022 /* My Intervals.icuTests.xctest */,
-				1760FCDD2EBFFC6D00AAD022 /* My Intervals.icuUITests.xctest */,
+				1760FCC62EBFFC6900AAD022 /* MyIntervalsIcu.app */,
+				1760FCD32EBFFC6D00AAD022 /* MyIntervalsIcuTests.xctest */,
+				1760FCDD2EBFFC6D00AAD022 /* MyIntervalsIcuUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -95,9 +122,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		1760FCC52EBFFC6800AAD022 /* My Intervals.icu */ = {
+		1760FCC52EBFFC6800AAD022 /* MyIntervalsIcu */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 1760FCE72EBFFC6D00AAD022 /* Build configuration list for PBXNativeTarget "My Intervals.icu" */;
+			buildConfigurationList = 1760FCE72EBFFC6D00AAD022 /* Build configuration list for PBXNativeTarget "MyIntervalsIcu" */;
 			buildPhases = (
 				1760FCC22EBFFC6800AAD022 /* Sources */,
 				1760FCC32EBFFC6800AAD022 /* Frameworks */,
@@ -108,18 +135,23 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				1760FCC82EBFFC6900AAD022 /* My Intervals.icu */,
+				1760FCC82EBFFC6900AAD022 /* MyIntervalsIcu */,
 			);
-			name = "My Intervals.icu";
+			name = MyIntervalsIcu;
 			packageProductDependencies = (
+				173CA3732EC10145008FEAA6 /* ReerCodable */,
+				17FAF8312EC7950A006A11B4 /* GRDB */,
+				171C5A2A2FB362A100DDB710 /* Blade */,
+				D87375703001E41C0016B550 /* SqlDsl */,
+				D87375743001EA630016B550 /* CodingKeysMacro */,
 			);
-			productName = "My Intervals.icu";
-			productReference = 1760FCC62EBFFC6900AAD022 /* My Intervals.icu.app */;
+			productName = MyIntervalsIcu;
+			productReference = 1760FCC62EBFFC6900AAD022 /* MyIntervalsIcu.app */;
 			productType = "com.apple.product-type.application";
 		};
-		1760FCD22EBFFC6D00AAD022 /* My Intervals.icuTests */ = {
+		1760FCD22EBFFC6D00AAD022 /* MyIntervalsIcuTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 1760FCEA2EBFFC6D00AAD022 /* Build configuration list for PBXNativeTarget "My Intervals.icuTests" */;
+			buildConfigurationList = 1760FCEA2EBFFC6D00AAD022 /* Build configuration list for PBXNativeTarget "MyIntervalsIcuTests" */;
 			buildPhases = (
 				1760FCCF2EBFFC6D00AAD022 /* Sources */,
 				1760FCD02EBFFC6D00AAD022 /* Frameworks */,
@@ -131,18 +163,18 @@
 				1760FCD52EBFFC6D00AAD022 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
-				1760FCD62EBFFC6D00AAD022 /* My Intervals.icuTests */,
+				1760FCD62EBFFC6D00AAD022 /* MyIntervalsIcuTests */,
 			);
-			name = "My Intervals.icuTests";
+			name = MyIntervalsIcuTests;
 			packageProductDependencies = (
 			);
-			productName = "My Intervals.icuTests";
-			productReference = 1760FCD32EBFFC6D00AAD022 /* My Intervals.icuTests.xctest */;
+			productName = MyIntervalsIcuTests;
+			productReference = 1760FCD32EBFFC6D00AAD022 /* MyIntervalsIcuTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		1760FCDC2EBFFC6D00AAD022 /* My Intervals.icuUITests */ = {
+		1760FCDC2EBFFC6D00AAD022 /* MyIntervalsIcuUITests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 1760FCED2EBFFC6D00AAD022 /* Build configuration list for PBXNativeTarget "My Intervals.icuUITests" */;
+			buildConfigurationList = 1760FCED2EBFFC6D00AAD022 /* Build configuration list for PBXNativeTarget "MyIntervalsIcuUITests" */;
 			buildPhases = (
 				1760FCD92EBFFC6D00AAD022 /* Sources */,
 				1760FCDA2EBFFC6D00AAD022 /* Frameworks */,
@@ -154,13 +186,13 @@
 				1760FCDF2EBFFC6D00AAD022 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
-				1760FCE02EBFFC6D00AAD022 /* My Intervals.icuUITests */,
+				1760FCE02EBFFC6D00AAD022 /* MyIntervalsIcuUITests */,
 			);
-			name = "My Intervals.icuUITests";
+			name = MyIntervalsIcuUITests;
 			packageProductDependencies = (
 			);
-			productName = "My Intervals.icuUITests";
-			productReference = 1760FCDD2EBFFC6D00AAD022 /* My Intervals.icuUITests.xctest */;
+			productName = MyIntervalsIcuUITests;
+			productReference = 1760FCDD2EBFFC6D00AAD022 /* MyIntervalsIcuUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 /* End PBXNativeTarget section */
@@ -171,7 +203,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 2610;
-				LastUpgradeCheck = 2610;
+				LastUpgradeCheck = 2650;
 				TargetAttributes = {
 					1760FCC52EBFFC6800AAD022 = {
 						CreatedOnToolsVersion = 26.1;
@@ -186,7 +218,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 1760FCC12EBFFC6800AAD022 /* Build configuration list for PBXProject "My Intervals.icu" */;
+			buildConfigurationList = 1760FCC12EBFFC6800AAD022 /* Build configuration list for PBXProject "MyIntervalsIcu" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -195,14 +227,21 @@
 			);
 			mainGroup = 1760FCBD2EBFFC6800AAD022;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				173CA3722EC10145008FEAA6 /* XCRemoteSwiftPackageReference "ReerCodable" */,
+				17FAF8302EC7950A006A11B4 /* XCRemoteSwiftPackageReference "GRDB" */,
+				171C5A292FB362A100DDB710 /* XCLocalSwiftPackageReference "../swift-blade" */,
+				D873756F3001E41C0016B550 /* XCLocalSwiftPackageReference "../sql-dsl" */,
+				D87375733001EA630016B550 /* XCLocalSwiftPackageReference "../CodingKeysMacro" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 1760FCC72EBFFC6900AAD022 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				1760FCC52EBFFC6800AAD022 /* My Intervals.icu */,
-				1760FCD22EBFFC6D00AAD022 /* My Intervals.icuTests */,
-				1760FCDC2EBFFC6D00AAD022 /* My Intervals.icuUITests */,
+				1760FCC52EBFFC6800AAD022 /* MyIntervalsIcu */,
+				1760FCD22EBFFC6D00AAD022 /* MyIntervalsIcuTests */,
+				1760FCDC2EBFFC6D00AAD022 /* MyIntervalsIcuUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -258,12 +297,12 @@
 /* Begin PBXTargetDependency section */
 		1760FCD52EBFFC6D00AAD022 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 1760FCC52EBFFC6800AAD022 /* My Intervals.icu */;
+			target = 1760FCC52EBFFC6800AAD022 /* MyIntervalsIcu */;
 			targetProxy = 1760FCD42EBFFC6D00AAD022 /* PBXContainerItemProxy */;
 		};
 		1760FCDF2EBFFC6D00AAD022 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 1760FCC52EBFFC6800AAD022 /* My Intervals.icu */;
+			target = 1760FCC52EBFFC6800AAD022 /* MyIntervalsIcu */;
 			targetProxy = 1760FCDE2EBFFC6D00AAD022 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -271,6 +310,8 @@
 /* Begin XCBuildConfiguration section */
 		1760FCE52EBFFC6D00AAD022 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = 1760FCC82EBFFC6900AAD022 /* MyIntervalsIcu */;
+			baseConfigurationReferenceRelativePath = Config/Api.xcconfig;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -327,13 +368,22 @@
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_UPCOMING_FEATURE_DISABLE_OUTWARD_ACTOR_ISOLATION = YES;
+				SWIFT_UPCOMING_FEATURE_DYNAMIC_ACTOR_ISOLATION = YES;
+				SWIFT_UPCOMING_FEATURE_GLOBAL_ACTOR_ISOLATED_TYPES_USABILITY = YES;
+				SWIFT_UPCOMING_FEATURE_GLOBAL_CONCURRENCY = YES;
+				SWIFT_UPCOMING_FEATURE_NONISOLATED_NONSENDING_BY_DEFAULT = YES;
 			};
 			name = Debug;
 		};
 		1760FCE62EBFFC6D00AAD022 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = 1760FCC82EBFFC6900AAD022 /* MyIntervalsIcu */;
+			baseConfigurationReferenceRelativePath = Config/Api.xcconfig;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -383,25 +433,38 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_UPCOMING_FEATURE_DISABLE_OUTWARD_ACTOR_ISOLATION = YES;
+				SWIFT_UPCOMING_FEATURE_DYNAMIC_ACTOR_ISOLATION = YES;
+				SWIFT_UPCOMING_FEATURE_GLOBAL_ACTOR_ISOLATED_TYPES_USABILITY = YES;
+				SWIFT_UPCOMING_FEATURE_GLOBAL_CONCURRENCY = YES;
+				SWIFT_UPCOMING_FEATURE_NONISOLATED_NONSENDING_BY_DEFAULT = YES;
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
 		};
 		1760FCE82EBFFC6D00AAD022 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = 1760FCC82EBFFC6900AAD022 /* MyIntervalsIcu */;
+			baseConfigurationReferenceRelativePath = Config/Api.xcconfig;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 65J45NLFP3;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = MyIntervalsIcu/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -410,29 +473,39 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.michaelrogers.engineering.My-Intervals-icu";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
-				SWIFT_APPROACHABLE_CONCURRENCY = YES;
-				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = NO;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = nonisolated;
 				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_STRICT_CONCURRENCY = complete;
+				SWIFT_STRICT_MEMORY_SAFETY = YES;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
-				SWIFT_VERSION = 5.0;
+				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
 		};
 		1760FCE92EBFFC6D00AAD022 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = 1760FCC82EBFFC6900AAD022 /* MyIntervalsIcu */;
+			baseConfigurationReferenceRelativePath = Config/Api.xcconfig;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 65J45NLFP3;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = MyIntervalsIcu/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -441,17 +514,23 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.michaelrogers.engineering.My-Intervals-icu";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
-				SWIFT_APPROACHABLE_CONCURRENCY = YES;
-				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = NO;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = nonisolated;
 				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_STRICT_CONCURRENCY = complete;
+				SWIFT_STRICT_MEMORY_SAFETY = YES;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
-				SWIFT_VERSION = 5.0;
+				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
 		};
 		1760FCEB2EBFFC6D00AAD022 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = 1760FCC82EBFFC6900AAD022 /* MyIntervalsIcu */;
+			baseConfigurationReferenceRelativePath = Config/Api.xcconfig;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
@@ -467,12 +546,14 @@
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/My Intervals.icu.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/My Intervals.icu";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/MyIntervalsIcu.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/MyIntervalsIcu";
 			};
 			name = Debug;
 		};
 		1760FCEC2EBFFC6D00AAD022 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = 1760FCC82EBFFC6900AAD022 /* MyIntervalsIcu */;
+			baseConfigurationReferenceRelativePath = Config/Api.xcconfig;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
@@ -488,12 +569,14 @@
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/My Intervals.icu.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/My Intervals.icu";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/MyIntervalsIcu.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/MyIntervalsIcu";
 			};
 			name = Release;
 		};
 		1760FCEE2EBFFC6D00AAD022 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = 1760FCC82EBFFC6900AAD022 /* MyIntervalsIcu */;
+			baseConfigurationReferenceRelativePath = Config/Api.xcconfig;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -507,12 +590,14 @@
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = "My Intervals.icu";
+				TEST_TARGET_NAME = MyIntervalsIcu;
 			};
 			name = Debug;
 		};
 		1760FCEF2EBFFC6D00AAD022 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = 1760FCC82EBFFC6900AAD022 /* MyIntervalsIcu */;
+			baseConfigurationReferenceRelativePath = Config/Api.xcconfig;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -526,14 +611,14 @@
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = "My Intervals.icu";
+				TEST_TARGET_NAME = MyIntervalsIcu;
 			};
 			name = Release;
 		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		1760FCC12EBFFC6800AAD022 /* Build configuration list for PBXProject "My Intervals.icu" */ = {
+		1760FCC12EBFFC6800AAD022 /* Build configuration list for PBXProject "MyIntervalsIcu" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				1760FCE52EBFFC6D00AAD022 /* Debug */,
@@ -542,7 +627,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		1760FCE72EBFFC6D00AAD022 /* Build configuration list for PBXNativeTarget "My Intervals.icu" */ = {
+		1760FCE72EBFFC6D00AAD022 /* Build configuration list for PBXNativeTarget "MyIntervalsIcu" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				1760FCE82EBFFC6D00AAD022 /* Debug */,
@@ -551,7 +636,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		1760FCEA2EBFFC6D00AAD022 /* Build configuration list for PBXNativeTarget "My Intervals.icuTests" */ = {
+		1760FCEA2EBFFC6D00AAD022 /* Build configuration list for PBXNativeTarget "MyIntervalsIcuTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				1760FCEB2EBFFC6D00AAD022 /* Debug */,
@@ -560,7 +645,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		1760FCED2EBFFC6D00AAD022 /* Build configuration list for PBXNativeTarget "My Intervals.icuUITests" */ = {
+		1760FCED2EBFFC6D00AAD022 /* Build configuration list for PBXNativeTarget "MyIntervalsIcuUITests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				1760FCEE2EBFFC6D00AAD022 /* Debug */,
@@ -570,6 +655,67 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		171C5A292FB362A100DDB710 /* XCLocalSwiftPackageReference "../swift-blade" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = "../swift-blade";
+		};
+		D873756F3001E41C0016B550 /* XCLocalSwiftPackageReference "../sql-dsl" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = "../sql-dsl";
+		};
+		D87375733001EA630016B550 /* XCLocalSwiftPackageReference "../CodingKeysMacro" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../CodingKeysMacro;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		173CA3722EC10145008FEAA6 /* XCRemoteSwiftPackageReference "ReerCodable" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/reers/ReerCodable.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.4.0;
+			};
+			traits = (
+			);
+		};
+		17FAF8302EC7950A006A11B4 /* XCRemoteSwiftPackageReference "GRDB" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/groue/GRDB.swift";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 7.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		171C5A2A2FB362A100DDB710 /* Blade */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Blade;
+		};
+		173CA3732EC10145008FEAA6 /* ReerCodable */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 173CA3722EC10145008FEAA6 /* XCRemoteSwiftPackageReference "ReerCodable" */;
+			productName = ReerCodable;
+		};
+		17FAF8312EC7950A006A11B4 /* GRDB */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 17FAF8302EC7950A006A11B4 /* XCRemoteSwiftPackageReference "GRDB" */;
+			productName = GRDB;
+		};
+		D87375703001E41C0016B550 /* SqlDsl */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = SqlDsl;
+		};
+		D87375743001EA630016B550 /* CodingKeysMacro */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = CodingKeysMacro;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 1760FCBE2EBFFC6800AAD022 /* Project object */;
 }
