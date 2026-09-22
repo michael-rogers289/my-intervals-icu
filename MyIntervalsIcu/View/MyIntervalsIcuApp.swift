@@ -1,5 +1,5 @@
 //
-//  My_Intervals_icuApp.swift
+//  MyIntervalsIcuApp.swift
 //  My Intervals.icu
 //
 //  Created by Michael Rogers on 11/8/25.
@@ -8,10 +8,10 @@
 import SwiftUI
 
 @main
-struct My_Intervals_icuApp: App {
+struct MyIntervalsIcuApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            RootView()
         }
     }
 }
