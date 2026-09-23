@@ -7,6 +7,7 @@
 
 import Foundation
 
+@MainActor
 protocol NavigationViewModel {
     
     associatedtype NavigationElement : Equatable
@@ -23,6 +24,7 @@ protocol NavigationViewModel {
     
 }
 
+@MainActor
 extension NavigationViewModel {
     
     mutating func push(_ element: NavigationElement) {

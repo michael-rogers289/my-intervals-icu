@@ -10,12 +10,20 @@ import SwiftUI
 struct ActivityListView : View {
     
     @State private var viewModel = ActivityListViewModel()
+    @State private var navigationViewModel = ActivityNavigationViewModel()
     
     var body: some View {
-        NavigationStack {
+        NavigationStack(path: $navigationViewModel.stack) {
             List(viewModel.activities) { activity in
-                Text("ID: \(activity.id)")
-            }.navigationTitle("Activities")
+                NavigationLink("ID: \(activity.id)", value: ActivityNavigationElement.detail(activityId: activity.id))
+            }
+            .navigationDestination(for: ActivityNavigationElement.self) { destination in
+                switch destination {
+                case .detail(let id):
+                    ActivityDetailView()
+                }
+            }
+            .navigationTitle("Activities")
         }
         .onAppear { viewModel.startObservation() }
         
