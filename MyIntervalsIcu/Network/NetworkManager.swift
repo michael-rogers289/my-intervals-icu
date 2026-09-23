@@ -10,6 +10,8 @@ import Blade
 
 actor NetworkManager {
     
+    // MARK: Enums
+    
     enum NetworkError : Error {
         case unableToFetchData(forPath: String)
         case unableToDecodeResponse(decodeError: DecodingError)
@@ -39,12 +41,41 @@ actor NetworkManager {
         static let oldestActivityQueryKey = "oldest"
         static let newestActivityQueryKey = "newest"
     }
+    
+    // MARK: Private Variables
         
     private let networkConstants = NetworkConstants()
     private let standardFormatter = StandardFormatter()
+    private let networkSession: NetworkSession
+    private let networkLogger: NetworkLogging
+    
+    // MARK: Init
 
-    init() { }
+    init(
+        networkLogger: NetworkLogging,
+        networkSession: NetworkSession
+    ) {
+        self.networkLogger = networkLogger
+        self.networkSession = networkSession
+    }
         
+    // MARK: Public Methods
+
+    func getActivities(for dateRange: DateInterval) async throws(NetworkError) -> [ActivityDto] {
+        let oldestQueryItem = URLQueryItem(
+            name: Constant.oldestActivityQueryKey,
+            value: standardFormatter.format(dateRange.start)
+        )
+        let newestQueryItem = URLQueryItem(
+            name: Constant.newestActivityQueryKey,
+            value: standardFormatter.format(dateRange.end)
+        )
+        let request = makeRequest(appendingPath: "activities", addingQueryParameters: [oldestQueryItem, newestQueryItem])
+        return try await fetchAndDecode(with: request)
+    }
+    
+    // MARK: Private Methods
+    
     private func makeRequest(
         appendingPath pathToAppend: String? = nil,
         addingQueryParameters queryParameters: [URLQueryItem] = [],
@@ -69,36 +100,24 @@ actor NetworkManager {
         request.setValue(networkConstants.authHeaderValue, forHTTPHeaderField: "Authorization")
         return request
     }
-
-    func getActivities(for dateRange: DateInterval) async throws(NetworkError) -> [ActivityDto] {
-        let oldestQueryItem = URLQueryItem(
-            name: Constant.oldestActivityQueryKey,
-            value: standardFormatter.format(dateRange.start)
-        )
-        let newestQueryItem = URLQueryItem(
-            name: Constant.newestActivityQueryKey,
-            value: standardFormatter.format(dateRange.end)
-        )
-        let request = makeRequest(appendingPath: "activities", addingQueryParameters: [oldestQueryItem, newestQueryItem])
-        return try await URLSession.shared.fetchAndDecode(with: request)
-    }
-}
-
-private extension URLSession {
     
-    @concurrent
-    func fetchAndDecode<T: Decodable>(
+    private func fetchAndDecode<T: Decodable & Sendable>(
         with request: URLRequest
     ) async throws(NetworkManager.NetworkError) -> T {
         do {
-            let (data, response) = try await self.data(for: request)
+            let (data, response) = try await networkSession.data(for: request)
             guard
                 let response = response as? HTTPURLResponse,
                 NetworkManager.HTTPStatus(rawValue: response.statusCode)?.isSuccess == true
             else {
                 throw NetworkManager.NetworkError.unableToFetchData(forPath: response.url?.path ?? response.description)
             }
-            return try await decode(type: T.self, from: data)
+            
+            let decoded: T = try await decode(type: T.self, from: data)
+            
+            networkLogger.logResponse(response, andData: decoded, of: request)
+
+            return decoded
         } catch let networkError as NetworkManager.NetworkError {
             throw networkError
         } catch let decodingError as DecodingError {
@@ -116,5 +135,4 @@ private extension URLSession {
         decoder.dateDecodingStrategy = .iso8601
         return try decoder.decode(T.self, from: data)
     }
-        
 }
