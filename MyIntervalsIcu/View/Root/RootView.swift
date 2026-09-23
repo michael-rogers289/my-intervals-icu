@@ -26,7 +26,9 @@ struct RootView: View {
                 }
             }, detail: {
                 switch selection {
-                case .home, .settings: Text(selection?.title ?? "")
+                case .home :
+                    ActivityListView()
+                case .settings: Text(selection?.title ?? "")
                 case .summary:
                     SummaryView()
                 default: Text("No Selection")

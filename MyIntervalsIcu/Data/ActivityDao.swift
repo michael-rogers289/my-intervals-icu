@@ -58,6 +58,17 @@ final class ActivityDao : Sendable {
         }
     }
     
+    func getActivities(in interval: DateInterval) -> AnyPublisher<[Activity], Error> {
+        ValueObservation.tracking { database in
+            try Activity.fetchAll(database).filter { activity in
+                interval.contains(activity.startDate)
+            }
+        }
+        .publisher(in: databaseQueue)
+        .eraseToAnyPublisher()
+        
+    }
+    
     func getTotalDistance(from start: Date, to end: Date) -> AnyPublisher<Double, Error> {
         return ValueObservation
             .tracking {
