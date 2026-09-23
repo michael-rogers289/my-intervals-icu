@@ -12,8 +12,13 @@ import Foundation
 enum NetworkDependencyModule {
     
     @Provider
-    static func providesNetworkManager() -> NetworkManager {
-        NetworkManager()
+    static func providesNetworkManager() -> NetworkManager {        
+        NetworkManager(
+            networkLogger: NetworkLogger(),
+            networkSession: URLSession(
+                configuration: URLSessionConfiguration.default
+            )
+        )
     }
     
 }
