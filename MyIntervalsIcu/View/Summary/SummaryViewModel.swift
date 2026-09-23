@@ -70,7 +70,6 @@ class SummaryViewModel {
             // distance is stored in meters and we'd like to format to KM
             .sink { [weak self] in self?.distanceForWeek = $0 / 1000.0 }
             .store(in: &cancellables)
-
     }
     
     func nextWeek() {

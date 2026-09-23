@@ -45,6 +45,13 @@ struct CalendarRepository {
             }
     }
     
+    static func getCurrentMonth(from date: Date) throws(CalendarError) -> DateInterval {
+        guard let monthInterval = calendar.dateInterval(of: .month, for: date) else {
+            throw CalendarError.dateCreationError
+        }
+        return monthInterval
+    }
+    
     static func startOfWeek(for date: Date) -> Date? {
         calendar.date(
             from: calendar.dateComponents(
