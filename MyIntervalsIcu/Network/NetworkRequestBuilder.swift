@@ -9,9 +9,9 @@ import Foundation
 
 struct NetworkRequestBuilder {
         
-    private let networkConstants = NetworkConstants()
+    private static let networkConstants = NetworkConstants()
     
-    func makeAthleteRequest(
+    static func makeAthleteRequest(
         appendingPath pathToAppend: String? = nil,
         addingQueryParameters queryParameters: [URLQueryItem] = [],
         shouldAppendAthleteId: Bool = true
@@ -35,7 +35,7 @@ struct NetworkRequestBuilder {
         return request
     }
     
-    func makeActivityRequest(
+    static func makeActivityRequest(
         activityId: String,
         appendingPath pathToAppend: String? = nil,
         addingQueryParameters queryParameters: [URLQueryItem] = [],
@@ -55,7 +55,7 @@ struct NetworkRequestBuilder {
         return request
     }
     
-    private func setHeaders(on request: inout URLRequest) {
+    private static func setHeaders(on request: inout URLRequest) {
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.setValue(networkConstants.authHeaderValue, forHTTPHeaderField: "Authorization")
     }

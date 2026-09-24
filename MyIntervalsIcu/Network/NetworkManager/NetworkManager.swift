@@ -37,15 +37,8 @@ actor NetworkManager {
         }
     }
     
-    private enum Constant {
-        static let oldestActivityQueryKey = "oldest"
-        static let newestActivityQueryKey = "newest"
-    }
-    
     // MARK: Private Variables
         
-    private let requestBuilder = NetworkRequestBuilder()
-    private let standardFormatter = StandardFormatter()
     private let networkSession: NetworkSession
     private let networkLogger: NetworkLogging
     
@@ -60,27 +53,8 @@ actor NetworkManager {
     }
         
     // MARK: Public Methods
-
-    func getActivities(for dateRange: DateInterval) async throws(NetworkError) -> [ActivityDto] {
-        let oldestQueryItem = URLQueryItem(
-            name: Constant.oldestActivityQueryKey,
-            value: standardFormatter.format(dateRange.start)
-        )
-        let newestQueryItem = URLQueryItem(
-            name: Constant.newestActivityQueryKey,
-            value: standardFormatter.format(dateRange.end)
-        )
-        let request = requestBuilder.makeAthleteRequest(appendingPath: "activities", addingQueryParameters: [oldestQueryItem, newestQueryItem])
-        return try await fetchAndDecode(with: request)
-    }
     
-    func getHistogram(forActivityId activityId: String) async throws(NetworkError) -> [HistogramDto] {
-        let request = requestBuilder.makeActivityRequest(activityId: activityId)
-        return try await fetchAndDecode(with: request)
-    }
-    
-    // MARK: Private Methods
-    private func fetchAndDecode<T: Decodable & Sendable>(
+    func fetchAndDecode<T: Decodable & Sendable>(
         with request: URLRequest
     ) async throws(NetworkManager.NetworkError) -> T {
         do {
