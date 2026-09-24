@@ -44,7 +44,7 @@ actor NetworkManager {
     
     // MARK: Private Variables
         
-    private let networkConstants = NetworkConstants()
+    private let requestBuilder = NetworkRequestBuilder()
     private let standardFormatter = StandardFormatter()
     private let networkSession: NetworkSession
     private let networkLogger: NetworkLogging
@@ -70,37 +70,16 @@ actor NetworkManager {
             name: Constant.newestActivityQueryKey,
             value: standardFormatter.format(dateRange.end)
         )
-        let request = makeRequest(appendingPath: "activities", addingQueryParameters: [oldestQueryItem, newestQueryItem])
+        let request = requestBuilder.makeAthleteRequest(appendingPath: "activities", addingQueryParameters: [oldestQueryItem, newestQueryItem])
+        return try await fetchAndDecode(with: request)
+    }
+    
+    func getHistogram(forActivityId activityId: String) async throws(NetworkError) -> [HistogramDto] {
+        let request = requestBuilder.makeActivityRequest(activityId: activityId)
         return try await fetchAndDecode(with: request)
     }
     
     // MARK: Private Methods
-    
-    private func makeRequest(
-        appendingPath pathToAppend: String? = nil,
-        addingQueryParameters queryParameters: [URLQueryItem] = [],
-        shouldAppendAthleteId: Bool = true
-    ) -> URLRequest {
-        let baseUrl = if (shouldAppendAthleteId) {
-            networkConstants.baseUrl.appending(path: networkConstants.athleteId)
-        } else {
-            networkConstants.baseUrl
-        }
-        
-        var url = if let pathToAppend {
-            baseUrl.appendingPathComponent(pathToAppend)
-        } else {
-            baseUrl
-        }
-        
-        url.append(queryItems: queryParameters)
-        
-        var request = URLRequest(url: url)
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.setValue(networkConstants.authHeaderValue, forHTTPHeaderField: "Authorization")
-        return request
-    }
-    
     private func fetchAndDecode<T: Decodable & Sendable>(
         with request: URLRequest
     ) async throws(NetworkManager.NetworkError) -> T {

@@ -19,7 +19,8 @@ struct NetworkConstants : Sendable {
     let athleteId: String
     let apiKey: String
     let authHeaderValue: String
-    let baseUrl: URL
+    let athleteUrl: URL
+    let activityUrl: URL
     
     init() {
         guard let athleteId = Bundle.main.getValue(forConfigurationKey: Constant.athleteId) else {
@@ -35,9 +36,14 @@ struct NetworkConstants : Sendable {
         authHeaderValue = "Basic \(Data("API_KEY:\(apiKey)".utf8).base64EncodedString())"
         
         guard let baseUrl = URL(string: "https://intervals.icu/api/v1/athlete/") else {
-            fatalError("invalid base url")
+            fatalError("invalid athlete url")
         }
-        self.baseUrl = baseUrl
+        self.athleteUrl = baseUrl
+        
+        guard let activityUrl =  URL(string: "https://intervals.icu/api/v1/activity/") else {
+            fatalError("invalid activity url")
+        }
+        self.activityUrl = activityUrl
     }
     
 }

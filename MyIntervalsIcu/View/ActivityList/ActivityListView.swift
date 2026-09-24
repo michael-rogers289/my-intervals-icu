@@ -15,7 +15,23 @@ struct ActivityListView : View {
     var body: some View {
         NavigationStack(path: $navigationViewModel.stack) {
             List(viewModel.activities) { activity in
-                NavigationLink("ID: \(activity.id)", value: ActivityNavigationElement.detail(activityId: activity.id))
+                NavigationLink(value: ActivityNavigationElement.detail(activityId: activity.id)) {
+                    VStack(alignment: .leading, spacing: .spacingSmall) {
+                        let activityDateTime = Text(activity.startDate, format: .dateTime)
+                        Text("\(activity.type ?? "Activity"): \(activityDateTime)")
+                        
+                        Text("Time: \(activity.elapsedTime ?? 0)")
+                        
+                        Text(
+                            Measurement(value: activity.distince, unit: UnitLength.meters).converted(to: UnitLength.kilometers),
+                            format: .measurement(
+                                width: .abbreviated,
+                                usage: .asProvided,
+                                numberFormatStyle: .number.precision(.fractionLength(1))
+                            )
+                        )
+                    }
+                }
             }
             .navigationDestination(for: ActivityNavigationElement.self) { destination in
                 switch destination {
