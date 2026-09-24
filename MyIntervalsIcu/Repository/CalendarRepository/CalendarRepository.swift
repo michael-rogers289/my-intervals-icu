@@ -32,7 +32,9 @@ struct CalendarRepository {
         }
     }
     
-    static let calendar = Calendar.current
+    static let standardFormatter = StandardFormatter()
+    
+    private static let calendar = Calendar.current
     
     static func getWeek(by configuration: WeekStartEndConfiguration = .startingAt(date: Date()) ) throws(CalendarError) -> DateInterval {
         guard let startOfWeek = startOfWeek(for: configuration.date),
