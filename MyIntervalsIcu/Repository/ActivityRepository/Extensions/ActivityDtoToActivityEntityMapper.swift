@@ -11,8 +11,24 @@ nonisolated
 extension ActivityDto {
     
     func mapToActivity() -> Activity? {
-        guard let startDate = self.startDate else { return nil }
-        return Activity(id: self.id, startDate: startDate, distince: self.distance ?? Double.zero)
+        guard let startDate else { return nil }
+        return Activity(
+            id: self.id,
+            startDate: startDate,
+            distince: self.distance ?? Double.zero,
+            elapsedTime: elapsedTime,
+            type: type,
+            averageCadence: averageCadence,
+            calories: calories,
+            polarizationIndex: polarizationIndex,
+            maxSpeed: maxSpeed,
+            averageSpeed: averageSpeed,
+            normalizedWatts: icuWeightedAvgWatts,
+            icuAverageWatts: icuAverageWatts,
+            deviceWatts: deviceWatts,
+            maxHeartRate: maxHeartRate,
+            averageHeartRate: averageHeartRate
+        )
     }
     
     func mapToHeartRateZones() -> [ActivityHeartRateZone] {
