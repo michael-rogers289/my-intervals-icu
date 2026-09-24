@@ -60,9 +60,9 @@ final class ActivityDao : Sendable {
     
     func getActivities(in interval: DateInterval) -> AnyPublisher<[Activity], Error> {
         ValueObservation.tracking { database in
-            try Activity.fetchAll(database).filter { activity in
-                interval.contains(activity.startDate)
-            }
+            try Activity.fetchAll(database)
+                .filter { interval.contains($0.startDate) }
+                .sorted { $0.startDate > $1.startDate }
         }
         .publisher(in: databaseQueue)
         .eraseToAnyPublisher()
