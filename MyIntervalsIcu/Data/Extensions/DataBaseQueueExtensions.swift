@@ -36,6 +36,18 @@ extension DatabaseQueue {
                 .indexed()
             table.column(Activity.codingKey(for: \.distince)).notNull()
             table.column(Activity.codingKey(for: \.startDate)).notNull().indexed()
+            table.column(Activity.codingKey(for: \.elapsedTime))
+            table.column(Activity.codingKey(for: \.type))
+            table.column(Activity.codingKey(for: \.averageCadence))
+            table.column(Activity.codingKey(for: \.calories))
+            table.column(Activity.codingKey(for: \.polarizationIndex))
+            table.column(Activity.codingKey(for: \.maxSpeed))
+            table.column(Activity.codingKey(for: \.averageSpeed))
+            table.column(Activity.codingKey(for: \.normalizedWatts))
+            table.column(Activity.codingKey(for: \.icuAverageWatts))
+            table.column(Activity.codingKey(for: \.deviceWatts))
+            table.column(Activity.codingKey(for: \.maxHeartRate))
+            table.column(Activity.codingKey(for: \.averageHeartRate))
         }
     }
     
