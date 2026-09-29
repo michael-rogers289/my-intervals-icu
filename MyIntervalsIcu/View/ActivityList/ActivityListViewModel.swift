@@ -17,10 +17,11 @@ final class ActivityListViewModel {
     private let activityRepository: ActivityRepository = BladeMyIntervalsIcuComponent().activityRepository()
     private var currentMonth: DateInterval
     private var refreshTask: Task<Void, Never>?
+    private var summaryChartTask: Task<Void, Never>?
     private var cancellables: Set<AnyCancellable> = []
     
     //MARK: Public Variables
-    private(set) var activities: [Activity] = []
+    private(set) var activities: [ActivityListViewData] = []
     
     // MARK: Init
     init() {
@@ -38,9 +39,7 @@ final class ActivityListViewModel {
         cancellables.removeAll()
         activityRepository.getActivities(for: currentMonth)
             .replaceError(with: [])
-            .sink { [weak self] activities in
-                self?.activities = activities
-            }
+            .sink { [weak self] activities in self?.getSummaryChartBars(for: activities) }
             .store(in: &cancellables)
     }
     
@@ -57,6 +56,48 @@ final class ActivityListViewModel {
                 print("Got error from network: \(error)")
             }
         }
+    }
+    
+    private func getSummaryChartBars(for activities: [Activity]) {
+        summaryChartTask = Task {
+            var charts: [String: [SummaryChartBar]] = [:]
+            do {
+                charts = try await activityRepository.getGroupedSummaryChartBars(for: activities)
+            } catch {
+                print("Error while getting charts: \(error)")
+            }
+            
+            self.activities = activities.compactMap { activity in
+                let bars = (charts[activity.id] ?? []).sorted { $0.xChartPosition < $1.xChartPosition }
+                let totalWidth: CGFloat = if let maxXPositionBar = bars.last {
+                    CGFloat(maxXPositionBar.width + maxXPositionBar.xChartPosition)
+                } else {
+                    1.0 // 1 to just avoid NAN with divide by zero
+                }
+                
+                return ActivityListViewData.activity(
+                    activity: ActivityListViewData.ActivityListSummary(
+                        id: activity.id,
+                        title: activity.type ?? "Activity",
+                        date: Calendar.current.startOfDay(for: activity.startDate),
+                        elapsedTime: Measurement(
+                            value: Double(activity.elapsedTime ?? 0),
+                            unit: .seconds
+                        ).converted(to: .hours),
+                        distance: Measurement(value: activity.distince, unit: .meters).converted(to: UnitLength.kilometers),
+                        summaryChartBars: bars.map {
+                            ActivityListViewData.SummaryBar(
+                                id: $0.id,
+                                widthPercentage: CGFloat($0.width) / totalWidth,
+                                heightPercentage: CGFloat($0.zone) / CGFloat($0.totalNumZones),
+                                zone: $0.zone
+                            )
+                        }
+                    )
+                )
+            }
+        }
+        
     }
 }
     

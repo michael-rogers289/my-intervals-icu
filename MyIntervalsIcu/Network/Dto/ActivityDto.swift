@@ -5,11 +5,22 @@
 //  Created by Michael Rogers on 11/9/25.
 //
 
+import CodingKeysMacro
 import Foundation
-import ReerCodable
+import SwiftProtobuf
 
-@Codable
-@SnakeCase
+@CodingKeys(
+    .custom(
+        [
+            "maxHeartRate" : "max_heartrate",
+            "averageHeartRate" : "average_heartrate",
+            "avgLeftRightBalance" : "avg_lr_balance",
+            "icuHeartRateZones" : "icu_hr_zones",
+            "icuHeartRateRecovery" : "icu_hrr",
+            "paceZoneTimes" : "pace_zone_times"
+        ]
+    )
+)
 struct ActivityDto: Codable {
     let id: String
     let startDateLocal: String
@@ -25,42 +36,31 @@ struct ActivityDto: Codable {
     let ssCp: Double?
     let elapsedTime: Int?
     let icuWeightedAvgWatts: Int?
-    @DateCoding(.iso8601)
     let startDate: Date?
     let distance: Double?
     let maxSpeed: Double?
     let averageSpeed: Double?
     let deviceWatts: Bool?
-    @CodingKey("max_heartrate")
     let maxHeartRate: Int?
-    @CodingKey("average_heartrate")
     let averageHeartRate: Int?
     let averageCadence: Double?
     let calories: Int?
     let averageTemp: Double?
     let minTemp: Int?
     let maxTemp: Int?
-    @CodingKey("avg_lr_balance")
     let avgLeftRightBalance: Double?
     let gear: GearDto?
     let perceivedExertion: Double?
-    @DateCoding(.iso8601)
     let created: Date?
     let pMax: Int?
     let thresholdPace: Double?
     let powerFieldNames: [String]
     let powerField: String?
     let icuZoneTimes: [PowerZoneTime]
-    @CodingKey("icu_hr_zones")
     let icuHeartRateZones: [Int]
     let icuHrZoneTimes: [Int]
-    @CustomCoding<[Int]>(decode: { decoder in
-        (try? decoder.value(forKeys: "pace_zone_times")) ?? []
-    }
-    )
-    let paceZoneTimes: [Int]
+    let paceZoneTimes: [Int]?
     let polarizationIndex: Double?
-    @CodingKey("icu_hrr")
     let icuHeartRateRecovery: IcuHeartRateRecovery?
     let powerLoad: Int?
     let hrLoad: Int?
@@ -69,4 +69,5 @@ struct ActivityDto: Codable {
     let icuPowerHr: Double?
     let icuAverageWatts: Int?
     let strainScore: Double?
+    let skylineChartBytes: String
 }

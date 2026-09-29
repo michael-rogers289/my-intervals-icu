@@ -8,10 +8,11 @@
 
 /* Begin PBXBuildFile section */
 		171C5A2B2FB362A100DDB710 /* Blade in Frameworks */ = {isa = PBXBuildFile; productRef = 171C5A2A2FB362A100DDB710 /* Blade */; };
-		173CA3742EC10145008FEAA6 /* ReerCodable in Frameworks */ = {isa = PBXBuildFile; productRef = 173CA3732EC10145008FEAA6 /* ReerCodable */; };
 		17FAF8322EC7950A006A11B4 /* GRDB in Frameworks */ = {isa = PBXBuildFile; productRef = 17FAF8312EC7950A006A11B4 /* GRDB */; };
 		D87375713001E41C0016B550 /* SqlDsl in Frameworks */ = {isa = PBXBuildFile; productRef = D87375703001E41C0016B550 /* SqlDsl */; };
 		D87375753001EA630016B550 /* CodingKeysMacro in Frameworks */ = {isa = PBXBuildFile; productRef = D87375743001EA630016B550 /* CodingKeysMacro */; };
+		D8B73B693067665700039240 /* SwiftProtobuf in Frameworks */ = {isa = PBXBuildFile; productRef = D8B73B683067665700039240 /* SwiftProtobuf */; };
+		D8B73B6B3067665700039240 /* SwiftProtobufPluginLibrary in Frameworks */ = {isa = PBXBuildFile; productRef = D8B73B6A3067665700039240 /* SwiftProtobufPluginLibrary */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -76,9 +77,10 @@
 			files = (
 				171C5A2B2FB362A100DDB710 /* Blade in Frameworks */,
 				D87375713001E41C0016B550 /* SqlDsl in Frameworks */,
+				D8B73B6B3067665700039240 /* SwiftProtobufPluginLibrary in Frameworks */,
 				D87375753001EA630016B550 /* CodingKeysMacro in Frameworks */,
 				17FAF8322EC7950A006A11B4 /* GRDB in Frameworks */,
-				173CA3742EC10145008FEAA6 /* ReerCodable in Frameworks */,
+				D8B73B693067665700039240 /* SwiftProtobuf in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -139,11 +141,12 @@
 			);
 			name = MyIntervalsIcu;
 			packageProductDependencies = (
-				173CA3732EC10145008FEAA6 /* ReerCodable */,
 				17FAF8312EC7950A006A11B4 /* GRDB */,
 				171C5A2A2FB362A100DDB710 /* Blade */,
 				D87375703001E41C0016B550 /* SqlDsl */,
 				D87375743001EA630016B550 /* CodingKeysMacro */,
+				D8B73B683067665700039240 /* SwiftProtobuf */,
+				D8B73B6A3067665700039240 /* SwiftProtobufPluginLibrary */,
 			);
 			productName = MyIntervalsIcu;
 			productReference = 1760FCC62EBFFC6900AAD022 /* MyIntervalsIcu.app */;
@@ -228,11 +231,11 @@
 			mainGroup = 1760FCBD2EBFFC6800AAD022;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				173CA3722EC10145008FEAA6 /* XCRemoteSwiftPackageReference "ReerCodable" */,
 				17FAF8302EC7950A006A11B4 /* XCRemoteSwiftPackageReference "GRDB" */,
 				171C5A292FB362A100DDB710 /* XCLocalSwiftPackageReference "../swift-blade" */,
 				D873756F3001E41C0016B550 /* XCLocalSwiftPackageReference "../sql-dsl" */,
 				D87375733001EA630016B550 /* XCLocalSwiftPackageReference "../CodingKeysMacro" */,
+				D8B73B673067665600039240 /* XCRemoteSwiftPackageReference "swift-protobuf" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 1760FCC72EBFFC6900AAD022 /* Products */;
@@ -457,6 +460,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 65J45NLFP3;
 				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = MyIntervalsIcu/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -498,6 +502,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 65J45NLFP3;
 				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = MyIntervalsIcu/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -672,16 +677,6 @@
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		173CA3722EC10145008FEAA6 /* XCRemoteSwiftPackageReference "ReerCodable" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/reers/ReerCodable.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.4.0;
-			};
-			traits = (
-			);
-		};
 		17FAF8302EC7950A006A11B4 /* XCRemoteSwiftPackageReference "GRDB" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/groue/GRDB.swift";
@@ -690,17 +685,20 @@
 				minimumVersion = 7.0.0;
 			};
 		};
+		D8B73B673067665600039240 /* XCRemoteSwiftPackageReference "swift-protobuf" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/swift-protobuf.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.38.1;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
 		171C5A2A2FB362A100DDB710 /* Blade */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = Blade;
-		};
-		173CA3732EC10145008FEAA6 /* ReerCodable */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 173CA3722EC10145008FEAA6 /* XCRemoteSwiftPackageReference "ReerCodable" */;
-			productName = ReerCodable;
 		};
 		17FAF8312EC7950A006A11B4 /* GRDB */ = {
 			isa = XCSwiftPackageProductDependency;
@@ -714,6 +712,16 @@
 		D87375743001EA630016B550 /* CodingKeysMacro */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = CodingKeysMacro;
+		};
+		D8B73B683067665700039240 /* SwiftProtobuf */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D8B73B673067665600039240 /* XCRemoteSwiftPackageReference "swift-protobuf" */;
+			productName = SwiftProtobuf;
+		};
+		D8B73B6A3067665700039240 /* SwiftProtobufPluginLibrary */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D8B73B673067665600039240 /* XCRemoteSwiftPackageReference "swift-protobuf" */;
+			productName = SwiftProtobufPluginLibrary;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

@@ -50,14 +50,20 @@ final class ActivityDao : Sendable {
     }
     
     @DatabaseActor
-    func insertAll(activities: [Activity], heartRateZones: [ActivityHeartRateZone], powerZones: [ActivityPowerZone]) async {
+    func insertAll(
+        activities: [Activity],
+        heartRateZones: [ActivityHeartRateZone],
+        powerZones: [ActivityPowerZone],
+        summaryChartBars: [SummaryChartBar],
+    ) async {
         try? await databaseQueue.write { db in
             try activities.insertAll(in: db)
             try heartRateZones.insertAll(in: db)
             try powerZones.insertAll(in: db)
+            try summaryChartBars.insertAll(in: db)
         }
     }
-    
+        
     func getActivities(in interval: DateInterval) -> AnyPublisher<[Activity], Error> {
         ValueObservation.tracking { database in
             try Activity.fetchAll(database)
@@ -67,6 +73,16 @@ final class ActivityDao : Sendable {
         .publisher(in: databaseQueue)
         .eraseToAnyPublisher()
         
+    }
+    
+    @DatabaseActor
+    func getGroupedSummaryChartBars(for activityIds: [String]) throws -> [String: [SummaryChartBar]] {
+        return try databaseQueue.read { database in
+            return Dictionary(
+                grouping: try SummaryChartBar.filter(activityIds.contains(SummaryChartBar.Columns.activityId)).fetchAll(database),
+                by: { $0.activityId }
+            )
+        }
     }
     
     func getTotalDistance(from start: Date, to end: Date) -> AnyPublisher<Double, Error> {

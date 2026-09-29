@@ -16,6 +16,12 @@ protocol NetworkLogging {
         of request: URLRequest,
     )
     
+    func logError(
+        _ error: NetworkManager.NetworkError,
+        for request: URLRequest,
+        and response: URLResponse?
+    ) -> NetworkManager.NetworkError
+    
 }
 
 struct NetworkLogger : NetworkLogging {
@@ -54,11 +60,46 @@ struct NetworkLogger : NetworkLogging {
                 
         Self.logger.debug(
             """
+            🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢
             \(request.httpMethod ?? "") \(request.url?.absoluteString ?? "") : \(response.statusCode)
             \(response.allHeaderFields.map { "\($0): \($1)" }.joined(separator: "\n"))
             \(dataString)
+            ⬆️⬆️⬆️⬆️⬆️⬆️⬆️⬆️⬆️⬆️⬆️⬆️⬆️⬆️⬆️⬆️⬆️⬆️⬆️⬆️⬆️⬆️⬆️⬆️⬆️⬆️⬆️⬆️⬆️⬆️⬆️⬆️⬆️⬆️⬆️⬆️⬆️⬆️⬆️⬆️⬆️⬆️
             """
         )
+    }
+    
+    func logError(
+        _ error: NetworkManager.NetworkError,
+        for request: URLRequest,
+        and response: URLResponse? = nil
+    ) -> NetworkManager.NetworkError {
+        guard Self.isDebuggable else {
+            return error
+        }
+        
+        let additionalData = switch error {
+        case .cancelled: "Cancelled"
+        case .unableToDecodeResponse(let decodeError): "Decode Error: \(decodeError)"
+        case .unableToFetchData(let path): "Unable to fetch data for: \(path)"
+        }
+        
+        let responseStatusCode = if let response = response as? HTTPURLResponse {
+            "\(response.statusCode)"
+        } else {
+            "None"
+        }
+        
+        Self.logger.error(
+            """
+            🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴
+            \(request.allHTTPHeaderFields?.map({ "\($0): \($1)" }).joined(separator: "\n") ?? "No Header Fields") 
+            \(request.httpMethod ?? "") \(request.url?.absoluteString ?? "") : \(responseStatusCode)
+            \(additionalData)
+            🔺🔺🔺🔺🔺🔺🔺🔺🔺🔺🔺🔺🔺🔺🔺🔺🔺🔺🔺🔺🔺🔺🔺🔺🔺🔺🔺🔺🔺🔺🔺🔺🔺🔺🔺🔺🔺🔺🔺🔺🔺🔺
+            """
+        )
+        return error
     }
     
 }

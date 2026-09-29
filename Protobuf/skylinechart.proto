@@ -1,0 +1,9 @@
+syntax = "proto3";
+
+message SkylineChart {
+    int32 num_zones = 1;
+    repeated int32 width = 2 [packed=true];
+    repeated int32 intensity = 3 [packed=true];
+    repeated int32 zone = 4 [packed=true];
+    int32 min_intensity = 5;
+}

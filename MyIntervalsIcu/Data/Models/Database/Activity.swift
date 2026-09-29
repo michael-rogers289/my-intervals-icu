@@ -9,6 +9,7 @@ import CodingKeysMacro
 import Foundation
 import GRDB
 import SqlDsl
+import SwiftProtobuf
 
 @CodingKeys(.all)
 @CodingKeyMappable
