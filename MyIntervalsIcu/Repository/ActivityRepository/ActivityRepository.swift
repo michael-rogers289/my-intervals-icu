@@ -12,6 +12,8 @@ import GRDB
 
 class ActivityRepository {
     
+    typealias ActivityId = String
+    
     private let activityDao: ActivityDao
     private let networkManager: NetworkManager
     
@@ -23,6 +25,10 @@ class ActivityRepository {
     
     func getActivities(for range: DateInterval) -> AnyPublisher<[Activity], Error> {
         activityDao.getActivities(in: range)
+    }
+    
+    func getGroupedSummaryChartBars(for activities: [Activity]) async throws -> [String: [SummaryChartBar]] {
+        try await activityDao.getGroupedSummaryChartBars(for: activities.map { $0.id })
     }
     
     func getHeartRateZonesGroupedByZone(for range: DateInterval) -> AnyPublisher<[ZoneSummary], Error> {
@@ -43,7 +49,8 @@ class ActivityRepository {
         await dao.insertAll(
             activities: activities.compactMap { $0.mapToActivity() },
             heartRateZones: activities.flatMap { $0.mapToHeartRateZones() },
-            powerZones: activities.flatMap { $0.mapToPowerZones() }
+            powerZones: activities.flatMap { $0.mapToPowerZones() },
+            summaryChartBars: activities.flatMap { $0.mapToSummaryChartBars() }
         )
     }
 }

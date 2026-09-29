@@ -27,20 +27,6 @@ struct ZoneSummaryViewData : Identifiable {
     let summaryType: SummaryType
     let value: Double
     
-    var zoneColor: Color {
-        return switch id {
-        case 0: .gray
-        case 1: .teal
-        case 2: .blue
-        case 3: .green
-        case 4: .yellow
-        case 5: .orange
-        case 6: .red
-        case 7: .purple
-        default: .gray
-        }
-    }
-    
     init(
         zoneSummary: ZoneSummary,
         summaryType: SummaryType,

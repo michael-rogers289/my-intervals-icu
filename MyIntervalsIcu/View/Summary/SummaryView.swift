@@ -76,7 +76,7 @@ private struct SummaryBarView: View {
                     x: .value("zone", summary.zoneTitle),
                     y: .value("zone_value", summary.value),
                 )
-                .foregroundStyle(summary.zoneColor)
+                .foregroundStyle(summary.id.zoneColor)
             }
             .chartXAxis {
                 AxisMarks(values: .automatic) { value in

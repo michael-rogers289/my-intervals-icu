@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SwiftProtobuf
 
 nonisolated
 extension ActivityDto {
@@ -60,6 +61,32 @@ extension ActivityDto {
                 activityId: id
             )
         }
+    }
+    
+    func mapToSummaryChartBars() -> [SummaryChartBar] {
+        guard let data = Data(base64Encoded: skylineChartBytes),
+              let chart = try? SkylineChart(serializedBytes: data),
+              chart.width.count == chart.intensity.count && chart.width.count == chart.zone.count else {
+            return []
+        }
+        var previousWidth: Int32 = 0
+        
+        return chart.width.enumerated().map { index, width in
+            let chartBar = SummaryChartBar(
+                id: "\(id)_\(index)",
+                xChartPosition: Int(previousWidth),
+                width: Int(width),
+                intensity: Int(chart.intensity[index]),
+                zone: Int(chart.zone[index]),
+                totalNumZones: Int(chart.numZones),
+                activityId: id
+            )
+            
+            previousWidth += width
+            
+            return chartBar
+        }
+        
     }
     
 }

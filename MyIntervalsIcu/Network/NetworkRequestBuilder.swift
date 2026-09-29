@@ -13,7 +13,7 @@ struct NetworkRequestBuilder {
     
     static func makeAthleteRequest(
         appendingPath pathToAppend: String? = nil,
-        addingQueryParameters queryParameters: [URLQueryItem] = [],
+        addingQueryParameters queryParameters: [URLQueryItem]? = nil,
         shouldAppendAthleteId: Bool = true
     ) -> URLRequest {
         let baseUrl = if (shouldAppendAthleteId) {
@@ -28,7 +28,9 @@ struct NetworkRequestBuilder {
             baseUrl
         }
         
-        url.append(queryItems: queryParameters)
+        if let queryParameters {
+            url.append(queryItems: queryParameters)
+        }
         
         var request = URLRequest(url: url)
         setHeaders(on: &request)
@@ -38,7 +40,7 @@ struct NetworkRequestBuilder {
     static func makeActivityRequest(
         activityId: String,
         appendingPath pathToAppend: String? = nil,
-        addingQueryParameters queryParameters: [URLQueryItem] = [],
+        addingQueryParameters queryParameters: [URLQueryItem]? = nil,
     ) -> URLRequest {
         let baseUrl = networkConstants.activityUrl.appendingPathComponent(activityId)
         
@@ -48,7 +50,9 @@ struct NetworkRequestBuilder {
             baseUrl
         }
         
-        url.append(queryItems: queryParameters)
+        if let queryParameters {
+            url.append(queryItems: queryParameters)
+        }
         
         var request = URLRequest(url: url)
         setHeaders(on: &request)

@@ -14,7 +14,6 @@ import SqlDsl
 @CodingKeys(.all)
 @CodingKeyMappable
 struct ActivityHeartRateZone: Zone, Identifiable, PersistableRecord, FetchableRecord {
-    typealias ZoneType = ActivityHeartRateZone
     
     let id: String
     

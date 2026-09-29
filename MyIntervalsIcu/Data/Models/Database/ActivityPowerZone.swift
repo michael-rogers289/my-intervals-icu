@@ -13,7 +13,6 @@ import SqlDsl
 @CodingKeys(.all)
 @CodingKeyMappable
 struct ActivityPowerZone: Zone, Identifiable, PersistableRecord, FetchableRecord {
-    typealias ZoneType = ActivityPowerZone
     
     let id: String
     let zone: Int

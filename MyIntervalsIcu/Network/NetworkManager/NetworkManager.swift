@@ -63,7 +63,11 @@ actor NetworkManager {
                 let response = response as? HTTPURLResponse,
                 NetworkManager.HTTPStatus(rawValue: response.statusCode)?.isSuccess == true
             else {
-                throw NetworkManager.NetworkError.unableToFetchData(forPath: response.url?.path ?? response.description)
+                throw networkLogger.logError(
+                    NetworkManager.NetworkError.unableToFetchData(forPath: response.url?.path ?? response.description),
+                    for: request,
+                    and: response
+                )
             }
             
             let decoded: T = try await decode(type: T.self, from: data)
@@ -71,14 +75,24 @@ actor NetworkManager {
             networkLogger.logResponse(response, andData: decoded, of: request)
 
             return decoded
-        } catch let networkError as NetworkManager.NetworkError {
-            throw networkError
         } catch let decodingError as DecodingError {
-            throw NetworkManager.NetworkError.unableToDecodeResponse(decodeError: decodingError)
+            throw networkLogger.logError(
+                NetworkManager.NetworkError.unableToDecodeResponse(decodeError: decodingError),
+                for: request,
+                and: nil
+            )
         } catch let cancelationError as CancellationError {
-            throw NetworkManager.NetworkError.cancelled(error: cancelationError)
+            throw networkLogger.logError(
+                NetworkManager.NetworkError.cancelled(error: cancelationError),
+                for: request,
+                and: nil
+            )
         } catch {
-            throw NetworkManager.NetworkError.unableToFetchData(forPath: "activities")
+            throw networkLogger.logError(
+                NetworkManager.NetworkError.unableToFetchData(forPath: request.url?.path ?? request.description),
+                for: request,
+                and: nil
+            )
         }
     }
     

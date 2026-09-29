@@ -11,6 +11,7 @@ extension NetworkManager {
     
     private enum Constant {
         static let activitiesPath = "activities"
+        static let powerHistogram = "power-histogram"
         static let oldestActivityQueryKey = "oldest"
         static let newestActivityQueryKey = "newest"
     }
@@ -30,10 +31,5 @@ extension NetworkManager {
         )
         return try await fetchAndDecode(with: request)
     }
-    
-    func getHistogram(forActivityId activityId: String) async throws(NetworkError) -> [HistogramDto] {
-        let request = NetworkRequestBuilder.makeActivityRequest(activityId: activityId)
-        return try await fetchAndDecode(with: request)
-    }
-    
+        
 }
