@@ -67,35 +67,41 @@ final class ActivityListViewModel {
                 print("Error while getting charts: \(error)")
             }
             
-            self.activities = activities.compactMap { activity in
-                let bars = (charts[activity.id] ?? []).sorted { $0.xChartPosition < $1.xChartPosition }
-                let totalWidth: CGFloat = if let maxXPositionBar = bars.last {
-                    CGFloat(maxXPositionBar.width + maxXPositionBar.xChartPosition)
-                } else {
-                    1.0 // 1 to just avoid NAN with divide by zero
-                }
-                
-                return ActivityListViewData.activity(
-                    activity: ActivityListViewData.ActivityListSummary(
-                        id: activity.id,
-                        title: activity.type ?? "Activity",
-                        date: Calendar.current.startOfDay(for: activity.startDate),
-                        elapsedTime: Measurement(
-                            value: Double(activity.elapsedTime ?? 0),
-                            unit: .seconds
-                        ).converted(to: .hours),
-                        distance: Measurement(value: activity.distince, unit: .meters).converted(to: UnitLength.kilometers),
-                        summaryChartBars: bars.map {
-                            ActivityListViewData.SummaryBar(
-                                id: $0.id,
-                                widthPercentage: CGFloat($0.width) / totalWidth,
-                                heightPercentage: CGFloat($0.zone) / CGFloat($0.totalNumZones),
-                                zone: $0.zone
+            self.activities = Dictionary(grouping: activities) { activity in
+                CalendarRepository.startOfDay(on: activity.startDate)
+            }
+            .map { startDate, activities in
+                ActivityListViewData(
+                    activities: activities
+                        .sorted { $0.startDate > $1.startDate }
+                        .map { activity in
+                            let bars = (charts[activity.id] ?? []).sorted { $0.xChartPosition < $1.xChartPosition }
+                            let totalWidth: CGFloat = if let maxXPositionBar = bars.last {
+                                CGFloat(maxXPositionBar.width + maxXPositionBar.xChartPosition)
+                            } else {
+                                1.0 // 1 to just avoid NAN with divide by zero
+                            }
+                            
+                            return ActivityListViewData.ActivityListSummary(
+                                id: activity.id,
+                                title: activity.type ?? "Activity",
+                                startTime: CalendarRepository.getTime(from: activity.startDate),
+                                elapsedTimeFormatted: CalendarRepository.formatInterval(from: activity.startDate, to: activity.endDate ?? activity.startDate) ?? "",
+                                distance: Measurement(value: activity.distince, unit: .meters).converted(to: UnitLength.kilometers),
+                                summaryChartBars: bars.map {
+                                    ActivityListViewData.SummaryBar(
+                                        id: $0.id,
+                                        widthPercentage: CGFloat($0.width) / totalWidth,
+                                        heightPercentage: CGFloat($0.zone) / CGFloat($0.totalNumZones),
+                                        zone: $0.zone
+                                    )
+                                }
                             )
-                        }
-                    )
+                        },
+                    activityDate: startDate
                 )
             }
+            .sorted { $0.activityDate > $1.activityDate }
         }
         
     }

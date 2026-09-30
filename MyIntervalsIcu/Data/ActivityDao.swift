@@ -19,9 +19,7 @@ final class ActivityDao : Sendable {
     static let shared = ActivityDao()
     
     private let databaseQueue: DatabaseQueue
-    
-    private let dateFormatter = StandardFormatter()
-    
+        
     private init(inMemoryDatabase: Bool = false) {
 
         do {

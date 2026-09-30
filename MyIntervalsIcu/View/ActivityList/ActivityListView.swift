@@ -15,19 +15,18 @@ struct ActivityListView : View {
     var body: some View {
         NavigationStack(path: $navigationViewModel.stack) {
             List(viewModel.activities) { activity in
-                NavigationLink(value: ActivityNavigationElement.detail(activityId: activity.id)) {
-                    switch activity {
-                    case .activity(let activity):
-                        ActivityCellView(activity: activity)
-                    case .section(let activities, let sectionDate):
-                        Section {
-                            ForEach(activities) { activity in
+                ForEach(viewModel.activities) { viewData in
+                    Section {
+                        Text(viewData.activityDate, style: .date)
+                            .font(.title)
+                            .padding(.bottom, .spacingSmall)
+                        
+                        ForEach(viewData.activities) { activity in
+                            NavigationLink(value: ActivityNavigationElement.detail(activityId: activity.id)) {
                                 ActivityCellView(activity: activity)
                             }
-                            
                         }
                     }
-                    
                 }
             }
             .navigationDestination(for: ActivityNavigationElement.self) { destination in
@@ -47,24 +46,38 @@ struct ActivityListView : View {
 private struct ActivityCellView : View {
     
     @Environment(\.horizontalSizeClass) var horizontalSizeClass
+    @State private var barChartWidth: CGFloat?
     let activity: ActivityListViewData.ActivityListSummary
     
     var body: some View {
-        ViewThatFits(in: .horizontal) {
-            HStack {
-                ActivityCellInfoView(activity: activity)
-                    .frame(maxWidth: .infinity)
-                SummaryBarChartView(bars: activity.summaryChartBars)
-                    .frame(maxWidth: .infinity)
+            switch horizontalSizeClass {
+            case .regular:
+                
+                HStack {
+                    ActivityCellInfoView(activity: activity)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity,  alignment: .topLeading)
+                    SummaryBarChartView(bars: activity.summaryChartBars)
+                        .frame(maxWidth: barChartWidth ?? .infinity, maxHeight: .infinity, alignment: .topTrailing)
+                }.onGeometryChange(for: (CGFloat?).self) { proxy in
+                    if #available(iOS 27.1, *),
+                       let reservedRegion = proxy.reservedRegions(kind: .division).first {
+                        return (proxy.size.width / 2.0) - (reservedRegion.frame.width + reservedRegion.margins.trailing) - .spacingMedium
+                    } else {
+                        return nil
+                    }
+                    
+                } action: { newReservedRegion in
+                    barChartWidth = newReservedRegion
+                }
+
+            default:
+                VStack(alignment: .leading) {
+                    ActivityCellInfoView(activity: activity)
+                        .frame(maxHeight: .infinity)
+                    SummaryBarChartView(bars: activity.summaryChartBars)
+                        .frame(minHeight: 100.0, maxHeight: .infinity)
+                }
             }
-            
-            VStack(alignment: .leading) {
-                ActivityCellInfoView(activity: activity)
-                    .frame(maxHeight: .infinity)
-                SummaryBarChartView(bars: activity.summaryChartBars)
-                    .frame(maxHeight: .infinity)
-            }
-        }
     }
     
 }
@@ -74,11 +87,10 @@ private struct ActivityCellInfoView : View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: .spacingSmall) {
-            let activityDateTime = Text(activity.date, format: .dateTime)
-            Text("\(activity.title): \(activityDateTime)")
+            Text("\(activity.title): \(activity.startTime)")
+                .font(.headline)
             
-            let activityElapsedTime = Text(activity.elapsedTime, format: .measurement(width: .abbreviated))
-            Text("Time: \(activityElapsedTime)")
+            Text("Duration: \(activity.elapsedTimeFormatted)") 
             
             Text(
                 activity.distance,
@@ -88,7 +100,10 @@ private struct ActivityCellInfoView : View {
                     numberFormatStyle: .number.precision(.fractionLength(1))
                 )
             )
+            
         }
+        .multilineTextAlignment(.leading)
+        .font(.subheadline)
     }
 }
 
@@ -111,7 +126,10 @@ private struct SummaryBarChartView: View {
                         )
                 }
             }
-            .frame(maxHeight: .infinity, alignment: .bottom)
+            .frame(
+                maxHeight: .infinity,
+                alignment: .bottom,
+            )
             .background {
                 Color.gray.opacity(0.5)
             }
