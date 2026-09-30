@@ -13,9 +13,15 @@ extension ActivityDto {
     
     func mapToActivity() -> Activity? {
         guard let startDate else { return nil }
+        let endDate: Date? = if let elapsedTime {
+            CalendarRepository.date(byAddingSeconds: elapsedTime, to: startDate)
+        } else {
+            nil
+        }
         return Activity(
             id: self.id,
             startDate: startDate,
+            endDate: endDate,
             distince: self.distance ?? Double.zero,
             elapsedTime: elapsedTime,
             type: type,

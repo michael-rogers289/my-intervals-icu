@@ -39,6 +39,7 @@ extension DatabaseQueue {
                 .indexed()
             table.column(Activity.codingKey(for: \.distince)).notNull()
             table.column(Activity.codingKey(for: \.startDate)).notNull().indexed()
+            table.column(Activity.codingKey(for: \.endDate))
             table.column(Activity.codingKey(for: \.elapsedTime))
             table.column(Activity.codingKey(for: \.type))
             table.column(Activity.codingKey(for: \.averageCadence))

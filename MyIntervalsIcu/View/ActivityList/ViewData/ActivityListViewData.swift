@@ -7,16 +7,16 @@
 
 import Foundation
 
-enum ActivityListViewData : Identifiable {
+struct ActivityListViewData : Identifiable {
     
-    case section(activities: [ActivityListSummary], sectionDate: Date)
-    case activity(activity: ActivityListSummary)
+    let activities: [ActivityListSummary]
+    let activityDate: Date
     
     struct ActivityListSummary : Identifiable {
         let id: String
         let title: String
-        let date: Date
-        let elapsedTime: Measurement<UnitDuration>
+        let startTime: String
+        let elapsedTimeFormatted: String
         let distance: Measurement<UnitLength>
         let summaryChartBars: [SummaryBar]
     }
@@ -28,11 +28,8 @@ enum ActivityListViewData : Identifiable {
         let zone: Int
     }
     
-    var id: String {
-        switch self {
-        case .activity(let activity): activity.id
-        case .section(let activities, _): activities.map { $0.id }.joined(separator: "_")
-        }
+    var id: Date {
+        activityDate
     }
     
 }

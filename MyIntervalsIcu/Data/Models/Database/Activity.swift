@@ -16,6 +16,7 @@ import SwiftProtobuf
 struct Activity: Identifiable, Codable, PersistableRecord, FetchableRecord {
     let id: String
     let startDate: Date
+    let endDate: Date?
     let distince: Double
     let elapsedTime: Int?
     let type: String?
