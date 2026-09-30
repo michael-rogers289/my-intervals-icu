@@ -19,8 +19,7 @@ struct CalendarRepository {
         
         var date: Date {
             switch self {
-            case .endingAt(let date),
-                .startingAt(let date): date
+            case .endingAt(let date), .startingAt(let date): date
             }
         }
         
@@ -61,9 +60,9 @@ struct CalendarRepository {
             throw CalendarError.dateCreationError
         }
         return switch configuration {
-            case .endingAt: DateInterval(start: endOfWeek, end: startOfWeek)
-            case .startingAt: DateInterval(start: startOfWeek, end: endOfWeek)
-            }
+        case .endingAt: DateInterval(start: endOfWeek, end: startOfWeek)
+        case .startingAt: DateInterval(start: startOfWeek, end: endOfWeek)
+        }
     }
     
     static func getCurrentMonth(from date: Date) throws(CalendarError) -> DateInterval {

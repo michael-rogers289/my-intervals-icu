@@ -12,8 +12,6 @@ import GRDB
 
 class ActivityRepository {
     
-    typealias ActivityId = String
-    
     private let activityDao: ActivityDao
     private let networkManager: NetworkManager
     
@@ -41,6 +39,10 @@ class ActivityRepository {
     
     func getDistanceSummaryByDayBetween(for range: DateInterval) -> AnyPublisher<Double, Error> {
         activityDao.getTotalDistance(from: range.start, to: range.end)
+    }
+    
+    func getActivity(byId activityId: Activity.ActivityId) -> AnyPublisher<Activity?, Error> {
+        activityDao.getActivity(byId: activityId)
     }
     
     func fetchActivitiesForDateRange(range: DateInterval) async throws {

@@ -84,10 +84,7 @@ final class ActivityListViewModel {
                             
                             return ActivityListViewData.ActivityListSummary(
                                 id: activity.id,
-                                title: activity.type ?? "Activity",
-                                startTime: CalendarRepository.getTime(from: activity.startDate),
-                                elapsedTimeFormatted: CalendarRepository.formatInterval(from: activity.startDate, to: activity.endDate ?? activity.startDate) ?? "",
-                                distance: Measurement(value: activity.distince, unit: .meters).converted(to: UnitLength.kilometers),
+                                summaryInfoViewData: ActivitySummaryInfoViewData(activity: activity),
                                 summaryChartBars: bars.map {
                                     ActivityListViewData.SummaryBar(
                                         id: $0.id,

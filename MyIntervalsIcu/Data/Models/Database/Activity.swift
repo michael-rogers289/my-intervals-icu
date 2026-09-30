@@ -14,6 +14,8 @@ import SwiftProtobuf
 @CodingKeys(.all)
 @CodingKeyMappable
 struct Activity: Identifiable, Codable, PersistableRecord, FetchableRecord {
+    typealias ActivityId = String
+    
     let id: String
     let startDate: Date
     let endDate: Date?

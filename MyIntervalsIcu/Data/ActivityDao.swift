@@ -70,11 +70,18 @@ final class ActivityDao : Sendable {
         }
         .publisher(in: databaseQueue)
         .eraseToAnyPublisher()
-        
+    }
+    
+    func getActivity(byId id: Activity.ActivityId) -> AnyPublisher<Activity?, Error> {
+        ValueObservation.tracking { database in
+            try Activity.filter(id: id).fetchOne(database)
+        }
+        .publisher(in: databaseQueue)
+        .eraseToAnyPublisher()
     }
     
     @DatabaseActor
-    func getGroupedSummaryChartBars(for activityIds: [String]) throws -> [String: [SummaryChartBar]] {
+    func getGroupedSummaryChartBars(for activityIds: [Activity.ActivityId]) throws -> [String: [SummaryChartBar]] {
         return try databaseQueue.read { database in
             return Dictionary(
                 grouping: try SummaryChartBar.filter(activityIds.contains(SummaryChartBar.Columns.activityId)).fetchAll(database),
