@@ -14,10 +14,7 @@ struct ActivityListViewData : Identifiable {
     
     struct ActivityListSummary : Identifiable {
         let id: String
-        let title: String
-        let startTime: String
-        let elapsedTimeFormatted: String
-        let distance: Measurement<UnitLength>
+        let summaryInfoViewData: ActivitySummaryInfoViewData
         let summaryChartBars: [SummaryBar]
     }
     

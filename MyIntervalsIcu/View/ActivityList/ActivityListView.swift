@@ -32,7 +32,7 @@ struct ActivityListView : View {
             .navigationDestination(for: ActivityNavigationElement.self) { destination in
                 switch destination {
                 case .detail(let id):
-                    ActivityDetailView()
+                    ActivityDetailView(activityId: id)
                 }
             }
             .navigationTitle("Activities")
@@ -54,7 +54,7 @@ private struct ActivityCellView : View {
             case .regular:
                 
                 HStack {
-                    ActivityCellInfoView(activity: activity)
+                    ActivitySummaryInfoView(viewData: activity.summaryInfoViewData)
                         .frame(maxWidth: .infinity, maxHeight: .infinity,  alignment: .topLeading)
                     SummaryBarChartView(bars: activity.summaryChartBars)
                         .frame(maxWidth: barChartWidth ?? .infinity, maxHeight: .infinity, alignment: .topTrailing)
@@ -72,7 +72,7 @@ private struct ActivityCellView : View {
 
             default:
                 VStack(alignment: .leading) {
-                    ActivityCellInfoView(activity: activity)
+                    ActivitySummaryInfoView(viewData: activity.summaryInfoViewData)
                         .frame(maxHeight: .infinity)
                     SummaryBarChartView(bars: activity.summaryChartBars)
                         .frame(minHeight: 100.0, maxHeight: .infinity)
@@ -80,31 +80,6 @@ private struct ActivityCellView : View {
             }
     }
     
-}
-
-private struct ActivityCellInfoView : View {
-    let activity: ActivityListViewData.ActivityListSummary
-    
-    var body: some View {
-        VStack(alignment: .leading, spacing: .spacingSmall) {
-            Text("\(activity.title): \(activity.startTime)")
-                .font(.headline)
-            
-            Text("Duration: \(activity.elapsedTimeFormatted)") 
-            
-            Text(
-                activity.distance,
-                format: .measurement(
-                    width: .abbreviated,
-                    usage: .asProvided,
-                    numberFormatStyle: .number.precision(.fractionLength(1))
-                )
-            )
-            
-        }
-        .multilineTextAlignment(.leading)
-        .font(.subheadline)
-    }
 }
 
 private struct SummaryBarChartView: View {
