@@ -10,9 +10,9 @@ import OSLog
 
 protocol NetworkLogging : Sendable {
     
-    func logResponse<T>(
+    func logResponse(
         _ response: URLResponse,
-        andData data: T?,
+        andData data: Data?,
         of request: URLRequest,
     )
     
@@ -34,26 +34,16 @@ struct NetworkLogger : NetworkLogging {
     
     static let logger = Logger(subsystem: Bundle.main.bundleIdentifier ?? "", category: "network")
     
-    func logResponse<T>(
+    func logResponse(
         _ response: URLResponse,
-        andData data: T?,
+        andData data: Data?,
         of request: URLRequest,
     ) {
         guard Self.isDebuggable,
               let response = response as? HTTPURLResponse else { return }
         
-        let dataString: String = if let data = data as? Array<Any> {
-            if data.isEmpty {
-                "[]"
-            } else {
-                """
-                [
-                \(data.map { "\($0)" }.joined(separator: ",\n"))
-                ]
-                """
-            }
-        } else if let data {
-            "\(data)"
+        let dataString: String = if let data {
+            "\(try? JSONSerialization.jsonObject(with: data))"
         } else {
             ""
         }

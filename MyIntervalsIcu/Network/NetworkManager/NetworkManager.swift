@@ -78,7 +78,7 @@ init(
             
             let decoded: T = try await decode(type: T.self, from: data)
             
-            networkLogger.logResponse(response, andData: decoded, of: request)
+            networkLogger.logResponse(response, andData: data, of: request)
 
             return decoded
         } catch let decodingError as DecodingError {
