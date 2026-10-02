@@ -16,34 +16,19 @@ import GRDB
 
 final class ActivityDao : Sendable {
     
-    static let shared = ActivityDao()
-    
+    let calendarRepository: CalendarRepository
     private let databaseQueue: DatabaseQueue
         
-    private init(inMemoryDatabase: Bool = false) {
-
+    init(
+        databaseQueue: DatabaseQueue,
+        calendarRepository: CalendarRepository
+    ) {
+        self.calendarRepository = calendarRepository
+        self.databaseQueue = databaseQueue
         do {
-            let databaseQueue = if inMemoryDatabase {
-                try DatabaseQueue(named: "com.myintervalsicu.database.sqlite")
-            } else {
-                try DatabaseQueue(
-                    path: try FileManager.default.url(
-                        for: .documentDirectory,
-                        in: .userDomainMask,
-                        appropriateFor: nil,
-                        create: true,
-                    )
-                    // TODO: recommended to add file to directory for encryption / backup purposes
-//                    .appending(path: "database", directoryHint: .isDirectory)
-                    .appendingPathComponent("myintervals.sqlite")
-                    .path(),
-                    configuration: Configuration()
-                )
-            }
             try databaseQueue.createTables()
-            self.databaseQueue = databaseQueue
         } catch let error {
-            fatalError("Failed to open database: \(error)")
+            fatalError("Failed to create database tables\(error)")
         }
     }
     

@@ -6,6 +6,7 @@
 //
 
 import Combine
+import FactoryKit
 import Foundation
 import GRDB
 
@@ -17,7 +18,12 @@ var count = 0
 class SummaryViewModel {
     
     // MARK: Private Variables
-    private let activityRepository: ActivityRepository = BladeMyIntervalsIcuComponent().activityRepository()
+    @ObservationIgnored
+    private var activityRepository = Container.shared.activityRepository.resolve()
+    
+    @ObservationIgnored
+    private var calendarRepository = Container.shared.calendarRepository.resolve()
+    
     private var currentWeek: DateInterval
     private var refreshTask: Task<Void, Never>?
     private var cancellables: Set<AnyCancellable> = []
@@ -39,7 +45,7 @@ class SummaryViewModel {
     
     init() {
         do {
-            currentWeek = try CalendarRepository.getWeek(by: .startingAt(date: Date()))
+            currentWeek = try calendarRepository.getWeek(by: .startingAt(date: Date()))
         } catch {
             fatalError("Unable to create date for current week")
         }
@@ -86,7 +92,9 @@ class SummaryViewModel {
         let currentWeekRange = currentWeek
         refreshTask = Task { [weak self] in
             defer {
-                self?.refreshTask = nil
+                await MainActor.run {
+                    self?.refreshTask = nil
+                }
             }
             do {
                 try await self?.activityRepository.fetchActivitiesForDateRange(range: currentWeekRange)
@@ -98,9 +106,9 @@ class SummaryViewModel {
     
     // MARK: Private Methods
     
-    private func updateCurrentWeek(by configuration: CalendarRepository.WeekStartEndConfiguration) {
+    private func updateCurrentWeek(by configuration: WeekStartEndConfiguration) {
         do {
-            currentWeek = try CalendarRepository.getWeek(by: configuration)
+            currentWeek = try calendarRepository.getWeek(by: configuration)
         } catch {
             print("Unable to create date starting at \(configuration.date)")
         }

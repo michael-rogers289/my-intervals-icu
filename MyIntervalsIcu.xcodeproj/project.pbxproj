@@ -7,12 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		171C5A2B2FB362A100DDB710 /* Blade in Frameworks */ = {isa = PBXBuildFile; productRef = 171C5A2A2FB362A100DDB710 /* Blade */; };
 		17FAF8322EC7950A006A11B4 /* GRDB in Frameworks */ = {isa = PBXBuildFile; productRef = 17FAF8312EC7950A006A11B4 /* GRDB */; };
 		D87375713001E41C0016B550 /* SqlDsl in Frameworks */ = {isa = PBXBuildFile; productRef = D87375703001E41C0016B550 /* SqlDsl */; };
 		D87375753001EA630016B550 /* CodingKeysMacro in Frameworks */ = {isa = PBXBuildFile; productRef = D87375743001EA630016B550 /* CodingKeysMacro */; };
 		D8B73B693067665700039240 /* SwiftProtobuf in Frameworks */ = {isa = PBXBuildFile; productRef = D8B73B683067665700039240 /* SwiftProtobuf */; };
 		D8B73B6B3067665700039240 /* SwiftProtobufPluginLibrary in Frameworks */ = {isa = PBXBuildFile; productRef = D8B73B6A3067665700039240 /* SwiftProtobufPluginLibrary */; };
+		D8B73B8B306FFCF900039240 /* FactoryKit in Frameworks */ = {isa = PBXBuildFile; productRef = D8B73B8A306FFCF900039240 /* FactoryKit */; };
+		D8B73B8D306FFCF900039240 /* FactoryTesting in Frameworks */ = {isa = PBXBuildFile; productRef = D8B73B8C306FFCF900039240 /* FactoryTesting */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -75,9 +76,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				171C5A2B2FB362A100DDB710 /* Blade in Frameworks */,
 				D87375713001E41C0016B550 /* SqlDsl in Frameworks */,
 				D8B73B6B3067665700039240 /* SwiftProtobufPluginLibrary in Frameworks */,
+				D8B73B8B306FFCF900039240 /* FactoryKit in Frameworks */,
 				D87375753001EA630016B550 /* CodingKeysMacro in Frameworks */,
 				17FAF8322EC7950A006A11B4 /* GRDB in Frameworks */,
 				D8B73B693067665700039240 /* SwiftProtobuf in Frameworks */,
@@ -88,6 +89,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D8B73B8D306FFCF900039240 /* FactoryTesting in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -142,11 +144,11 @@
 			name = MyIntervalsIcu;
 			packageProductDependencies = (
 				17FAF8312EC7950A006A11B4 /* GRDB */,
-				171C5A2A2FB362A100DDB710 /* Blade */,
 				D87375703001E41C0016B550 /* SqlDsl */,
 				D87375743001EA630016B550 /* CodingKeysMacro */,
 				D8B73B683067665700039240 /* SwiftProtobuf */,
 				D8B73B6A3067665700039240 /* SwiftProtobufPluginLibrary */,
+				D8B73B8A306FFCF900039240 /* FactoryKit */,
 			);
 			productName = MyIntervalsIcu;
 			productReference = 1760FCC62EBFFC6900AAD022 /* MyIntervalsIcu.app */;
@@ -170,6 +172,7 @@
 			);
 			name = MyIntervalsIcuTests;
 			packageProductDependencies = (
+				D8B73B8C306FFCF900039240 /* FactoryTesting */,
 			);
 			productName = MyIntervalsIcuTests;
 			productReference = 1760FCD32EBFFC6D00AAD022 /* MyIntervalsIcuTests.xctest */;
@@ -232,10 +235,10 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				17FAF8302EC7950A006A11B4 /* XCRemoteSwiftPackageReference "GRDB" */,
-				171C5A292FB362A100DDB710 /* XCLocalSwiftPackageReference "../swift-blade" */,
 				D873756F3001E41C0016B550 /* XCLocalSwiftPackageReference "../sql-dsl" */,
 				D87375733001EA630016B550 /* XCLocalSwiftPackageReference "../CodingKeysMacro" */,
 				D8B73B673067665600039240 /* XCRemoteSwiftPackageReference "swift-protobuf" */,
+				D8B73B89306FFCF900039240 /* XCRemoteSwiftPackageReference "Factory" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 1760FCC72EBFFC6900AAD022 /* Products */;
@@ -662,10 +665,6 @@
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
-		171C5A292FB362A100DDB710 /* XCLocalSwiftPackageReference "../swift-blade" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = "../swift-blade";
-		};
 		D873756F3001E41C0016B550 /* XCLocalSwiftPackageReference "../sql-dsl" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = "../sql-dsl";
@@ -693,13 +692,17 @@
 				minimumVersion = 1.38.1;
 			};
 		};
+		D8B73B89306FFCF900039240 /* XCRemoteSwiftPackageReference "Factory" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "git@github.com:hmlongco/Factory.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 3.4.1;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		171C5A2A2FB362A100DDB710 /* Blade */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = Blade;
-		};
 		17FAF8312EC7950A006A11B4 /* GRDB */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 17FAF8302EC7950A006A11B4 /* XCRemoteSwiftPackageReference "GRDB" */;
@@ -722,6 +725,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = D8B73B673067665600039240 /* XCRemoteSwiftPackageReference "swift-protobuf" */;
 			productName = SwiftProtobufPluginLibrary;
+		};
+		D8B73B8A306FFCF900039240 /* FactoryKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D8B73B89306FFCF900039240 /* XCRemoteSwiftPackageReference "Factory" */;
+			productName = FactoryKit;
+		};
+		D8B73B8C306FFCF900039240 /* FactoryTesting */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D8B73B89306FFCF900039240 /* XCRemoteSwiftPackageReference "Factory" */;
+			productName = FactoryTesting;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

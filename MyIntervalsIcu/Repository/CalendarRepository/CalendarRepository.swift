@@ -11,25 +11,35 @@ enum CalendarError : Error {
     case dateCreationError
 }
 
-struct CalendarRepository {
+enum WeekStartEndConfiguration {
+    case startingAt(date: Date)
+    case endingAt(date: Date)
     
-    enum WeekStartEndConfiguration {
-        case startingAt(date: Date)
-        case endingAt(date: Date)
-        
-        var date: Date {
-            switch self {
-            case .endingAt(let date), .startingAt(let date): date
-            }
-        }
-        
-        var endWeekDays: Int {
-            switch self {
-            case .endingAt: -7
-            case .startingAt: 7
-            }
+    var date: Date {
+        switch self {
+        case .endingAt(let date), .startingAt(let date): date
         }
     }
+    
+    var endWeekDays: Int {
+        switch self {
+        case .endingAt: -7
+        case .startingAt: 7
+        }
+    }
+}
+
+protocol CalendarRepository : Sendable {
+    func getWeek(by configuration: WeekStartEndConfiguration) throws(CalendarError) -> DateInterval
+    func getCurrentMonth(from date: Date) throws(CalendarError) -> DateInterval
+    func startOfDay(on date: Date) -> Date
+    func date(byAddingSeconds seconds: Int, to start: Date) -> Date?
+    func iso8601Format(_ date: Date) -> String
+    func formatInterval(from start: Date, to end: Date) -> String?
+    func getTime(from date: Date) -> String
+}
+
+struct LiveCalendarRepository : CalendarRepository {
     
     nonisolated(unsafe) private static let standard: ISO8601DateFormatter = {
         var formatter = ISO8601DateFormatter()
@@ -54,9 +64,9 @@ struct CalendarRepository {
     
     private static let calendar = Calendar.current
     
-    static func getWeek(by configuration: WeekStartEndConfiguration = .startingAt(date: Date()) ) throws(CalendarError) -> DateInterval {
-        guard let startOfWeek = startOfWeek(for: configuration.date),
-              let endOfWeek = calendar.date(byAdding: .day, value: configuration.endWeekDays, to: configuration.date) else {
+func getWeek(by configuration: WeekStartEndConfiguration = .startingAt(date: Date()) ) throws(CalendarError) -> DateInterval {
+        guard let startOfWeek = Self.startOfWeek(for: configuration.date),
+              let endOfWeek = Self.calendar.date(byAdding: .day, value: configuration.endWeekDays, to: configuration.date) else {
             throw CalendarError.dateCreationError
         }
         return switch configuration {
@@ -65,8 +75,8 @@ struct CalendarRepository {
         }
     }
     
-    static func getCurrentMonth(from date: Date) throws(CalendarError) -> DateInterval {
-        guard let monthInterval = calendar.dateInterval(of: .month, for: date) else {
+    func getCurrentMonth(from date: Date) throws(CalendarError) -> DateInterval {
+        guard let monthInterval = Self.calendar.dateInterval(of: .month, for: date) else {
             throw CalendarError.dateCreationError
         }
         return monthInterval
@@ -81,23 +91,23 @@ struct CalendarRepository {
         )
     }
     
-    static func startOfDay(on date: Date) -> Date {
-        calendar.startOfDay(for: date)
+    func startOfDay(on date: Date) -> Date {
+        Self.calendar.startOfDay(for: date)
     }
     
-    static func date(byAddingSeconds seconds: Int, to start: Date) -> Date? {
-        calendar.date(byAdding: .second, value: seconds, to: start)
+    func date(byAddingSeconds seconds: Int, to start: Date) -> Date? {
+        Self.calendar.date(byAdding: .second, value: seconds, to: start)
     }
     
-    static func iso8601Format(_ date: Date) -> String {
-        unsafe standard.string(from: date)
+    func iso8601Format(_ date: Date) -> String {
+        unsafe Self.standard.string(from: date)
     }
     
-    static func formatInterval(from start: Date, to end: Date) -> String? {
-        dateIntervalFormatter.string(from: start, to: end)
+    func formatInterval(from start: Date, to end: Date) -> String? {
+        Self.dateIntervalFormatter.string(from: start, to: end)
     }
     
-    static func getTime(from date: Date) -> String {
-        timeFormatter.string(from: date)
+    func getTime(from date: Date) -> String {
+        Self.timeFormatter.string(from: date)
     }
 }

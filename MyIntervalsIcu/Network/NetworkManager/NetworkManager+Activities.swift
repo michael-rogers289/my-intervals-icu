@@ -19,11 +19,11 @@ extension NetworkManager {
     func getActivities(for dateRange: DateInterval) async throws(NetworkError) -> [ActivityDto] {
         let oldestQueryItem = URLQueryItem(
             name: Constant.oldestActivityQueryKey,
-            value: CalendarRepository.iso8601Format(dateRange.start)
+            value: calendarRepository.iso8601Format(dateRange.start)
         )
         let newestQueryItem = URLQueryItem(
             name: Constant.newestActivityQueryKey,
-            value: CalendarRepository.iso8601Format(dateRange.end)
+            value: calendarRepository.iso8601Format(dateRange.end)
         )
         let request = NetworkRequestBuilder.makeAthleteRequest(
             appendingPath: Constant.activitiesPath,
