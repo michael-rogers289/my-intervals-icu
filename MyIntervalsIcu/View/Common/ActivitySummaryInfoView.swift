@@ -13,14 +13,6 @@ struct ActivitySummaryInfoViewData {
     let startTime: String
     let elapsedTime: String
     let distanceInKilometers: Measurement<UnitLength>
-    
-    init(title: String, startTime: String, elapsedTime: String, distanceInKilometers: Measurement<UnitLength>) {
-        self.title = title
-        self.startTime = startTime
-        self.elapsedTime = elapsedTime
-        self.distanceInKilometers = distanceInKilometers
-    }
-    
 }
 
 struct ActivitySummaryInfoView : View {

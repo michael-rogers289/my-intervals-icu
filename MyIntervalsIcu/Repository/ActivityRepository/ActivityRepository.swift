@@ -5,7 +5,6 @@
 //  Created by Michael Rogers on 11/11/25.
 //
 
-import Blade
 import Combine
 import Foundation
 import GRDB
@@ -14,11 +13,16 @@ class ActivityRepository {
     
     private let activityDao: ActivityDao
     private let networkManager: NetworkManager
+    private let calendarRepository: CalendarRepository
     
-    @Provider
-    init(activityDao: ActivityDao, networkManager: NetworkManager) {
+    init(
+        activityDao: ActivityDao,
+        networkManager: NetworkManager,
+        calendarRepository: CalendarRepository,
+    ) {
         self.activityDao = activityDao
         self.networkManager = networkManager
+        self.calendarRepository = calendarRepository
     }
     
     func getActivities(for range: DateInterval) -> AnyPublisher<[Activity], Error> {
@@ -49,7 +53,12 @@ class ActivityRepository {
         let dao = activityDao
         let activities = try await networkManager.getActivities(for: range)
         await dao.insertAll(
-            activities: activities.compactMap { $0.mapToActivity() },
+            activities: activities.compactMap {
+                $0.mapToActivity { elapsedTime, startDate in
+                    let elapsedTime = elapsedTime ?? 0
+                    return calendarRepository.date(byAddingSeconds: elapsedTime, to: startDate) ?? startDate
+                }
+            },
             heartRateZones: activities.flatMap { $0.mapToHeartRateZones() },
             powerZones: activities.flatMap { $0.mapToPowerZones() },
             summaryChartBars: activities.flatMap { $0.mapToSummaryChartBars() }

@@ -5,20 +5,33 @@
 //  Created by Michael Rogers on 11/13/25.
 //
 
-import Blade
+import FactoryKit
 import Foundation
 
-@Module()
-enum NetworkDependencyModule {
+extension Container {
     
-    @Provider
-    static func providesNetworkManager() -> NetworkManager {        
-        NetworkManager(
-            networkLogger: NetworkLogger(),
-            networkSession: URLSession(
+    var networkSession: Factory<NetworkSession> {
+        self {
+            URLSession(
                 configuration: URLSessionConfiguration.default
             )
-        )
+        }.singleton
+    }
+    
+    var networkLogger: Factory<NetworkLogging> {
+        self {
+            NetworkLogger()
+        }
+    }
+    
+    var networkManager: Factory<NetworkManager> {
+        self {
+            NetworkManager(
+                networkLogger: Container.shared.networkLogger.resolve(),
+                networkSession: Container.shared.networkSession.resolve(),
+                calendarRepository: Container.shared.calendarRepository.resolve()
+            )
+        }.singleton
     }
     
 }

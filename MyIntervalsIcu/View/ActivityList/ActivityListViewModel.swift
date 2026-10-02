@@ -6,6 +6,7 @@
 //
 
 import Combine
+import FactoryKit
 import Foundation
 import SwiftUI
 
@@ -14,7 +15,9 @@ import SwiftUI
 final class ActivityListViewModel {
     
     // MARK: Private Variables
-    private let activityRepository: ActivityRepository = BladeMyIntervalsIcuComponent().activityRepository()
+    private let activityRepository = Container.shared.activityRepository.resolve()
+    private let calendarRepository = Container.shared.calendarRepository.resolve()
+    private let activityMapper = ActivityMapper()
     private var currentMonth: DateInterval
     private var refreshTask: Task<Void, Never>?
     private var summaryChartTask: Task<Void, Never>?
@@ -26,7 +29,7 @@ final class ActivityListViewModel {
     // MARK: Init
     init() {
         do {
-            currentMonth = try CalendarRepository.getCurrentMonth(from: Date())
+            currentMonth = try calendarRepository.getCurrentMonth(from: Date())
             print("CURRENT MONTH: \(currentMonth)")
         } catch {
             fatalError("Unable to create date for current week")
@@ -68,7 +71,7 @@ final class ActivityListViewModel {
             }
             
             self.activities = Dictionary(grouping: activities) { activity in
-                CalendarRepository.startOfDay(on: activity.startDate)
+                calendarRepository.startOfDay(on: activity.startDate)
             }
             .map { startDate, activities in
                 ActivityListViewData(
@@ -84,7 +87,7 @@ final class ActivityListViewModel {
                             
                             return ActivityListViewData.ActivityListSummary(
                                 id: activity.id,
-                                summaryInfoViewData: ActivitySummaryInfoViewData(activity: activity),
+                                summaryInfoViewData: activityMapper.map(activity: activity),
                                 summaryChartBars: bars.map {
                                     ActivityListViewData.SummaryBar(
                                         id: $0.id,

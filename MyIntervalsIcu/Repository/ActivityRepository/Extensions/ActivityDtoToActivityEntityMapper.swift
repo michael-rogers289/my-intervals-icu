@@ -11,17 +11,14 @@ import SwiftProtobuf
 nonisolated
 extension ActivityDto {
     
-    func mapToActivity() -> Activity? {
+    func mapToActivity(
+        mappingEndDate: (_ addingSeconds: Int?, _ startDate: Date) -> Date
+    ) -> Activity? {
         guard let startDate else { return nil }
-        let endDate: Date? = if let elapsedTime {
-            CalendarRepository.date(byAddingSeconds: elapsedTime, to: startDate)
-        } else {
-            nil
-        }
         return Activity(
             id: self.id,
             startDate: startDate,
-            endDate: endDate,
+            endDate: mappingEndDate(elapsedTime,  startDate),
             distince: self.distance ?? Double.zero,
             elapsedTime: elapsedTime,
             type: type,

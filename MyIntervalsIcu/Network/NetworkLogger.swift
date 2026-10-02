@@ -8,7 +8,7 @@
 import Foundation
 import OSLog
 
-protocol NetworkLogging {
+protocol NetworkLogging : Sendable {
     
     func logResponse<T>(
         _ response: URLResponse,

@@ -37,6 +37,10 @@ actor NetworkManager {
         }
     }
     
+    // MARK: Public Variables
+    
+    let calendarRepository: CalendarRepository
+    
     // MARK: Private Variables
         
     private let networkSession: NetworkSession
@@ -44,12 +48,14 @@ actor NetworkManager {
     
     // MARK: Init
 
-    init(
-        networkLogger: NetworkLogging,
-        networkSession: NetworkSession
-    ) {
+init(
+    networkLogger: NetworkLogging,
+    networkSession: NetworkSession,
+    calendarRepository: CalendarRepository,
+) {
         self.networkLogger = networkLogger
         self.networkSession = networkSession
+        self.calendarRepository = calendarRepository
     }
         
     // MARK: Public Methods

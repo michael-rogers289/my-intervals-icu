@@ -5,8 +5,8 @@
 //  Created by Mike Rogers on 9/30/26.
 //
 
-import Blade
 import Combine
+import FactoryKit
 import Foundation
 import SwiftUI
 
@@ -16,7 +16,11 @@ final class ActivityDetailViewModel {
     
     //MARK: Private Properties
     private let id: String
-    private let activityRepository = BladeMyIntervalsIcuComponent().activityRepository()
+    
+    @ObservationIgnored
+    @Injected(\.activityRepository)
+    private var activityRepository
+    private let activityMapper = ActivityMapper()
     private var cancellables: Set<AnyCancellable> = []
     
     //MARK: Public Properties
@@ -37,7 +41,7 @@ final class ActivityDetailViewModel {
                     self?.summaryInfo = nil
                     return
                 }
-                self?.summaryInfo = ActivitySummaryInfoViewData(activity: activity)
+                self?.summaryInfo = self?.activityMapper.map(activity: activity)
             }
             .store(in: &cancellables)
     }
