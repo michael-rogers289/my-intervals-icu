@@ -14,17 +14,15 @@ struct ActivityListView : View {
     
     var body: some View {
         NavigationStack(path: $navigationViewModel.stack) {
-            List(viewModel.activities) { activity in
-                ForEach(viewModel.activities) { viewData in
-                    Section {
-                        Text(viewData.activityDate, style: .date)
-                            .font(.title)
-                            .padding(.bottom, .spacingSmall)
-                        
-                        ForEach(viewData.activities) { activity in
-                            NavigationLink(value: ActivityNavigationElement.detail(activityId: activity.id)) {
-                                ActivityCellView(activity: activity)
-                            }
+            List(viewModel.activities) { viewData in
+                Section {
+                    Text(viewData.activityDate, style: .date)
+                        .font(.title)
+                        .padding(.bottom, .spacingSmall)
+                    
+                    ForEach(viewData.activities) { activity in
+                        NavigationLink(value: ActivityNavigationElement.detail(activityId: activity.id)) {
+                            ActivityCellView(activity: activity)
                         }
                     }
                 }

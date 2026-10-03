@@ -61,7 +61,12 @@ class ActivityRepository {
             },
             heartRateZones: activities.flatMap { $0.mapToHeartRateZones() },
             powerZones: activities.flatMap { $0.mapToPowerZones() },
-            summaryChartBars: activities.flatMap { $0.mapToSummaryChartBars() }
+            summaryChartBars: activities.flatMap { $0.mapToSummaryChartBars() },
+            streamTypeLinks: activities.flatMap { activity in
+                activity.streamTypes.map { dto in
+                    dto.mapToStreamTypeLink(with: activity)
+                }
+            }
         )
     }
 }

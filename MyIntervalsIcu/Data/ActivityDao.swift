@@ -27,6 +27,15 @@ final class ActivityDao : Sendable {
         self.databaseQueue = databaseQueue
         do {
             try databaseQueue.createTables()
+            Task {
+                do {
+                    try await insertStreamTypesIfNeeded()
+                } catch {
+                    // TODO: Should log. I don't think this should gate the rest of the app functioning
+                    fatalError("Unable to insert stream types")
+                }
+            }
+            
         } catch let error {
             fatalError("Failed to create database tables\(error)")
         }
@@ -38,12 +47,14 @@ final class ActivityDao : Sendable {
         heartRateZones: [ActivityHeartRateZone],
         powerZones: [ActivityPowerZone],
         summaryChartBars: [SummaryChartBar],
+        streamTypeLinks: [StreamTypeLink],
     ) async {
         try? await databaseQueue.write { db in
             try activities.insertAll(in: db)
             try heartRateZones.insertAll(in: db)
             try powerZones.insertAll(in: db)
             try summaryChartBars.insertAll(in: db)
+            try streamTypeLinks.insertAll(in: db)
         }
     }
         
@@ -116,6 +127,28 @@ final class ActivityDao : Sendable {
             activityId: \.activityId
         )
         return valueObservation(from: statement.raw)
+    }
+    
+    //MARK: Private Methods
+    
+    @DatabaseActor
+    private func insertStreamTypesIfNeeded() throws {
+        let allStreamTypes = StreamType.allCases
+        
+        let storedStreamTypeRecordCount = try databaseQueue.read { database in
+            try StreamTypeRecord.fetchCount(database)
+        }
+        
+        guard allStreamTypes.count != storedStreamTypeRecordCount else { return }
+        
+        let streamTypeRecords = allStreamTypes.map {
+            StreamTypeRecord(id: $0.id, name: $0)
+        }
+        
+        try databaseQueue.write { database in
+            try StreamTypeRecord.deleteAll(database)
+            try streamTypeRecords.insertAll(in: database)
+        }
     }
     
     private func getStatement<T>(
