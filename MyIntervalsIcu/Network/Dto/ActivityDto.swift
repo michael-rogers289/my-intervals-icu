@@ -70,4 +70,5 @@ struct ActivityDto: Codable {
     let icuAverageWatts: Int?
     let strainScore: Double?
     let skylineChartBytes: String
+    let streamTypes: [StreamTypeDto]
 }

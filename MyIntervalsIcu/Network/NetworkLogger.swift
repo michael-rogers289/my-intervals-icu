@@ -18,6 +18,7 @@ protocol NetworkLogging : Sendable {
     
     func logError(
         _ error: NetworkManager.NetworkError,
+        data: Data?,
         for request: URLRequest,
         and response: URLResponse?
     ) -> NetworkManager.NetworkError
@@ -43,7 +44,7 @@ struct NetworkLogger : NetworkLogging {
               let response = response as? HTTPURLResponse else { return }
         
         let dataString: String = if let data {
-            "\(try? JSONSerialization.jsonObject(with: data))"
+            "\((try? JSONSerialization.jsonObject(with: data)) ?? "")"
         } else {
             ""
         }
@@ -61,6 +62,7 @@ struct NetworkLogger : NetworkLogging {
     
     func logError(
         _ error: NetworkManager.NetworkError,
+        data: Data?,
         for request: URLRequest,
         and response: URLResponse? = nil
     ) -> NetworkManager.NetworkError {
@@ -80,12 +82,19 @@ struct NetworkLogger : NetworkLogging {
             "None"
         }
         
+        let dataString = if let data {
+            String(describing: try? JSONSerialization.jsonObject(with: data))
+        } else {
+            "No Response Data"
+        }
+        
         Self.logger.error(
             """
             🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴
             \(request.allHTTPHeaderFields?.map({ "\($0): \($1)" }).joined(separator: "\n") ?? "No Header Fields") 
             \(request.httpMethod ?? "") \(request.url?.absoluteString ?? "") : \(responseStatusCode)
             \(additionalData)
+            \(dataString)
             🔺🔺🔺🔺🔺🔺🔺🔺🔺🔺🔺🔺🔺🔺🔺🔺🔺🔺🔺🔺🔺🔺🔺🔺🔺🔺🔺🔺🔺🔺🔺🔺🔺🔺🔺🔺🔺🔺🔺🔺🔺🔺
             """
         )

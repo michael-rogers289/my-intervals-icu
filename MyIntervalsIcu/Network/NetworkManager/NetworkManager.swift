@@ -42,22 +42,22 @@ actor NetworkManager {
     let calendarRepository: CalendarRepository
     
     // MARK: Private Variables
-        
+    
     private let networkSession: NetworkSession
     private let networkLogger: NetworkLogging
     
     // MARK: Init
-
-init(
-    networkLogger: NetworkLogging,
-    networkSession: NetworkSession,
-    calendarRepository: CalendarRepository,
-) {
+    
+    init(
+        networkLogger: NetworkLogging,
+        networkSession: NetworkSession,
+        calendarRepository: CalendarRepository,
+    ) {
         self.networkLogger = networkLogger
         self.networkSession = networkSession
         self.calendarRepository = calendarRepository
     }
-        
+    
     // MARK: Public Methods
     
     func fetchAndDecode<T: Decodable & Sendable>(
@@ -68,34 +68,36 @@ init(
             guard
                 let response = response as? HTTPURLResponse,
                 NetworkManager.HTTPStatus(rawValue: response.statusCode)?.isSuccess == true
-            else {
+                    else {
                 throw networkLogger.logError(
                     NetworkManager.NetworkError.unableToFetchData(forPath: response.url?.path ?? response.description),
+                    data: data,
                     for: request,
                     and: response
                 )
             }
             
-            let decoded: T = try await decode(type: T.self, from: data)
-            
             networkLogger.logResponse(response, andData: data, of: request)
-
-            return decoded
+            
+            return try await decode(type: T.self, from: data)
         } catch let decodingError as DecodingError {
             throw networkLogger.logError(
                 NetworkManager.NetworkError.unableToDecodeResponse(decodeError: decodingError),
+                data: nil,
                 for: request,
                 and: nil
             )
         } catch let cancelationError as CancellationError {
             throw networkLogger.logError(
                 NetworkManager.NetworkError.cancelled(error: cancelationError),
+                data: nil,
                 for: request,
                 and: nil
             )
         } catch {
             throw networkLogger.logError(
                 NetworkManager.NetworkError.unableToFetchData(forPath: request.url?.path ?? request.description),
+                data: nil,
                 for: request,
                 and: nil
             )

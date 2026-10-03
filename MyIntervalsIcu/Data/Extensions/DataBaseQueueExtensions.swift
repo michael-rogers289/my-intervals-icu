@@ -18,6 +18,8 @@ extension DatabaseQueue {
         case summaryChartBar = "SummaryChartBar"
         case activityPowerZone = "ActivityPowerZone"
         case activityheartRateZone = "ActivityHeartRateZone"
+        case streamTypeRecord = "StreamTypeRecord"
+        case streamTypeLink = "StreamTypeLink"
     }
     
     func createTables() throws {
@@ -26,6 +28,7 @@ extension DatabaseQueue {
             try createActivityPowerZoneTable(with: database)
             try createActivityHeartRateZoneTable(with: database)
             try createSummaryChartBarTable(with: database)
+            try createStreamTypeTables(with: database)
         }
     }
     
@@ -139,6 +142,30 @@ extension DatabaseQueue {
                 onDelete: .cascade,
                 onUpdate: .cascade
             )
+        }
+    }
+    
+    private func createStreamTypeTables(with database: Database) throws {
+        if try !database.tableExists(Tables.streamTypeLink.rawValue) {
+            try database.create(table: Tables.streamTypeLink.rawValue) { table in
+                table.column(StreamTypeLink.Columns.id.name, .text)
+                    .primaryKey(onConflict: .replace)
+                    .indexed()
+                table.column(StreamTypeLink.Columns.activityId.name, .text)
+                    .indexed()
+                table.column(StreamTypeLink.Columns.streamTypeId.name, .integer)
+                    .indexed()
+            }
+        }
+        
+        if try !database.tableExists(Tables.streamTypeRecord.rawValue) {
+            try database.create(table: Tables.streamTypeRecord.rawValue) { table in
+                table.column(StreamTypeRecord.Columns.id.name, .integer)
+                    .primaryKey(onConflict: .replace)
+                    .indexed()
+                table.column(StreamTypeRecord.Columns.name.name, .text)
+                    .indexed()
+            }
         }
     }
     
