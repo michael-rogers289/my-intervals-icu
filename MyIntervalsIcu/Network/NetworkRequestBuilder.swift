@@ -40,7 +40,7 @@ struct NetworkRequestBuilder {
     static func makeActivityRequest(
         activityId: String,
         appendingPath pathToAppend: String? = nil,
-        addingQueryParameters queryParameters: [URLQueryItem]? = nil,
+        addingQueryParameters queryParameters: URLQueryItem...,
     ) -> URLRequest {
         let baseUrl = networkConstants.activityUrl.appendingPathComponent(activityId)
         
@@ -50,7 +50,7 @@ struct NetworkRequestBuilder {
             baseUrl
         }
         
-        if let queryParameters {
+        if !queryParameters.isEmpty {
             url.append(queryItems: queryParameters)
         }
         
