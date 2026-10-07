@@ -14,6 +14,7 @@ extension Container {
         self {
             ActivityRepository(
                 activityDao: Container.shared.activityDao.resolve(),
+                streamDao: Container.shared.streamDao.resolve(),
                 networkManager: Container.shared.networkManager.resolve(),
                 calendarRepository: Container.shared.calendarRepository.resolve()
             )

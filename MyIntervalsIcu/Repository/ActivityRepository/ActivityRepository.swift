@@ -12,15 +12,18 @@ import GRDB
 class ActivityRepository {
     
     private let activityDao: ActivityDao
+    private let streamDao: StreamDao
     private let networkManager: NetworkManager
     private let calendarRepository: CalendarRepository
     
     init(
         activityDao: ActivityDao,
+        streamDao: StreamDao,
         networkManager: NetworkManager,
         calendarRepository: CalendarRepository,
     ) {
         self.activityDao = activityDao
+        self.streamDao = streamDao
         self.networkManager = networkManager
         self.calendarRepository = calendarRepository
     }
@@ -50,9 +53,8 @@ class ActivityRepository {
     }
     
     func fetchActivitiesForDateRange(range: DateInterval) async throws {
-        let dao = activityDao
         let activities = try await networkManager.getActivities(for: range)
-        await dao.insertAll(
+        await activityDao.insertAll(
             activities: activities.compactMap {
                 $0.mapToActivity { elapsedTime, startDate in
                     let elapsedTime = elapsedTime ?? 0
@@ -62,11 +64,13 @@ class ActivityRepository {
             heartRateZones: activities.flatMap { $0.mapToHeartRateZones() },
             powerZones: activities.flatMap { $0.mapToPowerZones() },
             summaryChartBars: activities.flatMap { $0.mapToSummaryChartBars() },
-            streamTypeLinks: activities.flatMap { activity in
-                activity.streamTypes.map { dto in
-                    dto.mapToStreamTypeLink(with: activity)
-                }
-            }
         )
+        
+        let streamTypes = activities.flatMap { activity in
+            activity.streamTypes.map { dto in
+                dto.mapToStreamTypeLink(with: activity)
+            }
+        }
+        await streamDao.store(streamTypeLinks: streamTypes)
     }
 }

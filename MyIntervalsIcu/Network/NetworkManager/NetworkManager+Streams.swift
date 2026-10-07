@@ -9,7 +9,7 @@ import Foundation
 
 extension NetworkManager {
      
-    func get(streams: [StreamType], forId activityId: Activity.ActivityId) async throws -> [StreamDto] {
+    func get(streams: [StreamTypeDto], forId activityId: Activity.ActivityId) async throws -> [StreamDto] {
         let request = NetworkRequestBuilder.makeActivityRequest(
             activityId: activityId,
             appendingPath: "streamsjson",

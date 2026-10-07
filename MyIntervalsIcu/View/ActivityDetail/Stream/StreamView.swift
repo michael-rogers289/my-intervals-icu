@@ -10,22 +10,26 @@ import Charts
 
 struct StreamView : View {
     
-    @State private var viewModel: StreamViewModel
-    
-    init(activityId: String) {
-        self.viewModel = StreamViewModel(activityId: activityId)
-    }
+    let viewData: StreamViewData
     
     var body: some View {
-        Chart {
-            ForEach(viewModel.selectedActivityStreams, id: \.streamType) { viewData in
-                ForEach(viewData.timeSeriesData, id: \.self) { data in
-                    LineMark(
-                        x: .value("Time", data.x),
-                        y: .value("Value", data.yValueTitle)
-                    )
-                }
+        Chart(viewData.timeSeries, id: \.streamType) { timeSeries in
+            ForEach(timeSeries.plottableData, id: \.self) { point in
+                LineMark(
+                    x: .value("Time", point.x),
+                    y: .value(point.yValueTitle, point.y),
+                    series: .value(point.yValueTitle, point.yValueTitle)
+                ).foregroundStyle(timeSeries.streamType.color)
+            }            
+        }
+        .chartXAxis {
+            AxisMarks(values: [0, viewData.xMax]) { value in
+                AxisGridLine().foregroundStyle(.clear) // no vertical grids
+                AxisTick()
             }
+        }
+        .chartYAxis {
+            AxisMarks(position: .leading, values: .automatic)
         }
     }
     

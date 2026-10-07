@@ -20,6 +20,12 @@ extension Container {
         }.singleton
     }
     
+    var streamDao: Factory<StreamDao> {
+        self {
+            StreamDao(databaseQueue: Container.shared.databaseQueue.resolve())
+        }.singleton
+    }
+    
     var databaseQueue: Factory<DatabaseQueue> {
         self {
 #if DEBUG

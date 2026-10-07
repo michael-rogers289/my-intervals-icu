@@ -21,22 +21,22 @@ struct ActivityListView : View {
                         .padding(.bottom, .spacingSmall)
                     
                     ForEach(viewData.activities) { activity in
-                        NavigationLink(value: ActivityNavigationElement.detail(activityId: activity.id)) {
-                            ActivityCellView(activity: activity)
-                        }
+                        ActivityCellView(activity: activity)
+                            .onTapGesture {
+                                navigationViewModel.pushDetail(with: activity.id)
+                            }
                     }
                 }
             }
             .navigationDestination(for: ActivityNavigationElement.self) { destination in
                 switch destination {
-                case .detail(let id):
-                    ActivityDetailView(activityId: id)
+                case .detail:
+                    ActivityDetailView()
                 }
             }
             .navigationTitle("Activities")
         }
-        .onAppear { viewModel.startObservation() }
-        
+        .onAppear { viewModel.onViewAppeared() }
     }
     
 }

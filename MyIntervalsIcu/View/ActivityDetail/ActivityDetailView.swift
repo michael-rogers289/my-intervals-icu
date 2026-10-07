@@ -9,24 +9,30 @@ import SwiftUI
 
 struct ActivityDetailView : View {
     
-    let activityId: String
-    @State private var viewModel: ActivityDetailViewModel
-    
-    init(activityId: String) {
-        self.activityId = activityId
-        self.viewModel = ActivityDetailViewModel(id: activityId)
-    }
+    @State private var viewModel = ActivityDetailViewModel()
+    @State private var streamViewModel = StreamViewModel()
     
     var body: some View {
-        VStack(alignment: .leading) {
-            if let summaryInfo = viewModel.summaryInfo {
-                ActivitySummaryInfoView(
-                    viewData: summaryInfo
-                )
-            } else {
-                EmptyView()
+        ScrollView {
+            VStack(alignment: .leading, spacing: .spacingMedium) {
+                if let summaryInfo = viewModel.summaryInfo {
+                    ActivitySummaryInfoView(
+                        viewData: summaryInfo
+                    )
+                    StreamLegendView(
+                        viewData: streamViewModel.selectableStreamTypes,
+                        onSelectionChanged: streamViewModel.onSelectedStreamTypeChanged
+                    )
+                    StreamView(viewData: streamViewModel.viewData)
+                        .aspectRatio(1.0 / 0.25, contentMode: .fill)
+                        .padding(.spacingMedium)
+                } else {
+                    EmptyView()
+                }
+                
             }
         }
+        .padding(.spacingLarge)
         .onAppear { viewModel.startObservation() }
     }
     
