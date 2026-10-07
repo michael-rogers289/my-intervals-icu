@@ -13,14 +13,26 @@ struct StreamView : View {
     let viewData: StreamViewData
     
     var body: some View {
-        Chart(viewData.timeSeries, id: \.streamType) { timeSeries in
-            ForEach(timeSeries.plottableData, id: \.self) { point in
-                LineMark(
-                    x: .value("Time", point.x),
-                    y: .value(point.yValueTitle, point.y),
-                    series: .value(point.yValueTitle, point.yValueTitle)
-                ).foregroundStyle(timeSeries.streamType.color)
-            }            
+        Chart {
+            if let areaSeries = viewData.areaTimeSeries {
+                ForEach(areaSeries.plottableData, id: \.self) { point in
+                    AreaMark(
+                        x: .value("Time", point.x),
+                        y: .value(point.yValueTitle, point.y),
+                        series: .value(point.yValueTitle, point.yValueTitle)
+                    ).foregroundStyle(areaSeries.streamType.color)
+                }
+            }
+            
+            ForEach(viewData.timeSeries, id: \.streamType) { timeSeries in
+                ForEach(timeSeries.plottableData, id: \.self) { point in
+                    LineMark(
+                        x: .value("Time", point.x),
+                        y: .value(point.yValueTitle, point.y),
+                        series: .value(point.yValueTitle, point.yValueTitle)
+                    ).foregroundStyle(timeSeries.streamType.color)
+                }
+            }
         }
         .chartXAxis {
             AxisMarks(values: [0, viewData.xMax]) { value in

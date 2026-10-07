@@ -30,7 +30,7 @@ final class StreamViewModel {
     
     // MARK: Public Variables
     
-    private(set) var viewData = StreamViewData(timeSeries: [], xMax: .zero)
+    private(set) var viewData = StreamViewData(timeSeries: [], areaTimeSeries: nil, xMax: .zero)
     private(set) var selectableStreamTypes: [StreamLegendViewData] = []
     
     // MARK: Life Cycle
@@ -61,17 +61,20 @@ final class StreamViewModel {
             return
         }
         
+        let scaledSelectedSeries = selectedSeries.map {
+            let scaleFactor = maxY / $0.maxY
+            return $0.copy(updatedPoints: $0.plottableData.map { point in
+                StreamViewData.Point(
+                    yValueTitle: point.yValueTitle,
+                    x: point.x,
+                    y: point.y * scaleFactor
+                )
+            })
+        }
+        
         viewData = StreamViewData(
-            timeSeries: selectedSeries.map {
-                let scaleFactor = maxY / $0.maxY
-                return $0.copy(updatedPoints: $0.plottableData.map { point in
-                    StreamViewData.Point(
-                        yValueTitle: point.yValueTitle,
-                        x: point.x,
-                        y: point.y * scaleFactor
-                    )
-                })
-            },
+            timeSeries: scaledSelectedSeries.filter { $0.streamType != .altitude },
+            areaTimeSeries: scaledSelectedSeries.first { $0.streamType == .altitude },
             xMax: timeSeriesXMax
         )
     }
