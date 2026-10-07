@@ -30,7 +30,7 @@ final class StreamViewModel {
     
     // MARK: Public Variables
     
-    private(set) var viewData = StreamViewData(timeSeries: [], areaTimeSeries: nil, xMax: .zero)
+    private(set) var viewData = StreamViewData(timeSeries: [], areaTimeSeries: nil, xMax: .zero, yMax: .zero)
     private(set) var selectableStreamTypes: [StreamLegendViewData] = []
     
     // MARK: Life Cycle
@@ -75,7 +75,8 @@ final class StreamViewModel {
         viewData = StreamViewData(
             timeSeries: scaledSelectedSeries.filter { $0.streamType != .altitude },
             areaTimeSeries: scaledSelectedSeries.first { $0.streamType == .altitude },
-            xMax: timeSeriesXMax
+            xMax: timeSeriesXMax,
+            yMax: maxY,
         )
     }
     
