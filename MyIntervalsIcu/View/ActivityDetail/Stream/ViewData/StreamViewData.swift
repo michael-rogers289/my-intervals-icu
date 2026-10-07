@@ -132,6 +132,7 @@ struct StreamViewData {
     }
     
     let timeSeries: [TimeSeries]
+    let areaTimeSeries: TimeSeries?
     let xMax: Double
     
 }
