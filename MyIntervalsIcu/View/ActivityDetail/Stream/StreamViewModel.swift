@@ -5,6 +5,7 @@
 //  Created by Mike Rogers on 10/4/26.
 //
 
+import Combine
 import FactoryKit
 import SwiftUI
 
@@ -14,16 +15,104 @@ final class StreamViewModel {
     
     // MARK: Private Variables
     
-    private let networkManager = Container.shared.networkManager
-    var selectedActivityStreams: [StreamViewData] = []
+    @ObservationIgnored
+    @Injected(\.streamRepository)
+    private var streamRepository
     
-    private let activityId: String
+    @ObservationIgnored
+    @Injected(\.detailActivityIdSelector)
+    private var selectedActivityId
+    
+    private var cancellables: Set<AnyCancellable> = []
+    private var streamTask: Task<Void, Never>?
+    private var allTimeSeries: [StreamViewData.TimeSeries] = []
+    private var timeSeriesXMax: Double = .zero
+    
+    // MARK: Public Variables
+    
+    private(set) var viewData = StreamViewData(timeSeries: [], xMax: .zero)
+    private(set) var selectableStreamTypes: [StreamLegendViewData] = []
     
     // MARK: Life Cycle
     
-    init(activityId: String) {
-        self.activityId = activityId
-        self.selectedActivityStreams = selectedActivityStreams
+    init() {
+        guard let selectedActivityId = selectedActivityId else {
+            return
+        }
+        streamRepository.getAllowedStreams(for: selectedActivityId)
+            .replaceError(with: [])
+            .removeDuplicates()
+            .sink { [weak self] in self?.getStreams(forActivity: selectedActivityId, with: $0) }
+            .store(in: &cancellables)
+    }
+    
+    // MARK: Public Methods
+    
+    func onSelectedStreamTypeChanged() {
+        let selectedStreamTypes = Set<StreamViewData.TimeSeriesStreamType>(
+            selectableStreamTypes.compactMap {
+                guard $0.isSelected else { return nil }
+                return $0.streamType
+            }
+        )
+        let selectedSeries = allTimeSeries
+            .filter { selectedStreamTypes.contains($0.streamType) }
+        guard let maxY = selectedSeries.max(by: { $0.maxY < $1.maxY })?.maxY else {
+            return
+        }
+        
+        viewData = StreamViewData(
+            timeSeries: selectedSeries.map {
+                let scaleFactor = maxY / $0.maxY
+                return $0.copy(updatedPoints: $0.plottableData.map { point in
+                    StreamViewData.Point(
+                        yValueTitle: point.yValueTitle,
+                        x: point.x,
+                        y: point.y * scaleFactor
+                    )
+                })
+            },
+            xMax: timeSeriesXMax
+        )
+    }
+    
+    // MARK: Private Methods
+    
+    private func getStreams(forActivity activityId: Activity.ActivityId, with types: [StreamType]) {
+        streamTask?.cancel()
+        streamTask = Task {
+            let streams = await streamRepository.getStreams(
+                types,
+                for: activityId
+            )
+            guard !Task.isCancelled,
+                  let secondsSeries = streams.first(where: { $0.type == .time }) else { return }
+            
+            allTimeSeries = streams
+                .compactMap { stream in
+                    guard let timeSeriesStreamType = StreamViewData.TimeSeriesStreamType(streamType: stream.type) else { return nil }
+                    
+                    return StreamViewData.TimeSeries(
+                        streamType: timeSeriesStreamType,
+                        plottableData: stream.timeSeries.enumerated().map { index, value in
+                            StreamViewData.Point(
+                                yValueTitle: timeSeriesStreamType.title,
+                                x: secondsSeries.timeSeries[index],
+                                y: value
+                            )
+                        },
+                        minY: stream.timeSeries.min() ?? .zero,
+                        maxY: stream.timeSeries.max() ?? .zero,
+                    )
+                }
+            
+            timeSeriesXMax = secondsSeries.timeSeries.last ?? .zero
+            
+            selectableStreamTypes = allTimeSeries.map {
+                StreamLegendViewData(streamType: $0.streamType, isSelected: $0.streamType.defaultPlottable)
+            }
+            onSelectedStreamTypeChanged()
+        }
     }
     
 }

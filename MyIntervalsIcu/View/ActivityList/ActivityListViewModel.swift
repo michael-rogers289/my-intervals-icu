@@ -15,8 +15,13 @@ import SwiftUI
 final class ActivityListViewModel {
     
     // MARK: Private Variables
+    
+    @ObservationIgnored
     private let activityRepository = Container.shared.activityRepository.resolve()
+    
+    @ObservationIgnored
     private let calendarRepository = Container.shared.calendarRepository.resolve()
+    
     private let activityMapper = ActivityMapper()
     private var currentMonth: DateInterval
     private var refreshTask: Task<Void, Never>?
@@ -30,14 +35,14 @@ final class ActivityListViewModel {
     init() {
         do {
             currentMonth = try calendarRepository.getCurrentMonth(from: Date())
-            print("CURRENT MONTH: \(currentMonth)")
         } catch {
             fatalError("Unable to create date for current week")
         }
     }
     
     // MARK: Public Methods
-    func startObservation() {
+    func onViewAppeared() {
+        Container.shared.detailActivityIdSelector.register { nil }
         refresh()
         cancellables.removeAll()
         activityRepository.getActivities(for: currentMonth)

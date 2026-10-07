@@ -153,18 +153,16 @@ extension DatabaseQueue {
                     .indexed()
                 table.column(StreamTypeLink.Columns.activityId.name, .text)
                     .indexed()
-                table.column(StreamTypeLink.Columns.streamTypeId.name, .integer)
+                table.column(StreamTypeLink.Columns.streamTypeId.name, .text)
                     .indexed()
-            }
-        }
-        
-        if try !database.tableExists(Tables.streamTypeRecord.rawValue) {
-            try database.create(table: Tables.streamTypeRecord.rawValue) { table in
-                table.column(StreamTypeRecord.Columns.id.name, .integer)
-                    .primaryKey(onConflict: .replace)
-                    .indexed()
-                table.column(StreamTypeRecord.Columns.name.name, .text)
-                    .indexed()
+                
+                table.foreignKey(
+                    [StreamTypeLink.Columns.activityId.name],
+                    references: Tables.activity.rawValue,
+                    columns: [Activity.codingKey(for: \.id)],
+                    onDelete: .cascade,
+                    onUpdate: .cascade
+                )
             }
         }
     }

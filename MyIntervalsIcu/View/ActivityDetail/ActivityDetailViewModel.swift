@@ -15,26 +15,28 @@ import SwiftUI
 final class ActivityDetailViewModel {
     
     //MARK: Private Properties
-    private let id: String
     
     @ObservationIgnored
     @Injected(\.activityRepository)
     private var activityRepository
+    
+    @ObservationIgnored
+    @Injected(\.detailActivityIdSelector)
+    private var selectedActivityId
+    
     private let activityMapper = ActivityMapper()
     private var cancellables: Set<AnyCancellable> = []
     
     //MARK: Public Properties
+    
     private(set) var summaryInfo: ActivitySummaryInfoViewData?
     
-    //MARK: Initialization
-    init(id: String) {
-        self.id = id
-    }
-    
     //MARK: Public Methods
+    
     func startObservation() {
+        guard let selectedActivityId else { return }
         activityRepository
-            .getActivity(byId: id)
+            .getActivity(byId: selectedActivityId)
             .replaceError(with: nil)
             .sink { [weak self] activity in
                 guard let activity else {

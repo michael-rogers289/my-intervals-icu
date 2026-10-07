@@ -1,24 +1,15 @@
 //
-//  StreamTypeDtoToStreamTypeMapper.swift
+//  StreamTypeToStreamTypeDtoMapper.swift
 //  MyIntervalsIcu
 //
-//  Created by Mike Rogers on 10/2/26.
+//  Created by Mike Rogers on 10/5/26.
 //
 
 import Foundation
 
-extension StreamTypeDto {
+extension StreamType {
     
-    func mapToStreamTypeLink(with activity: ActivityDto) -> StreamTypeLink {
-        let dataStreamTypeId = asDataStreamType.rawValue
-        return StreamTypeLink(
-            id: "\(activity.id)_\(dataStreamTypeId)",
-            streamTypeId: dataStreamTypeId,
-            activityId: activity.id
-        )
-    }
-    
-    var asDataStreamType: StreamType {
+    var asDto: StreamTypeDto {
         return switch self {
         case .altitude: .altitude
         case .cadence: .cadence
@@ -27,7 +18,7 @@ extension StreamTypeDto {
         case .lattitudeLongitude: .lattitudeLongitude
         case .time: .time
         case .torque: .torque
-        case .velocitySmooth: .smoothVelocity
+        case .smoothVelocity: .velocitySmooth
         case .watts: .watts
         case .temp: .temp
         case .leftRightBalance: .leftRightBalance
@@ -39,4 +30,5 @@ extension StreamTypeDto {
         case .skinTemperature: .skinTemperature
         }
     }
+    
 }
