@@ -7,6 +7,7 @@
 
 import Combine
 import FactoryKit
+import Observation
 import SwiftUI
 
 @MainActor
@@ -25,13 +26,14 @@ final class StreamViewModel {
     
     private var cancellables: Set<AnyCancellable> = []
     private var streamTask: Task<Void, Never>?
+    private var selectableTypesTask: Task<Void, Never>?
     private var allTimeSeries: [StreamViewData.TimeSeries] = []
     private var timeSeriesXMax: Double = .zero
     
     // MARK: Public Variables
     
     private(set) var viewData = StreamViewData(timeSeries: [], areaTimeSeries: nil, xMax: .zero, yMax: .zero)
-    private(set) var selectableStreamTypes: [StreamLegendViewData] = []
+    var selectableStreamTypes: [StreamLegendViewData] = []
     
     // MARK: Life Cycle
     
@@ -46,9 +48,9 @@ final class StreamViewModel {
             .store(in: &cancellables)
     }
     
-    // MARK: Public Methods
+    // MARK: Private Methods
     
-    func onSelectedStreamTypeChanged() {
+    private func updateStreamViewData(with selectableStreamTypes: [StreamLegendViewData]) {
         let selectedStreamTypes = Set<StreamViewData.TimeSeriesStreamType>(
             selectableStreamTypes.compactMap {
                 guard $0.isSelected else { return nil }
@@ -79,8 +81,6 @@ final class StreamViewModel {
             yMax: maxY,
         )
     }
-    
-    // MARK: Private Methods
     
     private func getStreams(forActivity activityId: Activity.ActivityId, with types: [StreamType]) {
         streamTask?.cancel()
@@ -115,7 +115,23 @@ final class StreamViewModel {
             selectableStreamTypes = allTimeSeries.map {
                 StreamLegendViewData(streamType: $0.streamType, isSelected: $0.streamType.defaultPlottable)
             }
-            onSelectedStreamTypeChanged()
+            startSelectionObservation()
+        }
+    }
+    
+    private func startSelectionObservation() {
+        selectableTypesTask?.cancel()
+        selectableTypesTask = Task { [weak self] in
+            let individualObservation = Observations { self?.selectableStreamTypes }
+            for await observation in individualObservation {
+                guard !Task.isCancelled,
+                      let observation else {
+                    self?.selectableTypesTask?.cancel()
+                    self?.selectableTypesTask = nil
+                    return
+                }
+                self?.updateStreamViewData(with: observation)
+            }
         }
     }
     

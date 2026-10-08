@@ -19,10 +19,7 @@ struct ActivityDetailView : View {
                     ActivitySummaryInfoView(
                         viewData: summaryInfo
                     )
-                    StreamLegendView(
-                        viewData: streamViewModel.selectableStreamTypes,
-                        onSelectionChanged: streamViewModel.onSelectedStreamTypeChanged
-                    )
+                    StreamLegendView(viewData: $streamViewModel.selectableStreamTypes)
                     StreamView(viewData: streamViewModel.viewData)
                         .aspectRatio(1.0 / 0.25, contentMode: .fill)
                         .padding(.spacingMedium)
