@@ -9,12 +9,12 @@ import SwiftUI
 
 struct StreamLegendView : View {
     
-    let viewData: [StreamLegendViewData]
-    let onSelectionChanged: () -> Void
+    @Binding var viewData: [StreamLegendViewData]
     
     var body: some View {
         CascadingGridLayout {
-            ForEach(viewData, id: \.streamType) { data in
+            ForEach(0..<viewData.count, id: \.self) { index in
+                let data = viewData[index]
                 ToggleableButton(
                     isSelected: data.isSelected,
                     label: Text(data.streamType.title).font(.caption)) {
@@ -23,9 +23,8 @@ struct StreamLegendView : View {
                             .frame(width: .spacingMedium)
                     } onTap: {
                         withAnimation {
-                            data.toggle()
+                            viewData[index].toggle()
                         }
-                        onSelectionChanged()
                     }
             }
         }
@@ -70,20 +69,25 @@ private struct ToggleableButton<LabelView: View>: View {
 }
 
 #Preview {
-    let viewData = [
-        StreamLegendViewData(
-            streamType: .watts,
-            isSelected: true
-        ),
-        StreamLegendViewData(
-            streamType: .heartrate,
-            isSelected: true
-        ),
-        StreamLegendViewData(
-            streamType: .cadence,
-            isSelected: false
-        ),
-    ]
+    let viewDataBinding = Binding(get: {
+        [
+            StreamLegendViewData(
+                streamType: .watts,
+                isSelected: true
+            ),
+            StreamLegendViewData(
+                streamType: .heartrate,
+                isSelected: true
+            ),
+            StreamLegendViewData(
+                streamType: .cadence,
+                isSelected: false
+            ),
+        ]
+    }, set: { _ in
+        
+    })
     
-    StreamLegendView(viewData: viewData, onSelectionChanged: {})
+    
+    StreamLegendView(viewData: viewDataBinding)
 }

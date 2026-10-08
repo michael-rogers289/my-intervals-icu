@@ -7,8 +7,7 @@
 
 import Foundation
 
-@Observable
-class StreamLegendViewData {
+struct StreamLegendViewData : Sendable {
     
     let streamType: StreamViewData.TimeSeriesStreamType
     private(set) var isSelected: Bool
@@ -21,7 +20,7 @@ class StreamLegendViewData {
         self.isSelected = isSelected
     }
     
-    func toggle() {
+    mutating func toggle() {
         isSelected.toggle()
     }
     
