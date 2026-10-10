@@ -92,9 +92,9 @@ final class StreamViewModel {
             guard let measurementType = timeSeries.streamType.measurementType else { return nil }
             return AStreamSummaryViewData(
                 type: timeSeries.streamType,
-                min: Measurement(value: timeSeries.minY, unit: measurementType).converted(to: measurementType),
-                average: Measurement(value: timeSeries.averageY, unit: measurementType).converted(to: measurementType),
-                max: Measurement(value: timeSeries.maxY, unit: measurementType).converted(to: measurementType),
+                min: Measurement(value: timeSeries.minY, unit: measurementType),
+                average: Measurement(value: timeSeries.averageY, unit: measurementType),
+                max: Measurement(value: timeSeries.maxY, unit: measurementType)
             )
         }
     }
