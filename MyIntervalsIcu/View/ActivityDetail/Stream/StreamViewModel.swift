@@ -32,15 +32,22 @@ final class StreamViewModel {
     
     // MARK: Public Variables
     
-    private(set) var viewData = StreamViewData(timeSeries: [], areaTimeSeries: nil, xMax: .zero, yMax: .zero)
+    private(set) var viewData = StreamViewData(
+        timeSeries: [],
+        areaTimeSeries: nil,
+        xMax: .zero,
+        timeSeriesMaxY: .zero
+    )
     var selectableStreamTypes: [StreamLegendViewData] = []
+    private(set) var streamSummaryData: [any StreamSummaryViewData] = []
+    
+    var subsectionStartIndex: Int?
+    var subsectionEndIndex: Int?
     
     // MARK: Life Cycle
     
     init() {
-        guard let selectedActivityId = selectedActivityId else {
-            return
-        }
+        guard let selectedActivityId = selectedActivityId else { return }
         streamRepository.getAllowedStreams(for: selectedActivityId)
             .replaceError(with: [])
             .removeDuplicates()
@@ -51,7 +58,7 @@ final class StreamViewModel {
     // MARK: Private Methods
     
     private func updateStreamViewData(with selectableStreamTypes: [StreamLegendViewData]) {
-        let selectedStreamTypes = Set<StreamViewData.TimeSeriesStreamType>(
+        let selectedStreamTypes = Set<TimeSeriesStreamType>(
             selectableStreamTypes.compactMap {
                 guard $0.isSelected else { return nil }
                 return $0.streamType
@@ -78,8 +85,18 @@ final class StreamViewModel {
             timeSeries: scaledSelectedSeries.filter { $0.streamType != .altitude },
             areaTimeSeries: scaledSelectedSeries.first { $0.streamType == .altitude },
             xMax: timeSeriesXMax,
-            yMax: maxY,
+            timeSeriesMaxY: maxY,
         )
+        
+        streamSummaryData = selectedSeries.compactMap { timeSeries in
+            guard let measurementType = timeSeries.streamType.measurementType else { return nil }
+            return AStreamSummaryViewData(
+                type: timeSeries.streamType,
+                min: Measurement(value: timeSeries.minY, unit: measurementType).converted(to: measurementType),
+                average: Measurement(value: timeSeries.averageY, unit: measurementType).converted(to: measurementType),
+                max: Measurement(value: timeSeries.maxY, unit: measurementType).converted(to: measurementType),
+            )
+        }
     }
     
     private func getStreams(forActivity activityId: Activity.ActivityId, with types: [StreamType]) {
@@ -94,7 +111,13 @@ final class StreamViewModel {
             
             allTimeSeries = streams
                 .compactMap { stream in
-                    guard let timeSeriesStreamType = StreamViewData.TimeSeriesStreamType(streamType: stream.type) else { return nil }
+                    guard let timeSeriesStreamType = TimeSeriesStreamType(streamType: stream.type) else { return nil }
+                    
+                    let timeSeriesSum = if timeSeriesStreamType.removeZerosWhenComputingAverage {
+                        stream.timeSeries.filter { $0 != .zero }
+                    } else {
+                        stream.timeSeries
+                    }
                     
                     return StreamViewData.TimeSeries(
                         streamType: timeSeriesStreamType,
@@ -107,6 +130,7 @@ final class StreamViewModel {
                         },
                         minY: stream.timeSeries.min() ?? .zero,
                         maxY: stream.timeSeries.max() ?? .zero,
+                        averageY: timeSeriesSum.reduce(0.0, { $0 + $1 }) / Double(timeSeriesSum.count)
                     )
                 }
             
