@@ -10,7 +10,6 @@ import SwiftUI
 struct ActivityDetailView : View {
     
     @State private var viewModel = ActivityDetailViewModel()
-    @State private var streamViewModel = StreamViewModel()
     
     var body: some View {
         ScrollView {
@@ -19,14 +18,11 @@ struct ActivityDetailView : View {
                     ActivitySummaryInfoView(
                         viewData: summaryInfo
                     )
-                    StreamLegendView(viewData: $streamViewModel.selectableStreamTypes)
-                    StreamView(viewData: streamViewModel.viewData)
-                        .aspectRatio(1.0 / 0.25, contentMode: .fill)
-                        .padding(.spacingMedium)
+                    .padding(.spacingMedium)
+                    StreamView()
                 } else {
                     EmptyView()
                 }
-                
             }
         }
         .padding(.spacingLarge)

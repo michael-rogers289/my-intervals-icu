@@ -1,0 +1,149 @@
+//
+//  TimeSeriesStreamType.swift
+//  MyIntervalsIcu
+//
+//  Created by Mike Rogers on 10/8/26.
+//
+
+import SwiftUI
+
+enum TimeSeriesStreamType : CaseIterable {
+    case watts
+    case cadence
+    case heartrate
+    case altitude
+    case smoothVelocity
+    case torque
+    case temp
+    case leftRightBalance
+    case leftPedalSmoothness
+    case rightPedalSmoothness
+    case leftTorqueEffectiveness
+    case rightTorqueEffectiveness
+    case coreTemperature
+    case skinTemperature
+    
+    init?(streamType: StreamType) {
+        let value: TimeSeriesStreamType? = switch streamType {
+        case .time,
+                .distance,
+                .lattitudeLongitude: nil
+        case .watts: .watts
+        case .cadence: .cadence
+        case .heartrate: .heartrate
+        case .altitude: .altitude
+        case .smoothVelocity: .smoothVelocity
+        case .torque: .torque
+        case .temp: .temp
+        case .leftRightBalance: .leftRightBalance
+        case .leftPedalSmoothness: .leftPedalSmoothness
+        case .rightPedalSmoothness: .rightPedalSmoothness
+        case .leftTorqueEffectiveness: .leftTorqueEffectiveness
+        case .rightTorqueEffectiveness: .rightTorqueEffectiveness
+        case .coreTemperature: .coreTemperature
+        case .skinTemperature: .skinTemperature
+        }
+        
+        guard let value else { return nil }
+        self = value
+    }
+    
+    var title: String {
+        switch self {
+        case .watts: "Power"
+        case .cadence: "Cadence"
+        case .heartrate: "Heart Rate"
+        case .altitude: "Altitude"
+        case .smoothVelocity: "Smooth Velocity"
+        case .torque: "Torque"
+        case .temp: "Outside Temperature"
+        case .leftRightBalance: "L + R Balance"
+        case .leftPedalSmoothness: "Left PS"
+        case .rightPedalSmoothness: "Right PS"
+        case .leftTorqueEffectiveness: "Left TE"
+        case .rightTorqueEffectiveness: "Right TE"
+        case .coreTemperature: "Core Temp"
+        case .skinTemperature: "Skin Temp"
+        }
+    }
+    
+    var defaultPlottable: Bool {
+        switch self {
+        case .smoothVelocity,
+                .temp,
+                .leftRightBalance,
+                .leftPedalSmoothness,
+                .rightPedalSmoothness,
+                .leftTorqueEffectiveness,
+                .rightTorqueEffectiveness,
+                .torque,
+                .skinTemperature: false
+        case .watts,
+                .cadence,
+                .heartrate,
+                .altitude,
+                .coreTemperature: true
+        }
+    }
+    
+    var measurementType: some Dimension? {
+        return switch self {
+        case .watts: UnitPower.watts
+        case .cadence: UnitFrequency.rotationsPerMinute
+        case .heartrate: UnitFrequency.heartBeatsPerMinute
+        case .altitude: UnitLength.meters
+        case .smoothVelocity: UnitSpeed.kilometersPerHour
+        case .torque: UnitTorque.newtonMeter
+        case .temp, .coreTemperature, .skinTemperature: UnitTemperature.celsius
+        default: nil
+        }
+    }
+    
+    var removeZerosWhenComputingAverage: Bool {
+        self == .cadence || self == .coreTemperature
+    }
+    
+    var color: Color {
+        return switch self {
+        case .watts: .blue
+        case .cadence: .purple
+        case .heartrate: .red
+        case .altitude: .gray
+        case .smoothVelocity: .yellow
+        case .torque: .green
+        case .temp: .cyan
+        case .leftRightBalance: .brown
+        case .leftPedalSmoothness: .green
+        case .rightPedalSmoothness: .blue
+        case .leftTorqueEffectiveness: .green
+        case .rightTorqueEffectiveness: .blue
+        case .coreTemperature: .green
+        case .skinTemperature: .mint
+        }
+    }
+}
+
+extension UnitFrequency {
+    static let rotationsPerMinute = UnitFrequency(
+        symbol: "rpm",
+        converter: UnitConverterLinear(coefficient: 1 / 60.0)
+    )
+    
+    static let heartBeatsPerMinute = UnitFrequency(
+        symbol: "bpm",
+        converter: UnitConverterLinear(coefficient: 1 / 60.0)
+    )
+    
+    func formatter(value: Double) -> some FormatStyle {
+        Measurement<UnitFrequency>.FormatStyle(width: .narrow, usage: .asProvided, numberFormatStyle: .number.precision(.significantDigits(2)))
+    }
+}
+
+class UnitTorque : Dimension, @unchecked Sendable {
+    static let newtonMeter = UnitTorque(symbol: "Nm", converter: UnitConverterLinear(coefficient: 1.0))
+    static let footPounds = UnitTorque(symbol: "lbf-ft", converter: UnitConverterLinear(coefficient: 0.7375621493))
+    
+    override class func baseUnit() -> Self {
+        Self.newtonMeter as! Self
+    }
+}

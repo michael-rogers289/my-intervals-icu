@@ -9,11 +9,11 @@ import Foundation
 
 struct StreamLegendViewData : Sendable {
     
-    let streamType: StreamViewData.TimeSeriesStreamType
+    let streamType: TimeSeriesStreamType
     private(set) var isSelected: Bool
     
     init(
-        streamType: StreamViewData.TimeSeriesStreamType,
+        streamType: TimeSeriesStreamType,
         isSelected: Bool
     ) {
         self.streamType = streamType
