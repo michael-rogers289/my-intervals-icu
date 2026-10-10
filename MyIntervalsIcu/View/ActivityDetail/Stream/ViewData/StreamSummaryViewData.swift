@@ -31,7 +31,7 @@ struct AStreamSummaryViewData<UnitType : Dimension> : StreamSummaryViewData {
         format: Measurement<UnitType>.FormatStyle = Measurement<UnitType>.FormatStyle(
             width: .narrow,
             usage: .asProvided,
-            numberFormatStyle: .number.precision(.fractionLength(0...1))
+            numberFormatStyle: .number.precision(.fractionLength(1))
         )
     ){
         self.type = type
