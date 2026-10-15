@@ -11,11 +11,9 @@ import SqlDsl
 
 @CodingKeyMappable
 struct VirtualStreamType: Codable, TableRecord, PersistableRecord {
-    let id: Int
     let type: StreamType
     
     enum Columns {
-        static let id = Column(CodingKeys.id.stringValue)
         static let type = Column(CodingKeys.type.stringValue)
     }
 }

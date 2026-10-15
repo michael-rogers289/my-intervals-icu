@@ -173,12 +173,15 @@ extension DatabaseQueue {
             table.column(Stream.Columns.id.name, .text)
                 .primaryKey(onConflict: .replace)
             table.column(Stream.Columns.activityId.name, .text)
+                .indexed()
                 .notNull()
             table.column(Stream.Columns.order.name, .numeric)
+                .indexed()
                 .notNull()
             table.column(Stream.Columns.value.name, .numeric)
                 .notNull()
             table.column(Stream.Columns.type.name, .text)
+                .indexed()
                 .notNull()
             
             table.foreignKey(
@@ -193,7 +196,6 @@ extension DatabaseQueue {
             indexOn: Tables.stream.rawValue,
             columns: [
                 Stream.Columns.activityId.name,
-                Stream.Columns.type.name,
                 Stream.Columns.order.name,
             ],
         )
