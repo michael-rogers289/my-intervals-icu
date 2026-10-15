@@ -10,7 +10,6 @@ import SwiftUI
 struct ActivityDetailView : View {
     
     @State private var viewModel = ActivityDetailViewModel()
-    @State private var isErrorPresented = false
     
     var body: some View {
         ScrollView {
@@ -19,12 +18,6 @@ struct ActivityDetailView : View {
                     ActivitySummaryInfoView(
                         viewData: summaryInfo
                     )
-                    .onTapGesture {
-                        withAnimation {
-                            isErrorPresented = true
-                        }
-                        
-                    }
                     .padding(.spacingMedium)
                     StreamView()
                 } else {
@@ -34,11 +27,6 @@ struct ActivityDetailView : View {
         }
         .padding(.spacingLarge)
         .onAppear { viewModel.startObservation() }
-        .overlay(alignment: .bottom) {
-            if isErrorPresented {
-                ErrorView(isPresented: $isErrorPresented, viewData: ErrorViewData(errorText: "Something went wrong. Please try again", error: nil))
-            }
-        }
     }
     
 }
