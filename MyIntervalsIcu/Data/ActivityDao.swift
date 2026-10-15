@@ -38,8 +38,8 @@ final class ActivityDao : Sendable {
         heartRateZones: [ActivityHeartRateZone],
         powerZones: [ActivityPowerZone],
         summaryChartBars: [SummaryChartBar],
-    ) async {
-        try? await databaseQueue.write { db in
+    ) async throws {
+        try await databaseQueue.write { db in
             try activities.insertAll(in: db)
             try heartRateZones.insertAll(in: db)
             try powerZones.insertAll(in: db)
@@ -133,7 +133,7 @@ final class ActivityDao : Sendable {
                 Sum(operand: factory.operand(from: secondsInZone)).asOther(name: "sum_seconds_in_zone")
                 Parentheses {
                     Sum(operand: factory.operand(from: secondsInZone)) * Operands.Raw(numeric: 100.0) /
-                    Sum(operand: Sum(operand: factory.operand(from: secondsInZone))).over()
+                    Sum(operand: Sum(operand: factory.operand(from: secondsInZone))).over(partition: Partition(keyPath: \Stream.activityId))
                 }.asOther(name: "percentage_in_zone")
             },
             join: Join(firstTablePath: activityId, onOtherPath: \Activity.id),

@@ -54,7 +54,7 @@ class ActivityRepository {
     
     func fetchActivitiesForDateRange(range: DateInterval) async throws {
         let activities = try await networkManager.getActivities(for: range)
-        await activityDao.insertAll(
+        try await activityDao.insertAll(
             activities: activities.compactMap {
                 $0.mapToActivity { elapsedTime, startDate in
                     let elapsedTime = elapsedTime ?? 0

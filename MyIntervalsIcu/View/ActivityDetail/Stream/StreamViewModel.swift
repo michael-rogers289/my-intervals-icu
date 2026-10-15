@@ -7,6 +7,7 @@
 
 import Combine
 import FactoryKit
+import GRDB
 import Observation
 import SwiftUI
 
@@ -25,20 +26,34 @@ final class StreamViewModel {
     private var selectedActivityId
     
     private var cancellables: Set<AnyCancellable> = []
+    private var summaryCancellable: Task<Void, Never>?
+    private var streamsObservationTask: Task<Void, Never>?
     private var streamTask: Task<Void, Never>?
     private var selectableTypesTask: Task<Void, Never>?
-    private var allTimeSeries: [StreamViewData.TimeSeries] = []
-    private var timeSeriesXMax: Double = .zero
     
     // MARK: Public Variables
     
     private(set) var viewData = StreamViewData(
         timeSeries: [],
         areaTimeSeries: nil,
-        xMax: .zero,
-        timeSeriesMaxY: .zero
+        xMax: .zero
     )
-    var selectableStreamTypes: [StreamLegendViewData] = []
+    var selectableStreamTypes: [StreamLegendViewData] = [] {
+        didSet {
+            guard let selectedActivityId = selectedActivityId else { return }
+            let filteringTypes = selectableStreamTypes
+                .filter { $0.isSelected }
+                .map { $0.streamType.asData }
+            updateSummary(
+                with: selectedActivityId,
+                filteringBy: filteringTypes
+            )
+            startStreamObservation(
+                with: selectedActivityId,
+                filteringBy: filteringTypes
+            )
+        }
+    }
     private(set) var streamSummaryData: [any StreamSummaryViewData] = []
     
     var subsectionStartIndex: Int?
@@ -48,113 +63,91 @@ final class StreamViewModel {
     
     init() {
         guard let selectedActivityId = selectedActivityId else { return }
-        streamRepository.getAllowedStreams(for: selectedActivityId)
-            .replaceError(with: [])
-            .removeDuplicates()
-            .sink { [weak self] in self?.getStreams(forActivity: selectedActivityId, with: $0) }
-            .store(in: &cancellables)
+        startAllowedStreamsObservation(with: selectedActivityId)
     }
     
     // MARK: Private Methods
     
-    private func updateStreamViewData(with selectableStreamTypes: [StreamLegendViewData]) {
-        let selectedStreamTypes = Set<TimeSeriesStreamType>(
-            selectableStreamTypes.compactMap {
-                guard $0.isSelected else { return nil }
-                return $0.streamType
-            }
-        )
-        let selectedSeries = allTimeSeries
-            .filter { selectedStreamTypes.contains($0.streamType) }
-        guard let maxY = selectedSeries.max(by: { $0.maxY < $1.maxY })?.maxY else {
-            return
-        }
-        
-        let scaledSelectedSeries = selectedSeries.map {
-            let scaleFactor = maxY / $0.maxY
-            return $0.copy(updatedPoints: $0.plottableData.map { point in
-                StreamViewData.Point(
-                    yValueTitle: point.yValueTitle,
-                    x: point.x,
-                    y: point.y * scaleFactor
-                )
-            })
-        }
-        
-        viewData = StreamViewData(
-            timeSeries: scaledSelectedSeries.filter { $0.streamType != .altitude },
-            areaTimeSeries: scaledSelectedSeries.first { $0.streamType == .altitude },
-            xMax: timeSeriesXMax,
-            timeSeriesMaxY: maxY,
-        )
-        
-        streamSummaryData = selectedSeries.compactMap { timeSeries in
-            guard let measurementType = timeSeries.streamType.measurementType else { return nil }
-            return AStreamSummaryViewData(
-                type: timeSeries.streamType,
-                min: Measurement(value: timeSeries.minY, unit: measurementType),
-                average: Measurement(value: timeSeries.averageY, unit: measurementType),
-                max: Measurement(value: timeSeries.maxY, unit: measurementType)
-            )
-        }
-    }
-    
     private func getStreams(forActivity activityId: Activity.ActivityId, with types: [StreamType]) {
         streamTask?.cancel()
         streamTask = Task {
-            let streams = await streamRepository.getStreams(
+            await streamRepository.getStreams(
                 types,
                 for: activityId
             )
-            guard !Task.isCancelled,
-                  let secondsSeries = streams.first(where: { $0.type == .time }) else { return }
-            
-            allTimeSeries = streams
-                .compactMap { stream in
-                    guard let timeSeriesStreamType = TimeSeriesStreamType(streamType: stream.type) else { return nil }
-                    
-                    let timeSeriesSum = if timeSeriesStreamType.removeZerosWhenComputingAverage {
-                        stream.timeSeries.filter { $0 != .zero }
-                    } else {
-                        stream.timeSeries
-                    }
-                    
-                    return StreamViewData.TimeSeries(
-                        streamType: timeSeriesStreamType,
-                        plottableData: stream.timeSeries.enumerated().map { index, value in
-                            StreamViewData.Point(
-                                yValueTitle: timeSeriesStreamType.title,
-                                x: secondsSeries.timeSeries[index],
-                                y: value
-                            )
-                        },
-                        minY: stream.timeSeries.min() ?? .zero,
-                        maxY: stream.timeSeries.max() ?? .zero,
-                        averageY: timeSeriesSum.reduce(0.0, { $0 + $1 }) / Double(timeSeriesSum.count)
-                    )
-                }
-            
-            timeSeriesXMax = secondsSeries.timeSeries.last ?? .zero
-            
-            selectableStreamTypes = allTimeSeries.map {
-                StreamLegendViewData(streamType: $0.streamType, isSelected: $0.streamType.defaultPlottable)
-            }
-            startSelectionObservation()
         }
     }
     
-    private func startSelectionObservation() {
-        selectableTypesTask?.cancel()
-        selectableTypesTask = Task { [weak self] in
-            let individualObservation = Observations { self?.selectableStreamTypes }
-            for await observation in individualObservation {
-                guard !Task.isCancelled,
-                      let observation else {
-                    self?.selectableTypesTask?.cancel()
-                    self?.selectableTypesTask = nil
+    private func startAllowedStreamsObservation(with selectedActivityId: Activity.ActivityId) {
+        streamRepository.observeAllowedStreams(for: selectedActivityId)
+            .replaceError(with: [])
+            .removeDuplicates()
+            .sink { [weak self] in
+                self?.getStreams(forActivity: selectedActivityId, with: $0)
+                self?.selectableStreamTypes = $0.compactMap {
+                    guard let streamType = TimeSeriesStreamType(streamType: $0) else { return nil }
+                    return StreamLegendViewData(streamType: streamType, isSelected: streamType.defaultPlottable)
+                }
+                .sorted { $0.streamType.rawValue < $1.streamType.rawValue }
+            }
+            .store(in: &cancellables)
+    }
+    
+    private func updateSummary(with selectedActivityId: Activity.ActivityId, filteringBy types: [StreamType]) {
+        summaryCancellable?.cancel()
+        summaryCancellable = Task { [weak self] in
+            do {
+                guard let summaries = try await self?.streamRepository.observeSummaries(for: selectedActivityId, filteringBy: types) else {
                     return
                 }
-                self?.updateStreamViewData(with: observation)
+                for try await summary in summaries {
+                    self?.streamSummaryData = summary
+                        .compactMap { summary in
+                            guard let timeSeriesType = TimeSeriesStreamType(streamType: summary.type),
+                                let measurementType = timeSeriesType.measurementType else { return nil }
+                            return AStreamSummaryViewData(
+                                type: timeSeriesType,
+                                min: Measurement(value: summary.min, unit: measurementType),
+                                average: Measurement(value: summary.average, unit: measurementType),
+                                max: Measurement(value: summary.max, unit: measurementType)
+                            )
+                        }
+                }
+            } catch {
+                print("SUMMARIES ERROR \(error)")
+            }
+        }
+    }
+    
+    private func startStreamObservation(with selectedActivityId: Activity.ActivityId, filteringBy types: [StreamType]) {
+        streamsObservationTask?.cancel()
+        streamsObservationTask = Task { [weak self] in
+            do {
+                guard let streamObservation = try await self?.streamRepository.observeStreams(for: selectedActivityId, filteringBy: types) else { return }
+                
+                for try await streamDictionary in streamObservation {
+                    let allTimeSeries = streamDictionary.compactMap { (key, value) -> StreamViewData.TimeSeries? in
+                        guard let timeSeriesType = TimeSeriesStreamType(streamType: key) else { return nil }
+                        return StreamViewData.TimeSeries(
+                            streamType: timeSeriesType,
+                            plottableData: value.map {
+                                StreamViewData.Point(
+                                    yValueTitle: timeSeriesType.title,
+                                    x: Double($0.order),
+                                    y: $0.value
+                                )
+                            },
+                        )
+                    }.sorted { $0.streamType.rawValue < $1.streamType.rawValue }
+                    
+                    self?.viewData = StreamViewData(
+                        timeSeries: allTimeSeries.filter { $0.streamType != .altitude },
+                        areaTimeSeries: allTimeSeries.first { $0.streamType == .altitude },
+                        xMax: allTimeSeries.first?.plottableData.last?.x ?? .zero
+                    )
+                }
+            } catch {
+                print("Streams error: \(error)")
             }
         }
     }

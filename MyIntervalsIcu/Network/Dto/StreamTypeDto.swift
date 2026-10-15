@@ -25,4 +25,5 @@ enum StreamTypeDto: String, Codable {
     case rightTorqueEffectiveness = "right_torque_effectiveness"
     case coreTemperature = "core_temperature"
     case skinTemperature = "skin_temperature"
+    case verticalSpeed = "vertical_speed"
 }

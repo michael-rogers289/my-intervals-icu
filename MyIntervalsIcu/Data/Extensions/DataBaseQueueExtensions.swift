@@ -18,7 +18,7 @@ extension DatabaseQueue {
         case summaryChartBar = "SummaryChartBar"
         case activityPowerZone = "ActivityPowerZone"
         case activityheartRateZone = "ActivityHeartRateZone"
-        case streamTypeRecord = "StreamTypeRecord"
+        case stream = "Stream"
         case streamTypeLink = "StreamTypeLink"
     }
     
@@ -29,6 +29,7 @@ extension DatabaseQueue {
             try createActivityHeartRateZoneTable(with: database)
             try createSummaryChartBarTable(with: database)
             try createStreamTypeTables(with: database)
+            try createStreamTable(with: database)
         }
     }
     
@@ -146,25 +147,56 @@ extension DatabaseQueue {
     }
     
     private func createStreamTypeTables(with database: Database) throws {
-        if try !database.tableExists(Tables.streamTypeLink.rawValue) {
-            try database.create(table: Tables.streamTypeLink.rawValue) { table in
-                table.column(StreamTypeLink.Columns.id.name, .text)
-                    .primaryKey(onConflict: .replace)
-                    .indexed()
-                table.column(StreamTypeLink.Columns.activityId.name, .text)
-                    .indexed()
-                table.column(StreamTypeLink.Columns.streamTypeId.name, .text)
-                    .indexed()
-                
-                table.foreignKey(
-                    [StreamTypeLink.Columns.activityId.name],
-                    references: Tables.activity.rawValue,
-                    columns: [Activity.codingKey(for: \.id)],
-                    onDelete: .cascade,
-                    onUpdate: .cascade
-                )
-            }
+        guard try !database.tableExists(Tables.streamTypeLink.rawValue) else { return }
+        try database.create(table: Tables.streamTypeLink.rawValue) { table in
+            table.column(StreamTypeLink.Columns.id.name, .text)
+                .primaryKey(onConflict: .replace)
+                .indexed()
+            table.column(StreamTypeLink.Columns.activityId.name, .text)
+                .indexed()
+            table.column(StreamTypeLink.Columns.streamTypeId.name, .text)
+                .indexed()
+            
+            table.foreignKey(
+                [StreamTypeLink.Columns.activityId.name],
+                references: Tables.activity.rawValue,
+                columns: [Activity.codingKey(for: \.id)],
+                onDelete: .cascade,
+                onUpdate: .cascade
+            )
         }
+    }
+    
+    private func createStreamTable(with database: Database) throws {
+        guard try !database.tableExists(Tables.stream.rawValue) else { return }
+        try database.create(table: Tables.stream.rawValue) { table in
+            table.column(Stream.Columns.id.name, .text)
+                .primaryKey(onConflict: .replace)
+            table.column(Stream.Columns.activityId.name, .text)
+                .notNull()
+            table.column(Stream.Columns.order.name, .numeric)
+                .notNull()
+            table.column(Stream.Columns.value.name, .numeric)
+                .notNull()
+            table.column(Stream.Columns.type.name, .text)
+                .notNull()
+            
+            table.foreignKey(
+                [Stream.Columns.activityId.name],
+                references: Tables.activity.rawValue,
+                columns: [Activity.codingKey(for: \.id)],
+                onDelete: .cascade,
+                onUpdate: .cascade
+            )
+        }
+        try database.create(
+            indexOn: Tables.stream.rawValue,
+            columns: [
+                Stream.Columns.activityId.name,
+                Stream.Columns.type.name,
+                Stream.Columns.order.name,
+            ],
+        )
     }
     
 }
