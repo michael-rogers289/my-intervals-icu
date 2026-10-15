@@ -76,7 +76,6 @@ class StreamDao {
                             Max(operand: factory.operand(from: \.value)).over(partition: Partition(keyPath: \Stream.type))
                     }
                     .asOther(name: "value")
-                    
                 },
                 join: Join(firstTablePath: \.type, onOtherPath: \VirtualStreamType.type),
                 whereClause: Where(operand: Operands.Path(keyPath: \Stream.activityId) == activityId),
@@ -111,12 +110,10 @@ class StreamDao {
                 try database.drop(table: Self.streamVirtualTable.tableName)
             }
             try database.create(virtualTable: Self.streamVirtualTable.tableName, using: FTS5()) {
-                $0.column(VirtualStreamType.Columns.id.name)
                 $0.column(VirtualStreamType.Columns.type.name)
             }
             try types
-                .enumerated()
-                .map { VirtualStreamType(id: $0, type: $1) }
+                .map { VirtualStreamType(type: $0) }
                 .insertAll(in: database)
         }
     }
