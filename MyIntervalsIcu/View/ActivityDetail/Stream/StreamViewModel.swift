@@ -29,7 +29,6 @@ final class StreamViewModel {
     private var summaryCancellable: Task<Void, Never>?
     private var streamsObservationTask: Task<Void, Never>?
     private var streamTask: Task<Void, Never>?
-    private var selectableTypesTask: Task<Void, Never>?
     
     // MARK: Public Variables
     
@@ -44,11 +43,11 @@ final class StreamViewModel {
             let filteringTypes = selectableStreamTypes
                 .filter { $0.isSelected }
                 .map { $0.streamType.asData }
-            updateSummary(
+            startStreamObservation(
                 with: selectedActivityId,
                 filteringBy: filteringTypes
             )
-            startStreamObservation(
+            updateSummary(
                 with: selectedActivityId,
                 filteringBy: filteringTypes
             )
@@ -71,10 +70,15 @@ final class StreamViewModel {
     private func getStreams(forActivity activityId: Activity.ActivityId, with types: [StreamType]) {
         streamTask?.cancel()
         streamTask = Task {
-            await streamRepository.getStreams(
-                types,
-                for: activityId
-            )
+            do {
+                try await streamRepository.getStreams(
+                    types,
+                    for: activityId
+                )
+            } catch {
+                print("Error getting streams: \(error)")
+            }
+            
         }
     }
     

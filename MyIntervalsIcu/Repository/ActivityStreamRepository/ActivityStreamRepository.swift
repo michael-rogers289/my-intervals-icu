@@ -36,33 +36,29 @@ class ActivityStreamRepository {
         try await streamDao.observeStreams(for: activityId, filteringBy: types)
     }
     
-    func getStreams(_ types: [StreamType], for activityId: Activity.ActivityId) async {
-        do {
-            let streamsForActivity: [StreamDto] = try await networkManager.get(
-                streams: types.map { $0.asDto },
-                forId: activityId
-            )
-            
-            let streams: [Stream] = streamsForActivity.flatMap { dto in
-                guard let type = StreamTypeDto(rawValue: dto.type)?.asDataStreamType,
-                      type != .time || type != .lattitudeLongitude else {
-                    return Array<Stream>()
-                }
-                return dto.timeSeries?.enumerated().map { index, value in
-                    Stream(
-                        id: "\(activityId)_\(type.rawValue)_\(index)",
-                        type: type,
-                        value: value ?? .zero,
-                        order: index,
-                        activityId: activityId,
-                    )
-                } ?? []
+    func getStreams(_ types: [StreamType], for activityId: Activity.ActivityId) async throws {
+        let streamsForActivity: [StreamDto] = try await networkManager.get(
+            streams: types.map { $0.asDto },
+            forId: activityId
+        )
+        
+        let streams: [Stream] = streamsForActivity.flatMap { dto in
+            guard let type = StreamTypeDto(rawValue: dto.type)?.asDataStreamType,
+                  type != .time || type != .lattitudeLongitude else {
+                return Array<Stream>()
             }
-            
-            await streamDao.store(streams: streams)
-        } catch {
-            print("Error getting streams: \(error)")
+            return dto.timeSeries?.enumerated().map { index, value in
+                Stream(
+                    id: "\(activityId)_\(type.rawValue)_\(index)",
+                    type: type,
+                    value: value ?? .zero,
+                    order: index,
+                    activityId: activityId,
+                )
+            } ?? []
         }
+        
+        await streamDao.store(streams: streams)
     }
     
 }
