@@ -37,6 +37,7 @@ extension StreamTypeDto {
         case .rightTorqueEffectiveness: .rightTorqueEffectiveness
         case .coreTemperature: .coreTemperature
         case .skinTemperature: .skinTemperature
+        case .verticalSpeed: .verticalSpeed
         }
     }
 }

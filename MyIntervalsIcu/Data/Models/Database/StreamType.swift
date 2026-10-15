@@ -9,8 +9,9 @@ import CodingKeysMacro
 import Foundation
 import GRDB
 
-@CodingKeys(.all)
+//@CodingKeys(.all) TODO FIX ME
 struct StreamTypeLink: TableRecord, PersistableRecord, FetchableRecord, Codable {
+    
     let id: String
     let streamTypeId: String
     let activityId: String
@@ -20,10 +21,15 @@ struct StreamTypeLink: TableRecord, PersistableRecord, FetchableRecord, Codable 
         static let activityId = Column(CodingKeys.activityId.rawValue)
         static let streamTypeId = Column(CodingKeys.streamTypeId.rawValue)
     }
-
+    
+    enum CodingKeys: String, CodingKey {
+        case id
+        case streamTypeId = "stream_type_id"
+        case activityId = "activity_id"
+    }
 }
 
-enum StreamType: String, CaseIterable, Codable {
+enum StreamType: String, CaseIterable, Codable, TableRecord, PersistableRecord, DatabaseValueConvertible {
     case time
     case watts
     case cadence
@@ -41,26 +47,5 @@ enum StreamType: String, CaseIterable, Codable {
     case rightTorqueEffectiveness = "right_torque_effectiveness"
     case coreTemperature = "core_temperature"
     case skinTemperature = "skin_temperature"
-    
-    var defaultPlottable: Bool {
-        switch self {
-        case .time,
-                .lattitudeLongitude,
-                .distance,
-                .smoothVelocity,
-                .temp,
-                .leftRightBalance,
-                .leftPedalSmoothness,
-                .rightPedalSmoothness,
-                .leftTorqueEffectiveness,
-                .rightTorqueEffectiveness,
-                .skinTemperature: false
-        case .watts,
-                .cadence,
-                .heartrate,
-                .altitude,
-                .torque,
-                .coreTemperature: true
-        }
-    }
+    case verticalSpeed = "vertical_speed"
 }

@@ -20,7 +20,7 @@ struct StreamSummaryView : View {
                 Text("Min")
                 Text("Average")
                 Text("Max")
-            }.font(.title)
+            }.font(.title3)
             
             ForEach(viewData, id: \.type) { data in
                 Divider()

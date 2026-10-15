@@ -7,12 +7,14 @@
 
 import SwiftUI
 
-enum TimeSeriesStreamType : CaseIterable {
-    case watts
-    case cadence
+enum TimeSeriesStreamType : Int, CaseIterable {
+    case watts = 1
     case heartrate
-    case altitude
+    case cadence
+    case coreTemperature
+    case skinTemperature
     case smoothVelocity
+    case altitude
     case torque
     case temp
     case leftRightBalance
@@ -20,8 +22,8 @@ enum TimeSeriesStreamType : CaseIterable {
     case rightPedalSmoothness
     case leftTorqueEffectiveness
     case rightTorqueEffectiveness
-    case coreTemperature
-    case skinTemperature
+    case verticalSpeed
+    
     
     init?(streamType: StreamType) {
         let value: TimeSeriesStreamType? = switch streamType {
@@ -42,10 +44,31 @@ enum TimeSeriesStreamType : CaseIterable {
         case .rightTorqueEffectiveness: .rightTorqueEffectiveness
         case .coreTemperature: .coreTemperature
         case .skinTemperature: .skinTemperature
+        case .verticalSpeed: .verticalSpeed
         }
         
         guard let value else { return nil }
         self = value
+    }
+    
+    var asData: StreamType {
+        switch self {
+        case .watts: .watts
+        case .cadence: .cadence
+        case .heartrate: .heartrate
+        case .altitude: .altitude
+        case .smoothVelocity: .smoothVelocity
+        case .torque: .torque
+        case .temp: .temp
+        case .leftRightBalance: .leftRightBalance
+        case .leftPedalSmoothness: .leftPedalSmoothness
+        case .rightPedalSmoothness: .rightPedalSmoothness
+        case .leftTorqueEffectiveness: .leftTorqueEffectiveness
+        case .rightTorqueEffectiveness: .rightTorqueEffectiveness
+        case .coreTemperature: .coreTemperature
+        case .skinTemperature: .skinTemperature
+        case .verticalSpeed: .verticalSpeed
+        }
     }
     
     var title: String {
@@ -64,6 +87,7 @@ enum TimeSeriesStreamType : CaseIterable {
         case .rightTorqueEffectiveness: "Right TE"
         case .coreTemperature: "Core Temp"
         case .skinTemperature: "Skin Temp"
+        case .verticalSpeed: "Vertical Speed"
         }
     }
     
@@ -77,7 +101,8 @@ enum TimeSeriesStreamType : CaseIterable {
                 .leftTorqueEffectiveness,
                 .rightTorqueEffectiveness,
                 .torque,
-                .skinTemperature: false
+                .skinTemperature,
+                .verticalSpeed: false
         case .watts,
                 .cadence,
                 .heartrate,
@@ -92,7 +117,8 @@ enum TimeSeriesStreamType : CaseIterable {
         case .cadence: UnitFrequency.rotationsPerMinute
         case .heartrate: UnitFrequency.heartBeatsPerMinute
         case .altitude: UnitLength.meters
-        case .smoothVelocity: UnitSpeed.kilometersPerHour
+        case .smoothVelocity: UnitSpeed.metersPerSecond
+        case .verticalSpeed: UnitSpeed.metersPerSecond
         case .torque: UnitTorque.newtonMeter
         case .temp, .coreTemperature, .skinTemperature: UnitTemperature.celsius
         default: nil
@@ -108,8 +134,9 @@ enum TimeSeriesStreamType : CaseIterable {
         case .watts: .blue
         case .cadence: .purple
         case .heartrate: .red
-        case .altitude: .gray
+        case .altitude: .gray.opacity(0.3)
         case .smoothVelocity: .yellow
+        case .verticalSpeed: .yellow
         case .torque: .green
         case .temp: .cyan
         case .leftRightBalance: .brown

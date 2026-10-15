@@ -102,6 +102,7 @@ struct StreamChartView : View {
                     )
                 
             }
+            .drawingGroup()
             .onTapGesture {
                 selectedStartIndex = nil
                 selectedEndIndex = nil

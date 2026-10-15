@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import GRDB
 import Combine
 
 class ActivityStreamRepository {
@@ -21,42 +22,46 @@ class ActivityStreamRepository {
         self.streamDao = streamDao
     }
     
-    func getAllowedStreams(for activityId: Activity.ActivityId) -> AnyPublisher<[StreamType], Error> {
+    func observeAllowedStreams(for activityId: Activity.ActivityId) -> AnyPublisher<[StreamType], Error> {
         streamDao.getStreamTypes(for: activityId)
-            .map { links in
-                print("MyIntervalsIcu/StreamViewModel.swift got new links")
-                return links.compactMap { StreamType(rawValue: $0.streamTypeId) }
-            }
+            .map { $0.compactMap { StreamType(rawValue: $0.streamTypeId) } }
             .eraseToAnyPublisher()
     }
     
-    func getStreams(_ types: [StreamType], for activityId: Activity.ActivityId) async -> [Stream] {
+    func observeSummaries(for activityId: Activity.ActivityId, filteringBy types: [StreamType]) async throws -> AsyncValueObservation<[StreamSummary]> {
+        try await streamDao.observeSummaries(for: activityId, filteringBy: types)
+    }
+    
+    func observeStreams(for activityId: Activity.ActivityId, filteringBy types: [StreamType])async throws -> AsyncValueObservation<[StreamType: [StreamPoint]]> {
+        try await streamDao.observeStreams(for: activityId, filteringBy: types)
+    }
+    
+    func getStreams(_ types: [StreamType], for activityId: Activity.ActivityId) async {
         do {
-            return try await networkManager.get(
+            let streamsForActivity: [StreamDto] = try await networkManager.get(
                 streams: types.map { $0.asDto },
                 forId: activityId
-            ).compactMap { dto in
-                guard let type = StreamTypeDto(rawValue: dto.type)?.asDataStreamType else {
-                    return nil
+            )
+            
+            let streams: [Stream] = streamsForActivity.flatMap { dto in
+                guard let type = StreamTypeDto(rawValue: dto.type)?.asDataStreamType,
+                      type != .time || type != .lattitudeLongitude else {
+                    return Array<Stream>()
                 }
-               
-                return Stream(
-                    type: type,
-                    timeSeries: dto.timeSeries?.map { $0 ?? .zero } ?? [],
-                    secondaryValues: dto.values?.map { $0 ?? .zero } ?? [],
-                    anomalies: dto.anomalies?.map { anomalyDto in
-                        Stream.Anomaly(
-                            startIndex: anomalyDto.startIndex,
-                            endIndex: anomalyDto.endIndex,
-                            value: anomalyDto.value,
-                            valueEnd: anomalyDto.valueEnd
-                        )
-                    } ?? []
-                )
+                return dto.timeSeries?.enumerated().map { index, value in
+                    Stream(
+                        id: "\(activityId)_\(type.rawValue)_\(index)",
+                        type: type,
+                        value: value ?? .zero,
+                        order: index,
+                        activityId: activityId,
+                    )
+                } ?? []
             }
+            
+            await streamDao.store(streams: streams)
         } catch {
             print("Error getting streams: \(error)")
-            return []
         }
     }
     
