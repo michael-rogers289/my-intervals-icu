@@ -9,6 +9,7 @@ import CodingKeysMacro
 import GRDB
 import SqlDsl
 
+@CodingKeys(.all)
 @CodingKeyMappable
 struct Stream: Codable, TableRecord, FetchableRecord, PersistableRecord {
     
@@ -23,14 +24,6 @@ struct Stream: Codable, TableRecord, FetchableRecord, PersistableRecord {
     let value: Double
     let order: Int
     let activityId: String
-    
-    enum CodingKeys: String, CodingKey {
-        case id
-        case type
-        case value
-        case order
-        case activityId = "activity_id"
-    }
     
     enum Columns {
         static let id = Column(CodingKeys.id.rawValue)
