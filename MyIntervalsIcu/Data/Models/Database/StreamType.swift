@@ -9,7 +9,7 @@ import CodingKeysMacro
 import Foundation
 import GRDB
 
-// @CodingKeys(.all) TODO FIX ME
+@CodingKeys(.all)
 struct StreamTypeLink: TableRecord, PersistableRecord, FetchableRecord, Codable {
 
     let id: String
@@ -20,12 +20,6 @@ struct StreamTypeLink: TableRecord, PersistableRecord, FetchableRecord, Codable 
         static let id = Column(CodingKeys.id.rawValue)
         static let activityId = Column(CodingKeys.activityId.rawValue)
         static let streamTypeId = Column(CodingKeys.streamTypeId.rawValue)
-    }
-
-    enum CodingKeys: String, CodingKey {
-        case id
-        case streamTypeId = "stream_type_id"
-        case activityId = "activity_id"
     }
 }
 
