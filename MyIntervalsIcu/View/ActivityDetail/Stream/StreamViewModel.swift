@@ -32,11 +32,7 @@ final class StreamViewModel {
     
     // MARK: Public Variables
     
-    private(set) var viewData = StreamViewData(
-        timeSeries: [],
-        areaTimeSeries: nil,
-        xMax: .zero
-    )
+    private(set) var viewData: [StreamViewData.TimeSeries] = []
     var selectableStreamTypes: [StreamLegendViewData] = [] {
         didSet {
             guard let selectedActivityId = selectedActivityId else { return }
@@ -130,25 +126,18 @@ final class StreamViewModel {
                 guard let streamObservation = try await self?.streamRepository.observeStreams(for: selectedActivityId, filteringBy: types) else { return }
                 
                 for try await streamDictionary in streamObservation {
-                    let allTimeSeries = streamDictionary.compactMap { (key, value) -> StreamViewData.TimeSeries? in
+                    self?.viewData = streamDictionary.compactMap { (key, value) -> StreamViewData.TimeSeries? in
                         guard let timeSeriesType = TimeSeriesStreamType(streamType: key) else { return nil }
                         return StreamViewData.TimeSeries(
                             streamType: timeSeriesType,
                             plottableData: value.map {
                                 StreamViewData.Point(
-                                    yValueTitle: timeSeriesType.title,
                                     x: Double($0.order),
                                     y: $0.value
                                 )
                             },
                         )
                     }.sorted { $0.streamType.rawValue < $1.streamType.rawValue }
-                    
-                    self?.viewData = StreamViewData(
-                        timeSeries: allTimeSeries.filter { $0.streamType != .altitude },
-                        areaTimeSeries: allTimeSeries.first { $0.streamType == .altitude },
-                        xMax: allTimeSeries.first?.plottableData.last?.x ?? .zero
-                    )
                 }
             } catch {
                 print("Streams error: \(error)")

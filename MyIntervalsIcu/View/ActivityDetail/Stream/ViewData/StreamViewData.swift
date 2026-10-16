@@ -10,19 +10,20 @@ import SwiftUI
 struct StreamViewData {
     
     struct Point : Equatable, Hashable {
-        let yValueTitle: String
-        
         let x: Double
         let y: Double
     }
     
+    @dynamicMemberLookup
     struct TimeSeries {
         let streamType: TimeSeriesStreamType
         let plottableData: [Point]
+        
+        subscript<T>(dynamicMember dynamicMember: KeyPath<TimeSeriesStreamType, T>) -> T {
+            streamType[keyPath: dynamicMember]
+        }
     }
     
     let timeSeries: [TimeSeries]
-    let areaTimeSeries: TimeSeries?
-    let xMax: Double
     
 }

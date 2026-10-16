@@ -65,29 +65,12 @@ class StreamDao {
     ) async throws -> AsyncValueObservation<[StreamType: [StreamPoint]]> {
         try await createVirtualTable(with: types)
         return ValueObservation.tracking { database in
-            let sql = Sql<Stream>(
-                select: Select { factory in
-                    factory.column(from: \.activityId)
-                    factory.column(from: \.type)
-                    factory.column(from: \.order)
-                    Parentheses {
-                        factory.operand(from: \.value) *
-                        Max(operand: factory.operand(from: \.value)).over(partition: Partition(keyPath: \Stream.activityId)) /
-                            Max(operand: factory.operand(from: \.value)).over(partition: Partition(keyPath: \Stream.type))
-                    }
-                    .asOther(name: "value")
-                },
-                join: Join(firstTablePath: \.type, onOtherPath: \VirtualStreamType.type),
-                whereClause: Where(operand: Operands.Path(keyPath: \Stream.activityId) == activityId),
-                orderdBy: OrderBy(path: \.order)
-            ).raw
-            
-            let streams = try Row.fetchAll(
-                database,
-                sql: sql
-            ).map {
-                return StreamPoint(value: $0["value"], order: $0["order"], type: $0["type"])
-            }
+            let streams = try Stream
+                .filter { $0.activityId == activityId }
+                .joining(required: Stream.streamType)
+                .order { $0.order.asc }
+                .asRequest(of: StreamPoint.self)
+                .fetchAll(database)
             return Dictionary(grouping: streams, by: \.type)
         }
         .values(in: databaseQueue)
