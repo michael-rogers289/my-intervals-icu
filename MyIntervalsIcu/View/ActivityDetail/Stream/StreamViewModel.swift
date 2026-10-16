@@ -80,9 +80,13 @@ final class StreamViewModel {
     
     private func startAllowedStreamsObservation(with selectedActivityId: Activity.ActivityId) {
         streamRepository.observeAllowedStreams(for: selectedActivityId)
-            .replaceError(with: [])
+            .replaceError(with: []) //TODO: REMOVE ME
             .removeDuplicates()
             .sink { [weak self] in
+                guard !$0.isEmpty else {
+                    self?.selectableStreamTypes = []
+                    return
+                }
                 self?.getStreams(forActivity: selectedActivityId, with: $0)
                 self?.selectableStreamTypes = $0.compactMap {
                     guard let streamType = TimeSeriesStreamType(streamType: $0) else { return nil }
