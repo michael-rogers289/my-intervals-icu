@@ -33,6 +33,29 @@ class StreamDao {
         }
     }
     
+    func getSummaries(
+        for activityId: Activity.ActivityId,
+        filteringBy types: [StreamType],
+        overTimeRange timeRange: Range<Int>
+    ) async throws -> [StreamSummary] {
+        try await databaseQueue.read { database in
+            try Stream
+                .select(
+                    [
+                        Stream.Columns.type,
+                        average(Stream.Columns.value).forKey("average"),
+                        min(Stream.Columns.value).forKey("min"),
+                        max(Stream.Columns.value).forKey("max")
+                    ]
+                )
+                .filter { $0.activityId == activityId && timeRange.contains($0.order)}
+                .joining(required: Stream.streamType)
+                .group(\.type)
+                .asRequest(of: StreamSummary.self)
+                .fetchAll(database)
+        }
+    }
+    
     @DatabaseActor
     func observeSummaries(
         for activityId: Activity.ActivityId,

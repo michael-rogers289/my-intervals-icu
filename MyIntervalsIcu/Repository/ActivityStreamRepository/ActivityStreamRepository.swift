@@ -28,6 +28,10 @@ class ActivityStreamRepository {
             .eraseToAnyPublisher()
     }
     
+    func getSummaries(for activityId: Activity.ActivityId, filteringBy types: [StreamType], overTimeRange timeRange: Range<Int>) async throws -> [StreamSummary] {
+        try await streamDao.getSummaries(for: activityId, filteringBy: types, overTimeRange: timeRange)
+    }
+    
     func observeSummaries(for activityId: Activity.ActivityId, filteringBy types: [StreamType]) async throws -> AsyncValueObservation<[StreamSummary]> {
         try await streamDao.observeSummaries(for: activityId, filteringBy: types)
     }
