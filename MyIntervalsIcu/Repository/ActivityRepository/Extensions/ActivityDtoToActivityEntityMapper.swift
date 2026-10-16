@@ -10,7 +10,7 @@ import SwiftProtobuf
 
 nonisolated
 extension ActivityDto {
-    
+
     func mapToActivity(
         mappingEndDate: (_ addingSeconds: Int?, _ startDate: Date) -> Date
     ) -> Activity? {
@@ -18,7 +18,7 @@ extension ActivityDto {
         return Activity(
             id: self.id,
             startDate: startDate,
-            endDate: mappingEndDate(elapsedTime,  startDate),
+            endDate: mappingEndDate(elapsedTime, startDate),
             distince: self.distance ?? Double.zero,
             elapsedTime: elapsedTime,
             type: type,
@@ -34,10 +34,13 @@ extension ActivityDto {
             averageHeartRate: averageHeartRate
         )
     }
-    
+
     func mapToHeartRateZones() -> [ActivityHeartRateZone] {
         guard icuHeartRateZones.count > 0 || icuHeartRateZones.count == icuHrZoneTimes.count else {
-            print("HeartRateMapping", "Incorrect hr zones \(icuHeartRateZones.count) or times size \(icuHrZoneTimes.count)")
+            print(
+                "HeartRateMapping",
+                "Incorrect hr zones \(icuHeartRateZones.count) or times size \(icuHrZoneTimes.count)"
+            )
             return []
         }
         return (0..<icuHeartRateZones.count).map {
@@ -51,7 +54,7 @@ extension ActivityDto {
             )
         }
     }
-    
+
     func mapToPowerZones() -> [ActivityPowerZone] {
         icuZoneTimes.compactMap { powerZoneTimeDto in
             guard let zone = Int(powerZoneTimeDto.id.filter { $0.isNumber }) else {
@@ -65,7 +68,7 @@ extension ActivityDto {
             )
         }
     }
-    
+
     func mapToSummaryChartBars() -> [SummaryChartBar] {
         guard let data = Data(base64Encoded: skylineChartBytes),
               let chart = try? SkylineChart(serializedBytes: data),
@@ -73,7 +76,7 @@ extension ActivityDto {
             return []
         }
         var previousWidth: Int32 = 0
-        
+
         return chart.width.enumerated().map { index, width in
             let chartBar = SummaryChartBar(
                 id: "\(id)_\(index)",
@@ -84,12 +87,12 @@ extension ActivityDto {
                 totalNumZones: Int(chart.numZones),
                 activityId: id
             )
-            
+
             previousWidth += width
-            
+
             return chartBar
         }
-        
+
     }
-    
+
 }

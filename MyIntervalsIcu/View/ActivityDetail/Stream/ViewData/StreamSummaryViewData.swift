@@ -16,13 +16,13 @@ protocol StreamSummaryViewData {
     var format: Measurement<UnitType>.FormatStyle { get }
 }
 
-struct AStreamSummaryViewData<UnitType : Dimension> : StreamSummaryViewData {
+struct AStreamSummaryViewData<UnitType: Dimension>: StreamSummaryViewData {
     let type: TimeSeriesStreamType
     let min: Measurement<UnitType>
     let average: Measurement<UnitType>
     let max: Measurement<UnitType>
-    let format:Measurement<UnitType>.FormatStyle
-    
+    let format: Measurement<UnitType>.FormatStyle
+
     init(
         type: TimeSeriesStreamType,
         min: Measurement<UnitType>,
@@ -33,7 +33,7 @@ struct AStreamSummaryViewData<UnitType : Dimension> : StreamSummaryViewData {
             usage: .asProvided,
             numberFormatStyle: .number.precision(.fractionLength(1))
         )
-    ){
+    ) {
         self.type = type
         self.min = min
         self.average = average

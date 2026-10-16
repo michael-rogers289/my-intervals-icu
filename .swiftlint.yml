@@ -1,0 +1,37 @@
+disabled_rules:
+  - nesting
+  - blanket_disable_command
+
+# If true, SwiftLint will not fail if no lintable files are found.
+allow_zero_lintable_files: false
+
+# If true, SwiftLint will treat all warnings as errors.
+strict: false
+
+# If true, SwiftLint will treat all errors as warnings.
+lenient: false
+
+# If true, SwiftLint will check for updates after linting or analyzing.
+check_for_updates: true
+  
+# Naming rules can set warnings/errors for `min_length` and `max_length`. Additionally, they can
+# set excluded names and allowed symbols.
+#type_name:
+#  min_length: 4 # warning
+#  max_length: # warning and error
+#    warning: 40
+#    error: 50
+#  excluded: i(Phone|Pad|Pod) # regex pattern
+#  allowed_symbols: ["_"]
+#identifier_name:
+#  min_length:
+#    error: 4 # only error
+#  excluded: # excluded via string array
+#    - id
+#    - URL
+#    - GlobalAPIKey
+    
+# The default reporter (SwiftLint's output format) can be configured as `checkstyle`, `codeclimate`, `csv`,
+# `emoji`, `github-actions-logging`, `gitlab`, `html`, `json`, `junit`, `markdown`, `relative-path`, `sarif`,
+# `sonarqube`, `summary`, or `xcode` (default).
+reporter: "xcode"

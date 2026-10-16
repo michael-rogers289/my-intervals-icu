@@ -10,10 +10,10 @@ import GRDB
 import Combine
 
 class ActivityStreamRepository {
-    
+
     private let networkManager: NetworkManager
     private let streamDao: StreamDao
-    
+
     init(
         networkManager: NetworkManager,
         streamDao: StreamDao
@@ -21,35 +21,45 @@ class ActivityStreamRepository {
         self.networkManager = networkManager
         self.streamDao = streamDao
     }
-    
+
     func observeAllowedStreams(for activityId: Activity.ActivityId) -> AnyPublisher<[StreamType], Error> {
         streamDao.getStreamTypes(for: activityId)
             .map { $0.compactMap { StreamType(rawValue: $0.streamTypeId) } }
             .eraseToAnyPublisher()
     }
-    
-    func getSummaries(for activityId: Activity.ActivityId, filteringBy types: [StreamType], overTimeRange timeRange: Range<Int>) async throws -> [StreamSummary] {
+
+    func getSummaries(
+        for activityId: Activity.ActivityId,
+        filteringBy types: [StreamType],
+        overTimeRange timeRange: Range<Int>
+    ) async throws -> [StreamSummary] {
         try await streamDao.getSummaries(for: activityId, filteringBy: types, overTimeRange: timeRange)
     }
-    
-    func observeSummaries(for activityId: Activity.ActivityId, filteringBy types: [StreamType]) async throws -> AsyncValueObservation<[StreamSummary]> {
+
+    func observeSummaries(
+        for activityId: Activity.ActivityId,
+        filteringBy types: [StreamType]
+    ) async throws -> AsyncValueObservation<[StreamSummary]> {
         try await streamDao.observeSummaries(for: activityId, filteringBy: types)
     }
-    
-    func observeStreams(for activityId: Activity.ActivityId, filteringBy types: [StreamType])async throws -> AsyncValueObservation<[StreamType: [StreamPoint]]> {
+
+    func observeStreams(
+        for activityId: Activity.ActivityId,
+        filteringBy types: [StreamType]
+    ) async throws -> AsyncValueObservation<[StreamType: [StreamPoint]]> {
         try await streamDao.observeStreams(for: activityId, filteringBy: types)
     }
-    
+
     func getStreams(_ types: [StreamType], for activityId: Activity.ActivityId) async throws {
         let streamsForActivity: [StreamDto] = try await networkManager.get(
             streams: types.map { $0.asDto },
             forId: activityId
         )
-        
+
         let streams: [Stream] = streamsForActivity.flatMap { dto in
             guard let type = StreamTypeDto(rawValue: dto.type)?.asDataStreamType,
                   type != .time || type != .lattitudeLongitude else {
-                return Array<Stream>()
+                return [Stream]()
             }
             return dto.timeSeries?.enumerated().map { index, value in
                 Stream(
@@ -61,8 +71,8 @@ class ActivityStreamRepository {
                 )
             } ?? []
         }
-        
+
         await streamDao.store(streams: streams)
     }
-    
+
 }

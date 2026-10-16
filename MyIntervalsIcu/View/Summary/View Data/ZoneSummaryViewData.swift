@@ -8,12 +8,12 @@
 import SwiftUI
 import Foundation
 
-struct ZoneSummaryViewData : Identifiable {
-    
-    enum SummaryType : CaseIterable {
+struct ZoneSummaryViewData: Identifiable {
+
+    enum SummaryType: CaseIterable {
         case percent
         case absolute
-        
+
         var title: String {
             switch self {
             case .absolute: "Time in Zone (Seconds)"
@@ -21,12 +21,12 @@ struct ZoneSummaryViewData : Identifiable {
             }
         }
     }
-    
+
     let id: Int
     let zoneTitle: String
     let summaryType: SummaryType
     let value: Double
-    
+
     init(
         zoneSummary: ZoneSummary,
         summaryType: SummaryType,
@@ -41,6 +41,5 @@ struct ZoneSummaryViewData : Identifiable {
             zoneSummary.percentInZone
         }
     }
-    
-    
+
 }

@@ -9,7 +9,7 @@ import CodingKeysMacro
 import Foundation
 
 @CodingKeys(.all)
-struct GearDto : Codable {
+struct GearDto: Codable {
     let id: String
     let name: String?
     let distance: Double?

@@ -11,7 +11,7 @@ enum RootViewData: CaseIterable {
     case home
     case summary
     case settings
-    
+
     var title: String {
         switch self {
         case .home: "Home"
@@ -19,7 +19,7 @@ enum RootViewData: CaseIterable {
         case .summary: "Summary"
         }
     }
-    
+
     var iconIdentifier: String {
         switch self {
         case .home: "house.fill"

@@ -9,7 +9,7 @@ import FactoryKit
 import Foundation
 
 extension Container {
-    
+
     var activityRepository: Factory<ActivityRepository> {
         self {
             ActivityRepository(
@@ -20,11 +20,11 @@ extension Container {
             )
         }
     }
-    
+
     var calendarRepository: Factory<CalendarRepository> {
         self {
             LiveCalendarRepository()
         }
     }
-    
+
 }

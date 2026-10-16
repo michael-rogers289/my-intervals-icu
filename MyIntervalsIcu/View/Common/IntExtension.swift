@@ -9,7 +9,7 @@ import Foundation
 import SwiftUI
 
 extension Int {
-    
+
     var zoneColor: Color {
         return switch self {
         case 0: .gray
@@ -23,5 +23,5 @@ extension Int {
         default: .gray
         }
     }
-    
+
 }

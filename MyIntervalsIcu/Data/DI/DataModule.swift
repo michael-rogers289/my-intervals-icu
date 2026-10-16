@@ -10,7 +10,7 @@ import Foundation
 import GRDB
 
 extension Container {
-    
+
     var activityDao: Factory<ActivityDao> {
         self {
             ActivityDao(
@@ -19,13 +19,13 @@ extension Container {
             )
         }.singleton
     }
-    
+
     var streamDao: Factory<StreamDao> {
         self {
             StreamDao(databaseQueue: Container.shared.databaseQueue.resolve())
         }.singleton
     }
-    
+
     var databaseQueue: Factory<DatabaseQueue> {
         self {
 #if DEBUG
@@ -33,13 +33,13 @@ extension Container {
 #else
         let inMemoryDatabase = false
 #endif
-        
+
         do {
             if inMemoryDatabase {
                 return try DatabaseQueue(named: "com.myintervalsicu.database.sqlite")
             } else {
                 let defaultFileManager = FileManager.default
-                
+
                 let userDirectory = try FileManager.default.url(
                     for: .documentDirectory,
                     in: .userDomainMask,
@@ -48,11 +48,11 @@ extension Container {
                 )
                 // recommended to add file to directory for encryption / backup purposes
                 let databaseDirectory = userDirectory.appending(path: "database")
-                
+
                 if !defaultFileManager.fileExists(atPath: databaseDirectory.path()) {
                     try FileManager.default.createDirectory(at: databaseDirectory, withIntermediateDirectories: true)
                 }
-                
+
                 return try DatabaseQueue(
                     path: databaseDirectory
                         .appendingPathComponent("myintervals.sqlite")
@@ -65,5 +65,5 @@ extension Container {
         }
         }.singleton
     }
-    
+
 }

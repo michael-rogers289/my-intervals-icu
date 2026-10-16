@@ -10,12 +10,12 @@ import Foundation
 import GRDB
 
 class ActivityRepository {
-    
+
     private let activityDao: ActivityDao
     private let streamDao: StreamDao
     private let networkManager: NetworkManager
     private let calendarRepository: CalendarRepository
-    
+
     init(
         activityDao: ActivityDao,
         streamDao: StreamDao,
@@ -27,31 +27,31 @@ class ActivityRepository {
         self.networkManager = networkManager
         self.calendarRepository = calendarRepository
     }
-    
+
     func getActivities(for range: DateInterval) -> AnyPublisher<[Activity], Error> {
         activityDao.getActivities(in: range)
     }
-    
+
     func getGroupedSummaryChartBars(for activities: [Activity]) async throws -> [String: [SummaryChartBar]] {
         try await activityDao.getGroupedSummaryChartBars(for: activities.map { $0.id })
     }
-    
+
     func getHeartRateZonesGroupedByZone(for range: DateInterval) -> AnyPublisher<[ZoneSummary], Error> {
         activityDao.getHeartRateZonesGroupedByZone(between: range.start, and: range.end)
     }
-    
+
     func getPowerZonesGroupedByZone(for range: DateInterval) -> AnyPublisher<[ZoneSummary], Error> {
         activityDao.getPowerZonesGroupedByZone(between: range.start, and: range.end)
     }
-    
+
     func getDistanceSummaryByDayBetween(for range: DateInterval) -> AnyPublisher<Double, Error> {
         activityDao.getTotalDistance(from: range.start, to: range.end)
     }
-    
+
     func getActivity(byId activityId: Activity.ActivityId) -> AnyPublisher<Activity?, Error> {
         activityDao.getActivity(byId: activityId)
     }
-    
+
     func fetchActivitiesForDateRange(range: DateInterval) async throws {
         let activities = try await networkManager.getActivities(for: range)
         try await activityDao.insertAll(
@@ -65,7 +65,7 @@ class ActivityRepository {
             powerZones: activities.flatMap { $0.mapToPowerZones() },
             summaryChartBars: activities.flatMap { $0.mapToSummaryChartBars() },
         )
-        
+
         let streamTypes = activities.flatMap { activity in
             activity.streamTypes.map { dto in
                 dto.mapToStreamTypeLink(with: activity)

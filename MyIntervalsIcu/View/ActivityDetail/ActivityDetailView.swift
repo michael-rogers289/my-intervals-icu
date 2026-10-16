@@ -7,10 +7,10 @@
 
 import SwiftUI
 
-struct ActivityDetailView : View {
-    
+struct ActivityDetailView: View {
+
     @State private var viewModel = ActivityDetailViewModel()
-    
+
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: .spacingMedium) {
@@ -27,5 +27,5 @@ struct ActivityDetailView : View {
         .padding(.spacingMedium)
         .onAppear { viewModel.startObservation() }
     }
-    
+
 }

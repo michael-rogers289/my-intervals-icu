@@ -12,7 +12,7 @@ import SqlDsl
 
 nonisolated
 extension DatabaseQueue {
-    
+
     enum Tables: String {
         case activity = "Activity"
         case summaryChartBar = "SummaryChartBar"
@@ -21,7 +21,7 @@ extension DatabaseQueue {
         case stream = "Stream"
         case streamTypeLink = "StreamTypeLink"
     }
-    
+
     func createTables() throws {
         try write { database in
             try createActivityTable(with: database)
@@ -32,10 +32,10 @@ extension DatabaseQueue {
             try createStreamTable(with: database)
         }
     }
-    
+
     private func createActivityTable(with database: Database) throws {
         guard try !database.tableExists(Tables.activity.rawValue) else { return }
-        
+
         try database.create(table: Tables.activity.rawValue) { table in
             table.column(Activity.codingKey(for: \.id))
                 .notNull()
@@ -58,10 +58,10 @@ extension DatabaseQueue {
             table.column(Activity.codingKey(for: \.averageHeartRate))
         }
     }
-    
+
     private func createSummaryChartBarTable(with database: Database) throws {
         guard try !database.tableExists(Tables.summaryChartBar.rawValue) else { return }
-        
+
         try database.create(table: Tables.summaryChartBar.rawValue) { table in
             table.column(SummaryChartBar.codingKey(for: \.id))
                 .primaryKey(onConflict: .replace)
@@ -88,7 +88,7 @@ extension DatabaseQueue {
             )
         }
     }
-    
+
     private func createActivityPowerZoneTable(with database: Database) throws {
         guard try !database.tableExists(Tables.activityPowerZone.rawValue) else { return }
         try database.create(table: Tables.activityPowerZone.rawValue) { table in
@@ -104,7 +104,7 @@ extension DatabaseQueue {
             table.column(ActivityPowerZone.codingKey(for: \.activityId), .text)
                 .notNull()
                 .indexed()
-            
+
             table.foreignKey(
                 [ActivityPowerZone.codingKey(for: \.activityId)],
                 references: Tables.activity.rawValue,
@@ -114,10 +114,10 @@ extension DatabaseQueue {
             )
         }
     }
-    
+
     private func createActivityHeartRateZoneTable(with database: Database) throws {
         guard try !database.tableExists(Tables.activityheartRateZone.rawValue) else { return }
-        
+
         try database.create(table: Tables.activityheartRateZone.rawValue) { table in
             table.column(ActivityHeartRateZone.codingKey(for: \.id), .text)
                 .primaryKey(onConflict: .replace)
@@ -135,7 +135,7 @@ extension DatabaseQueue {
                 .notNull()
             table.column(ActivityHeartRateZone.codingKey(for: \.lowerBound), .integer)
                 .notNull()
-            
+
             table.foreignKey(
                 [ActivityHeartRateZone.codingKey(for: \.activityId)],
                 references: Tables.activity.rawValue,
@@ -145,7 +145,7 @@ extension DatabaseQueue {
             )
         }
     }
-    
+
     private func createStreamTypeTables(with database: Database) throws {
         guard try !database.tableExists(Tables.streamTypeLink.rawValue) else { return }
         try database.create(table: Tables.streamTypeLink.rawValue) { table in
@@ -156,7 +156,7 @@ extension DatabaseQueue {
                 .indexed()
             table.column(StreamTypeLink.Columns.streamTypeId.name, .text)
                 .indexed()
-            
+
             table.foreignKey(
                 [StreamTypeLink.Columns.activityId.name],
                 references: Tables.activity.rawValue,
@@ -166,7 +166,7 @@ extension DatabaseQueue {
             )
         }
     }
-    
+
     private func createStreamTable(with database: Database) throws {
         guard try !database.tableExists(Tables.stream.rawValue) else { return }
         try database.create(table: Tables.stream.rawValue) { table in
@@ -183,7 +183,7 @@ extension DatabaseQueue {
             table.column(Stream.Columns.type.name, .text)
                 .indexed()
                 .notNull()
-            
+
             table.foreignKey(
                 [Stream.Columns.activityId.name],
                 references: Tables.activity.rawValue,
@@ -196,10 +196,9 @@ extension DatabaseQueue {
             indexOn: Tables.stream.rawValue,
             columns: [
                 Stream.Columns.activityId.name,
-                Stream.Columns.order.name,
+                Stream.Columns.order.name
             ],
         )
     }
-    
-}
 
+}

@@ -8,7 +8,7 @@
 import FactoryKit
 
 extension Container {
-    
+
     var streamRepository: Factory<ActivityStreamRepository> {
         self {
             ActivityStreamRepository(
@@ -17,5 +17,5 @@ extension Container {
             )
         }
     }
-    
+
 }

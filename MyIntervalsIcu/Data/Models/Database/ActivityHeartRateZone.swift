@@ -14,9 +14,9 @@ import SqlDsl
 @CodingKeys(.all)
 @CodingKeyMappable
 struct ActivityHeartRateZone: Zone, Identifiable, PersistableRecord, FetchableRecord {
-    
+
     let id: String
-    
+
     /// The Heart Rate Zone Number (e.g. Zone 1, Zone 2, etc.). Will be 1-indexed and always positive.
     let zone: Int
     let lowerBound: Int

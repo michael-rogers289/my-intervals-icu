@@ -20,7 +20,7 @@ struct SummaryChartBar: Codable, TableRecord, PersistableRecord, FetchableRecord
     let zone: Int
     let totalNumZones: Int
     let activityId: String
-    
+
     enum Columns {
         static let activityId = Column(CodingKeys.activityId)
     }

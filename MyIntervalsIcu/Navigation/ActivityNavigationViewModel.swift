@@ -14,15 +14,15 @@ enum ActivityNavigationElement: Hashable {
 
 @MainActor
 @Observable
-class ActivityNavigationViewModel : NavigationViewModel {
-    
+class ActivityNavigationViewModel: NavigationViewModel {
+
     var stack: [ActivityNavigationElement] = []
-    
+
     func pushDetail(with activityId: Activity.ActivityId) {
         Container.shared.detailActivityIdSelector.register {
             activityId
         }
         self.push(.detail)
     }
-    
+
 }

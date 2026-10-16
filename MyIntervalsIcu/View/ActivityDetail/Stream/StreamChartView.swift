@@ -8,12 +8,12 @@
 import Charts
 import SwiftUI
 
-struct StreamChartView : View {
-    
+struct StreamChartView: View {
+
     private let viewData: StreamViewData.TimeSeries
     private let isAreaChart: Bool
     @Binding private var overlayRect: CGRect?
-        
+
     init(
         viewData: StreamViewData.TimeSeries,
         isAreaChart: Bool,
@@ -23,12 +23,12 @@ struct StreamChartView : View {
         self.isAreaChart = isAreaChart
         self._overlayRect = overlayRect
     }
-    
+
     var body: some View {
         StreamChartViewChart(viewData: viewData, isAreaChart: isAreaChart)
             .chartXAxis {
                 let xMax = viewData.plottableData.last?.x ?? .zero
-                AxisMarks(values: [Double.zero, xMax]) { value in
+                AxisMarks(values: [Double.zero, xMax]) { _ in
                     AxisGridLine().foregroundStyle(.clear) // no vertical grids
                     AxisTick()
                 }
@@ -43,18 +43,18 @@ struct StreamChartView : View {
                         .contentShape(.rect)
                 } onChanged: { frame in
                     overlayRect = frame
-                    
+
                     guard let index: Int = chartProxy.value(atX: frame.origin.x + frame.width) else {
                         return
                     }
-                    
+
 //                        if selectedStartIndex == nil {
 //                            selectedStartIndex = index
 //                        } else {
 //                            selectedEndIndex = index
 //                        }
                 }
-                
+
                 if let overlayRect {
                     Rectangle()
                         .fill(.gray.opacity(0.3))
@@ -78,15 +78,15 @@ struct StreamChartView : View {
 }
 
 struct StreamChartViewChart: View {
-    
+
     private let viewData: StreamViewData.TimeSeries
     private let isAreaChart: Bool
-    
+
     init(viewData: StreamViewData.TimeSeries, isAreaChart: Bool) {
         self.viewData = viewData
         self.isAreaChart = isAreaChart
     }
-    
+
     var body: some View {
         Chart {
             if isAreaChart {

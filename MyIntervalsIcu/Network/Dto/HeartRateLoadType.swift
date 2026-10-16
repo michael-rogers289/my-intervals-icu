@@ -11,5 +11,5 @@ import Foundation
 enum HeartRateLoadType: String, Codable {
     case averageHeartRate = "AVG_HR"
     case heartRateZones = "HR_ZONES"
-    case Hrss = "HRSS"
+    case heartRateSs = "HRSS"
 }

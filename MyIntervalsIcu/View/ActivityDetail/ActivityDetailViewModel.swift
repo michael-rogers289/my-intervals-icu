@@ -13,26 +13,26 @@ import SwiftUI
 @Observable
 @MainActor
 final class ActivityDetailViewModel {
-    
-    //MARK: Private Properties
-    
+
+    // MARK: Private Properties
+
     @ObservationIgnored
     @Injected(\.activityRepository)
     private var activityRepository
-    
+
     @ObservationIgnored
     @Injected(\.detailActivityIdSelector)
     private var selectedActivityId
-    
+
     private let activityMapper = ActivityMapper()
     private var cancellables: Set<AnyCancellable> = []
-    
-    //MARK: Public Properties
-    
+
+    // MARK: Public Properties
+
     private(set) var summaryInfo: ActivitySummaryInfoViewData?
-    
-    //MARK: Public Methods
-    
+
+    // MARK: Public Methods
+
     func startObservation() {
         guard let selectedActivityId else { return }
         activityRepository
@@ -47,5 +47,5 @@ final class ActivityDetailViewModel {
             }
             .store(in: &cancellables)
     }
-    
+
 }

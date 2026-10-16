@@ -8,14 +8,14 @@
 import Foundation
 
 extension NetworkManager {
-    
+
     private enum Constant {
         static let activitiesPath = "activities"
         static let powerHistogram = "power-histogram"
         static let oldestActivityQueryKey = "oldest"
         static let newestActivityQueryKey = "newest"
     }
-    
+
     func getActivities(for dateRange: DateInterval) async throws(NetworkError) -> [ActivityDto] {
         let oldestQueryItem = URLQueryItem(
             name: Constant.oldestActivityQueryKey,
@@ -31,5 +31,5 @@ extension NetworkManager {
         )
         return try await fetchAndDecode(with: request)
     }
-        
+
 }

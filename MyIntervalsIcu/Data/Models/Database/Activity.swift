@@ -15,7 +15,7 @@ import SwiftProtobuf
 @CodingKeyMappable
 struct Activity: Identifiable, Codable, PersistableRecord, FetchableRecord {
     typealias ActivityId = String
-    
+
     let id: String
     let startDate: Date
     let endDate: Date?
@@ -25,16 +25,16 @@ struct Activity: Identifiable, Codable, PersistableRecord, FetchableRecord {
     let averageCadence: Double?
     let calories: Int?
     let polarizationIndex: Double?
-    
+
     // MARK: Speed
     let maxSpeed: Double?
     let averageSpeed: Double?
-    
+
     // MARK: Watts
     let normalizedWatts: Int?
     let icuAverageWatts: Int?
     let deviceWatts: Bool?
-    
+
     // MARK: Heart Rate
     let maxHeartRate: Int?
     let averageHeartRate: Int?
