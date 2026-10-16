@@ -16,33 +16,33 @@ var count = 0
 @MainActor
 @Observable
 class SummaryViewModel {
-    
+
     // MARK: Private Variables
     @ObservationIgnored
     private var activityRepository = Container.shared.activityRepository.resolve()
-    
+
     @ObservationIgnored
     private var calendarRepository = Container.shared.calendarRepository.resolve()
-    
+
     private var currentWeek: DateInterval
     private var refreshTask: Task<Void, Never>?
     private var cancellables: Set<AnyCancellable> = []
-    
+
     // MARK: Public Variables
     private(set) var heartRateSummaries: [ZoneSummaryViewData] = []
     private(set) var powerSummaries: [ZoneSummaryViewData] = []
     private(set) var distanceForWeek: Double = Double.zero
-    
+
     @Published
     @ObservationIgnored
     var summaryType: ZoneSummaryViewData.SummaryType = .percent
-    
+
     var weekEnding: Date {
         currentWeek.end
     }
-    
+
     // MARK: Init
-    
+
     init() {
         do {
             currentWeek = try calendarRepository.getWeek(by: .startingAt(date: Date()))
@@ -50,7 +50,7 @@ class SummaryViewModel {
             fatalError("Unable to create date for current week")
         }
     }
-        
+
     // MARK: Public Methods
     func startObservation() {
         refresh()
@@ -77,17 +77,17 @@ class SummaryViewModel {
             .sink { [weak self] in self?.distanceForWeek = $0 / 1000.0 }
             .store(in: &cancellables)
     }
-    
+
     func nextWeek() {
         updateCurrentWeek(by: .startingAt(date: currentWeek.end))
         startObservation()
     }
-    
+
     func previousWeek() {
         updateCurrentWeek(by: .endingAt(date: currentWeek.start))
         startObservation()
     }
-    
+
     func refresh() {
         let currentWeekRange = currentWeek
         refreshTask = Task { [weak self] in
@@ -103,9 +103,9 @@ class SummaryViewModel {
             }
         }
     }
-    
+
     // MARK: Private Methods
-    
+
     private func updateCurrentWeek(by configuration: WeekStartEndConfiguration) {
         do {
             currentWeek = try calendarRepository.getWeek(by: configuration)

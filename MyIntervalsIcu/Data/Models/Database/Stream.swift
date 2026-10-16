@@ -12,19 +12,19 @@ import SqlDsl
 @CodingKeys(.all)
 @CodingKeyMappable
 struct Stream: Codable, TableRecord, FetchableRecord, PersistableRecord {
-    
+
     static let streamType = hasOne(
         VirtualStreamType.self,
         key: Columns.type.name,
         using: ForeignKey([Columns.type], to: [VirtualStreamType.Columns.type])
     )
-    
+
     let id: String
     let type: StreamType
     let value: Double
     let order: Int
     let activityId: String
-    
+
     enum Columns {
         static let id = Column(CodingKeys.id.rawValue)
         static let type = Column(CodingKeys.type.rawValue)

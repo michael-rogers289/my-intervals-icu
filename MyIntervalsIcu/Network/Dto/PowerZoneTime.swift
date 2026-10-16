@@ -8,7 +8,7 @@
 import CodingKeysMacro
 import Foundation
 
-@CodingKeys(.custom(["timeInZone" : "secs"]))
+@CodingKeys(.custom(["timeInZone": "secs"]))
 struct PowerZoneTime: Codable {
     let id: String
     /**

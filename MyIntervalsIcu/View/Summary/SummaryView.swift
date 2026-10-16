@@ -9,11 +9,11 @@ import SwiftUI
 import Charts
 
 struct SummaryView: View {
-    
+
     @State private var viewModel = SummaryViewModel()
-    
+
     var body: some View {
-        GeometryReader { proxy in
+        GeometryReader { _ in
             ScrollView {
                 VStack(alignment: .center, spacing: .spacingSmall) {
                     DateSelector(
@@ -44,9 +44,9 @@ struct SummaryView: View {
 }
 
 private struct SummaryTypePicker: View {
-    
+
     @Binding var selectedSummaryType: ZoneSummaryViewData.SummaryType
-    
+
     var body: some View {
         Picker("Type", selection: $selectedSummaryType) {
             ForEach(ZoneSummaryViewData.SummaryType.allCases, id: \.self) {
@@ -56,15 +56,15 @@ private struct SummaryTypePicker: View {
         .pickerStyle(.segmented)
         .labelsHidden()
     }
-    
+
 }
 
 private struct SummaryBarView: View {
-    
+
     let title: String
     let selectedType: ZoneSummaryViewData.SummaryType
     let zoneSummaries: [ZoneSummaryViewData]
-    
+
     var body: some View {
         VStack(
             alignment: .center,
@@ -79,7 +79,7 @@ private struct SummaryBarView: View {
                 .foregroundStyle(summary.id.zoneColor)
             }
             .chartXAxis {
-                AxisMarks(values: .automatic) { value in
+                AxisMarks(values: .automatic) { _ in
                     AxisGridLine().foregroundStyle(.clear) // no vertical grids
                     AxisTick()
                     AxisValueLabel().font(.caption)
@@ -90,7 +90,7 @@ private struct SummaryBarView: View {
         .padding(.spacingMedium)
         .aspectRatio(1.0 / 1.5, contentMode: .fit)
     }
-     
+
 }
 
 #Preview {
@@ -129,7 +129,7 @@ private struct SummaryBarView: View {
             ZoneSummaryViewData(
                 zoneSummary: ZoneSummary(zone: 7, secondsInZone: 100, percentInZone: 0.2),
                 summaryType: .absolute
-            ),
+            )
         ]
     )
 }

@@ -13,24 +13,24 @@ import SwiftUI
 @MainActor
 @Observable
 final class ActivityListViewModel {
-    
+
     // MARK: Private Variables
-    
+
     @ObservationIgnored
     private let activityRepository = Container.shared.activityRepository.resolve()
-    
+
     @ObservationIgnored
     private let calendarRepository = Container.shared.calendarRepository.resolve()
-    
+
     private let activityMapper = ActivityMapper()
     private var currentMonth: DateInterval
     private var refreshTask: Task<Void, Never>?
     private var summaryChartTask: Task<Void, Never>?
     private var cancellables: Set<AnyCancellable> = []
-    
-    //MARK: Public Variables
+
+    // MARK: Public Variables
     private(set) var activities: [ActivityListViewData] = []
-    
+
     // MARK: Init
     init() {
         do {
@@ -39,7 +39,7 @@ final class ActivityListViewModel {
             fatalError("Unable to create date for current week")
         }
     }
-    
+
     // MARK: Public Methods
     func onViewAppeared() {
         Container.shared.detailActivityIdSelector.register { nil }
@@ -50,8 +50,8 @@ final class ActivityListViewModel {
             .sink { [weak self] activities in self?.getSummaryChartBars(for: activities) }
             .store(in: &cancellables)
     }
-    
-    //MARK: Private Methods
+
+    // MARK: Private Methods
     private func refresh() {
         let currentMonth = currentMonth
         refreshTask = Task { [weak self] in
@@ -65,7 +65,7 @@ final class ActivityListViewModel {
             }
         }
     }
-    
+
     private func getSummaryChartBars(for activities: [Activity]) {
         summaryChartTask = Task {
             var charts: [String: [SummaryChartBar]] = [:]
@@ -74,7 +74,7 @@ final class ActivityListViewModel {
             } catch {
                 print("Error while getting charts: \(error)")
             }
-            
+
             self.activities = Dictionary(grouping: activities) { activity in
                 calendarRepository.startOfDay(on: activity.startDate)
             }
@@ -89,7 +89,7 @@ final class ActivityListViewModel {
                             } else {
                                 1.0 // 1 to just avoid NAN with divide by zero
                             }
-                            
+
                             return ActivityListViewData.ActivityListSummary(
                                 id: activity.id,
                                 summaryInfoViewData: activityMapper.map(activity: activity),
@@ -108,7 +108,6 @@ final class ActivityListViewModel {
             }
             .sorted { $0.activityDate > $1.activityDate }
         }
-        
+
     }
 }
-    

@@ -8,12 +8,12 @@
 import SwiftUI
 import UIKit
 
-struct HorizontalPanGesture<Content: View> : UIViewRepresentable {
-    
+struct HorizontalPanGesture<Content: View>: UIViewRepresentable {
+
     final class Coordinator: NSObject, UIGestureRecognizerDelegate {
         private let onChanged: ((CGRect) -> Void)?
         private var startLocationX: CGFloat = .zero
-        
+
         init(onChanged: ((CGRect) -> Void)?) {
             self.onChanged = onChanged
         }
@@ -48,8 +48,8 @@ struct HorizontalPanGesture<Content: View> : UIViewRepresentable {
             _ gestureRecognizer: UIGestureRecognizer
         ) -> Bool {
             guard let pan = gestureRecognizer as? UIPanGestureRecognizer else { return true }
-            let v = pan.velocity(in: pan.view)
-            return abs(v.x) > abs(v.y)
+            let velocity = pan.velocity(in: pan.view)
+            return abs(velocity.x) > abs(velocity.y)
         }
 
         func gestureRecognizer(
@@ -59,10 +59,10 @@ struct HorizontalPanGesture<Content: View> : UIViewRepresentable {
             false
         }
     }
-    
+
     let content: Content
     let onChanged: (CGRect) -> Void
-    
+
     init(
         @ViewBuilder content: () -> Content,
         onChanged: @escaping (CGRect) -> Void
@@ -70,11 +70,11 @@ struct HorizontalPanGesture<Content: View> : UIViewRepresentable {
         self.content = content()
         self.onChanged = onChanged
     }
-    
+
     func makeUIView(context: Context) -> some UIView {
         let host = UIHostingController(rootView: content)
         host.view.backgroundColor = .clear
-        
+
         let pan = UIPanGestureRecognizer(
             target: context.coordinator,
             action: #selector(Coordinator.handlePan(_:))
@@ -83,13 +83,13 @@ struct HorizontalPanGesture<Content: View> : UIViewRepresentable {
         host.view.addGestureRecognizer(pan)
         return host.view
     }
-    
+
     func updateUIView(_ uiView: UIViewType, context: Context) {
         // Intentionally Blank
     }
-    
+
     func makeCoordinator() -> Coordinator {
         Coordinator(onChanged: onChanged)
     }
-    
+
 }

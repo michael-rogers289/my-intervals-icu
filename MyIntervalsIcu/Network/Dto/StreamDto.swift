@@ -17,7 +17,7 @@ struct StreamDto: Codable {
     let custom: Bool
     let allNull: Bool
     let anomalies: [Anomaly]?
-    
+
     @CodingKeys(.all)
     struct Anomaly: Codable {
         let startIndex: Int
@@ -25,7 +25,7 @@ struct StreamDto: Codable {
         let value: Int
         let valueEnd: Int
     }
-    
+
     enum CodingKeys: String, CodingKey {
         case type
         case name

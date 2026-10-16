@@ -11,7 +11,6 @@
 		D87375713001E41C0016B550 /* SqlDsl in Frameworks */ = {isa = PBXBuildFile; productRef = D87375703001E41C0016B550 /* SqlDsl */; };
 		D87375753001EA630016B550 /* CodingKeysMacro in Frameworks */ = {isa = PBXBuildFile; productRef = D87375743001EA630016B550 /* CodingKeysMacro */; };
 		D8B73B693067665700039240 /* SwiftProtobuf in Frameworks */ = {isa = PBXBuildFile; productRef = D8B73B683067665700039240 /* SwiftProtobuf */; };
-		D8B73B6B3067665700039240 /* SwiftProtobufPluginLibrary in Frameworks */ = {isa = PBXBuildFile; productRef = D8B73B6A3067665700039240 /* SwiftProtobufPluginLibrary */; };
 		D8B73B8B306FFCF900039240 /* FactoryKit in Frameworks */ = {isa = PBXBuildFile; productRef = D8B73B8A306FFCF900039240 /* FactoryKit */; };
 		D8B73B8D306FFCF900039240 /* FactoryTesting in Frameworks */ = {isa = PBXBuildFile; productRef = D8B73B8C306FFCF900039240 /* FactoryTesting */; };
 /* End PBXBuildFile section */
@@ -77,7 +76,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				D87375713001E41C0016B550 /* SqlDsl in Frameworks */,
-				D8B73B6B3067665700039240 /* SwiftProtobufPluginLibrary in Frameworks */,
 				D8B73B8B306FFCF900039240 /* FactoryKit in Frameworks */,
 				D87375753001EA630016B550 /* CodingKeysMacro in Frameworks */,
 				17FAF8322EC7950A006A11B4 /* GRDB in Frameworks */,
@@ -137,6 +135,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				D8BA70B53082584A00B46ABF /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				1760FCC82EBFFC6900AAD022 /* MyIntervalsIcu */,
@@ -147,7 +146,6 @@
 				D87375703001E41C0016B550 /* SqlDsl */,
 				D87375743001EA630016B550 /* CodingKeysMacro */,
 				D8B73B683067665700039240 /* SwiftProtobuf */,
-				D8B73B6A3067665700039240 /* SwiftProtobufPluginLibrary */,
 				D8B73B8A306FFCF900039240 /* FactoryKit */,
 			);
 			productName = MyIntervalsIcu;
@@ -239,6 +237,7 @@
 				D87375733001EA630016B550 /* XCLocalSwiftPackageReference "../CodingKeysMacro" */,
 				D8B73B673067665600039240 /* XCRemoteSwiftPackageReference "swift-protobuf" */,
 				D8B73B89306FFCF900039240 /* XCRemoteSwiftPackageReference "Factory" */,
+				D8BA70B13082583D00B46ABF /* XCRemoteSwiftPackageReference "SwiftLintPlugins" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 1760FCC72EBFFC6900AAD022 /* Products */;
@@ -310,6 +309,10 @@
 			isa = PBXTargetDependency;
 			target = 1760FCC52EBFFC6800AAD022 /* MyIntervalsIcu */;
 			targetProxy = 1760FCDE2EBFFC6D00AAD022 /* PBXContainerItemProxy */;
+		};
+		D8BA70B53082584A00B46ABF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			productRef = D8BA70B43082584A00B46ABF /* SwiftLintBuildToolPlugin */;
 		};
 /* End PBXTargetDependency section */
 
@@ -700,6 +703,14 @@
 				minimumVersion = 3.4.1;
 			};
 		};
+		D8BA70B13082583D00B46ABF /* XCRemoteSwiftPackageReference "SwiftLintPlugins" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SimplyDanny/SwiftLintPlugins";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.65.1;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -721,11 +732,6 @@
 			package = D8B73B673067665600039240 /* XCRemoteSwiftPackageReference "swift-protobuf" */;
 			productName = SwiftProtobuf;
 		};
-		D8B73B6A3067665700039240 /* SwiftProtobufPluginLibrary */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = D8B73B673067665600039240 /* XCRemoteSwiftPackageReference "swift-protobuf" */;
-			productName = SwiftProtobufPluginLibrary;
-		};
 		D8B73B8A306FFCF900039240 /* FactoryKit */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = D8B73B89306FFCF900039240 /* XCRemoteSwiftPackageReference "Factory" */;
@@ -735,6 +741,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = D8B73B89306FFCF900039240 /* XCRemoteSwiftPackageReference "Factory" */;
 			productName = FactoryTesting;
+		};
+		D8BA70B43082584A00B46ABF /* SwiftLintBuildToolPlugin */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D8BA70B13082583D00B46ABF /* XCRemoteSwiftPackageReference "SwiftLintPlugins" */;
+			productName = "plugin:SwiftLintBuildToolPlugin";
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

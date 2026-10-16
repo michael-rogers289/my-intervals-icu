@@ -9,7 +9,7 @@ import CodingKeysMacro
 import Foundation
 
 @CodingKeys(.all)
-struct IcuHeartRateRecovery : Codable {
+struct IcuHeartRateRecovery: Codable {
     let startIndex: Int
     let endIndex: Int
     let startTime: Int

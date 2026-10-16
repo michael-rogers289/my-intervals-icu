@@ -7,26 +7,26 @@
 
 import Foundation
 
-struct ActivityListViewData : Identifiable {
-    
+struct ActivityListViewData: Identifiable {
+
     let activities: [ActivityListSummary]
     let activityDate: Date
-    
-    struct ActivityListSummary : Identifiable {
+
+    struct ActivityListSummary: Identifiable {
         let id: String
         let summaryInfoViewData: ActivitySummaryInfoViewData
         let summaryChartBars: [SummaryBar]
     }
-    
-    struct SummaryBar : Identifiable {
+
+    struct SummaryBar: Identifiable {
         let id: String
         let widthPercentage: CGFloat
         let heightPercentage: CGFloat
         let zone: Int
     }
-    
+
     var id: Date {
         activityDate
     }
-    
+
 }

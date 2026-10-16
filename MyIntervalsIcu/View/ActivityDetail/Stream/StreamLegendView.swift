@@ -7,11 +7,11 @@
 
 import SwiftUI
 
-struct StreamLegendView : View {
-    
+struct StreamLegendView: View {
+
     @Binding var viewData: [StreamLegendViewData]
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
-    
+
     var body: some View {
         switch horizontalSizeClass {
         case .regular:
@@ -25,9 +25,9 @@ struct StreamLegendView : View {
                 }
             }
         }
-        
+
     }
-    
+
     private var toggleableButtons: some View {
         ForEach(0..<viewData.count, id: \.self) { index in
             let data = viewData[index]
@@ -47,17 +47,17 @@ struct StreamLegendView : View {
 }
 
 private struct ToggleableButton<LabelView: View>: View {
-    
+
     let isSelected: Bool
     let label: Text
     let icon: () -> LabelView
     let onTap: () -> Void
     @State var isOn = true
-    
+
     init(
         isSelected: Bool,
         label: Text,
-        @ContentBuilder icon:  @escaping () -> LabelView,
+        @ContentBuilder icon: @escaping () -> LabelView,
         onTap: @escaping () -> Void
     ) {
         self.label = label
@@ -65,7 +65,7 @@ private struct ToggleableButton<LabelView: View>: View {
         self.onTap = onTap
         self.isSelected = isSelected
     }
-    
+
     var body: some View {
         Button {
             onTap()
@@ -81,7 +81,7 @@ private struct ToggleableButton<LabelView: View>: View {
         .buttonBorderShape(.capsule)
         .tint(isSelected ? nil : .gray)
     }
-    
+
 }
 
 #Preview {
@@ -98,12 +98,11 @@ private struct ToggleableButton<LabelView: View>: View {
             StreamLegendViewData(
                 streamType: .cadence,
                 isSelected: false
-            ),
+            )
         ]
     }, set: { _ in
-        
+
     })
-    
-    
+
     StreamLegendView(viewData: viewDataBinding)
 }

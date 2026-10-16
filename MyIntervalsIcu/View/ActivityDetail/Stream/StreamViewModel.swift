@@ -14,24 +14,24 @@ import SwiftUI
 @MainActor
 @Observable
 final class StreamViewModel {
-    
+
     // MARK: Private Variables
-    
+
     @ObservationIgnored
     @Injected(\.streamRepository)
     private var streamRepository
-    
+
     @ObservationIgnored
     @Injected(\.detailActivityIdSelector)
     private var selectedActivityId
-    
+
     private var cancellables: Set<AnyCancellable> = []
     private var summaryCancellable: Task<Void, Never>?
     private var streamsObservationTask: Task<Void, Never>?
     private var streamTask: Task<Void, Never>?
-    
+
     // MARK: Public Variables
-    
+
     private(set) var viewData: [StreamViewData.TimeSeries] = []
     var selectableStreamTypes: [StreamLegendViewData] = [] {
         didSet {
@@ -50,19 +50,19 @@ final class StreamViewModel {
         }
     }
     private(set) var streamSummaryData: [any StreamSummaryViewData] = []
-    
+
     var subsectionStartIndex: Int?
     var subsectionEndIndex: Int?
-    
+
     // MARK: Life Cycle
-    
+
     init() {
         guard let selectedActivityId = selectedActivityId else { return }
         startAllowedStreamsObservation(with: selectedActivityId)
     }
-    
+
     // MARK: Private Methods
-    
+
     private func getStreams(forActivity activityId: Activity.ActivityId, with types: [StreamType]) {
         streamTask?.cancel()
         streamTask = Task {
@@ -74,13 +74,13 @@ final class StreamViewModel {
             } catch {
                 print("Error getting streams: \(error)")
             }
-            
+
         }
     }
-    
+
     private func startAllowedStreamsObservation(with selectedActivityId: Activity.ActivityId) {
         streamRepository.observeAllowedStreams(for: selectedActivityId)
-            .replaceError(with: []) //TODO: REMOVE ME
+            .replaceError(with: []) // TODO: REMOVE ME
             .removeDuplicates()
             .sink { [weak self] in
                 guard !$0.isEmpty else {
@@ -96,14 +96,15 @@ final class StreamViewModel {
             }
             .store(in: &cancellables)
     }
-    
+
     private func updateSummary(with selectedActivityId: Activity.ActivityId, filteringBy types: [StreamType]) {
         summaryCancellable?.cancel()
         summaryCancellable = Task { [weak self] in
             do {
-                guard let summaries = try await self?.streamRepository.observeSummaries(for: selectedActivityId, filteringBy: types) else {
-                    return
-                }
+                guard let summaries = try await self?.streamRepository.observeSummaries(
+                    for: selectedActivityId,
+                    filteringBy: types
+                ) else { return }
                 for try await summary in summaries {
                     self?.streamSummaryData = summary
                         .compactMap { summary in
@@ -122,13 +123,16 @@ final class StreamViewModel {
             }
         }
     }
-    
+
     private func startStreamObservation(with selectedActivityId: Activity.ActivityId, filteringBy types: [StreamType]) {
         streamsObservationTask?.cancel()
         streamsObservationTask = Task { [weak self] in
             do {
-                guard let streamObservation = try await self?.streamRepository.observeStreams(for: selectedActivityId, filteringBy: types) else { return }
-                
+                guard let streamObservation = try await self?.streamRepository.observeStreams(
+                    for: selectedActivityId,
+                    filteringBy: types
+                ) else { return }
+
                 for try await streamDictionary in streamObservation {
                     self?.viewData = streamDictionary.compactMap { (key, value) -> StreamViewData.TimeSeries? in
                         guard let timeSeriesType = TimeSeriesStreamType(streamType: key) else { return nil }
@@ -148,5 +152,5 @@ final class StreamViewModel {
             }
         }
     }
-    
+
 }

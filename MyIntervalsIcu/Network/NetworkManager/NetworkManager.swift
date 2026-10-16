@@ -8,16 +8,17 @@
 import Foundation
 
 actor NetworkManager {
-    
+
     // MARK: Enums
-    
-    enum NetworkError : Error {
+
+    enum NetworkError: Error {
         case unableToFetchData(forPath: String)
         case unableToDecodeResponse(decodeError: DecodingError)
         case cancelled(error: CancellationError)
     }
-    
+
     enum HTTPStatus: Int {
+        // swiftlint:disable:next identifier_name
         case ok = 200
         case created = 201
         case noContent = 204
@@ -25,7 +26,7 @@ actor NetworkManager {
         case unauthorized = 401
         case notFound = 404
         case internalServerError = 500
-        
+
         var isSuccess: Bool {
             switch self {
             case .ok, .created, .noContent:
@@ -35,18 +36,18 @@ actor NetworkManager {
             }
         }
     }
-    
+
     // MARK: Public Variables
-    
+
     let calendarRepository: CalendarRepository
-    
+
     // MARK: Private Variables
-    
+
     private let networkSession: NetworkSession
     private let networkLogger: NetworkLogging
-    
+
     // MARK: Init
-    
+
     init(
         networkLogger: NetworkLogging,
         networkSession: NetworkSession,
@@ -56,9 +57,9 @@ actor NetworkManager {
         self.networkSession = networkSession
         self.calendarRepository = calendarRepository
     }
-    
+
     // MARK: Public Methods
-    
+
     func fetchAndDecode<T: Decodable & Sendable>(
         with request: URLRequest
     ) async throws(NetworkManager.NetworkError) -> T {
@@ -75,9 +76,9 @@ actor NetworkManager {
                     and: response
                 )
             }
-            
+
             networkLogger.logResponse(response, andData: data, of: request)
-            
+
             return try await decode(type: T.self, from: data)
         } catch let decodingError as DecodingError {
             throw networkLogger.logError(
@@ -102,7 +103,7 @@ actor NetworkManager {
             )
         }
     }
-    
+
     @concurrent
     private func decode<T: Decodable>(type: T.Type, from data: Data) async throws -> T {
         let decoder = JSONDecoder()

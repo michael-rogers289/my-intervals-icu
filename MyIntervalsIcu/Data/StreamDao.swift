@@ -11,28 +11,28 @@ import GRDB
 import SqlDsl
 
 class StreamDao {
-    
+
     private let databaseQueue: DatabaseQueue
     private static let streamVirtualTable = Table("VirtualStreamType")
-    
+
     init(databaseQueue: DatabaseQueue) {
         self.databaseQueue = databaseQueue
     }
-    
+
     @DatabaseActor
     func store(streamTypeLinks: [StreamTypeLink]) async {
         try? await databaseQueue.write { database in
             try streamTypeLinks.insertAll(in: database)
         }
     }
-    
+
     @DatabaseActor
     func store(streams: [Stream]) async {
         try? await databaseQueue.write { database in
             try streams.insertAll(in: database)
         }
     }
-    
+
     func getSummaries(
         for activityId: Activity.ActivityId,
         filteringBy types: [StreamType],
@@ -55,14 +55,14 @@ class StreamDao {
                 .fetchAll(database)
         }
     }
-    
+
     @DatabaseActor
     func observeSummaries(
         for activityId: Activity.ActivityId,
         filteringBy types: [StreamType]
     ) async throws -> AsyncValueObservation<[StreamSummary]> {
         try await createVirtualTable(with: types)
-        
+
         return ValueObservation.tracking { database in
             try Stream
                 .select(
@@ -80,7 +80,7 @@ class StreamDao {
                 .fetchAll(database)
         }.values(in: databaseQueue)
     }
-    
+
     @DatabaseActor
     func observeStreams(
         for activityId: Activity.ActivityId,
@@ -98,7 +98,7 @@ class StreamDao {
         }
         .values(in: databaseQueue)
     }
-    
+
     func getStreamTypes(for activityId: Activity.ActivityId) -> AnyPublisher<[StreamTypeLink], Error> {
         ValueObservation.tracking { database in
             try StreamTypeLink
@@ -108,7 +108,7 @@ class StreamDao {
         .publisher(in: databaseQueue)
         .eraseToAnyPublisher()
     }
-    
+
     @DatabaseActor
     private func createVirtualTable(with types: [StreamType]) async throws {
         try await databaseQueue.write { database in
@@ -123,5 +123,5 @@ class StreamDao {
                 .insertAll(in: database)
         }
     }
-    
+
 }

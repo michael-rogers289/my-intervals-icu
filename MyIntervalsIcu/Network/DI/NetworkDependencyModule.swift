@@ -9,7 +9,7 @@ import FactoryKit
 import Foundation
 
 extension Container {
-    
+
     var networkSession: Factory<NetworkSession> {
         self {
             URLSession(
@@ -17,13 +17,13 @@ extension Container {
             )
         }.singleton
     }
-    
+
     var networkLogger: Factory<NetworkLogging> {
         self {
             NetworkLogger()
         }
     }
-    
+
     var networkManager: Factory<NetworkManager> {
         self {
             NetworkManager(
@@ -33,5 +33,5 @@ extension Container {
             )
         }.singleton
     }
-    
+
 }

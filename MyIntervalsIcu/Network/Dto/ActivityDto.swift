@@ -12,12 +12,12 @@ import SwiftProtobuf
 @CodingKeys(
     .custom(
         [
-            "maxHeartRate" : "max_heartrate",
-            "averageHeartRate" : "average_heartrate",
-            "avgLeftRightBalance" : "avg_lr_balance",
-            "icuHeartRateZones" : "icu_hr_zones",
-            "icuHeartRateRecovery" : "icu_hrr",
-            "paceZoneTimes" : "pace_zone_times"
+            "maxHeartRate": "max_heartrate",
+            "averageHeartRate": "average_heartrate",
+            "avgLeftRightBalance": "avg_lr_balance",
+            "icuHeartRateZones": "icu_hr_zones",
+            "icuHeartRateRecovery": "icu_hrr",
+            "paceZoneTimes": "pace_zone_times"
         ]
     )
 )

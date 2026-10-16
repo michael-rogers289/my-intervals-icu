@@ -13,11 +13,11 @@ struct ErrorViewData {
 }
 
 struct ErrorView: View {
-    
+
     @Binding var isPresented: Bool
     let viewData: ErrorViewData
     @State private var showDetailedError = false
-    
+
     var body: some View {
         VStack(spacing: .spacingMedium) {
             Text(viewData.errorText)
@@ -63,10 +63,10 @@ struct ErrorView: View {
                         .animation(.easeOut)
                         .combined(with: .opacity)
                 )
-                
+
             )
     }
-    
+
 }
 
 #Preview {

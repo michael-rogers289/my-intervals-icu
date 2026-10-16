@@ -15,17 +15,17 @@ struct ActivitySummaryInfoViewData {
     let distanceInKilometers: Measurement<UnitLength>
 }
 
-struct ActivitySummaryInfoView : View {
-    
+struct ActivitySummaryInfoView: View {
+
     let viewData: ActivitySummaryInfoViewData
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: .spacingSmall) {
             Text("\(viewData.title): \(viewData.startTime)")
                 .font(.headline)
-            
+
             Text("Duration: \(viewData.elapsedTime)")
-            
+
             Text(
                 viewData.distanceInKilometers,
                 format: .measurement(
@@ -34,7 +34,7 @@ struct ActivitySummaryInfoView : View {
                     numberFormatStyle: .number.precision(.fractionLength(1))
                 )
             )
-            
+
         }
         .multilineTextAlignment(.leading)
         .font(.subheadline)

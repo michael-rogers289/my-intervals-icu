@@ -8,7 +8,7 @@
 import Foundation
 
 extension StreamType {
-    
+
     var asDto: StreamTypeDto {
         return switch self {
         case .altitude: .altitude
@@ -31,5 +31,5 @@ extension StreamType {
         case .verticalSpeed: .verticalSpeed
         }
     }
-    
+
 }

@@ -8,14 +8,17 @@
 import Foundation
 
 extension NetworkManager {
-     
+
     func get(streams: [StreamTypeDto], forId activityId: Activity.ActivityId) async throws -> [StreamDto] {
         let request = NetworkRequestBuilder.makeActivityRequest(
             activityId: activityId,
             appendingPath: "streamsjson",
-            addingQueryParameters: URLQueryItem(name: "types", value: streams.map { $0.rawValue }.joined(separator: ","))
+            addingQueryParameters: URLQueryItem(
+                name: "types",
+                value: streams.map { $0.rawValue }.joined(separator: ",")
+            )
         )
         return try await self.fetchAndDecode(with: request)
     }
-    
+
 }

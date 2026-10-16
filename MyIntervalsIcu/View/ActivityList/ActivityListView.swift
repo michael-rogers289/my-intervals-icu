@@ -7,11 +7,11 @@
 
 import SwiftUI
 
-struct ActivityListView : View {
-    
+struct ActivityListView: View {
+
     @State private var viewModel = ActivityListViewModel()
     @State private var navigationViewModel = ActivityNavigationViewModel()
-    
+
     var body: some View {
         NavigationStack(path: $navigationViewModel.stack) {
             List(viewModel.activities) { viewData in
@@ -39,32 +39,34 @@ struct ActivityListView : View {
         }
         .onAppear { viewModel.onViewAppeared() }
     }
-    
+
 }
 
-private struct ActivityCellView : View {
-    
+private struct ActivityCellView: View {
+
     @Environment(\.horizontalSizeClass) var horizontalSizeClass
     @State private var barChartWidth: CGFloat?
     let activity: ActivityListViewData.ActivityListSummary
-    
+
     var body: some View {
             switch horizontalSizeClass {
             case .regular:
-                
+
                 HStack {
                     ActivitySummaryInfoView(viewData: activity.summaryInfoViewData)
-                        .frame(maxWidth: .infinity, maxHeight: .infinity,  alignment: .topLeading)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
                     SummaryBarChartView(bars: activity.summaryChartBars)
                         .frame(maxWidth: barChartWidth ?? .infinity, maxHeight: .infinity, alignment: .topTrailing)
                 }.onGeometryChange(for: (CGFloat?).self) { proxy in
                     if #available(iOS 27.1, *),
                        let reservedRegion = proxy.reservedRegions(kind: .division).first {
-                        return (proxy.size.width / 2.0) - (reservedRegion.frame.width + reservedRegion.margins.trailing) - .spacingMedium
+                        return (proxy.size.width / 2.0)
+                        - (reservedRegion.frame.width + reservedRegion.margins.trailing)
+                        - .spacingMedium
                     } else {
                         return nil
                     }
-                    
+
                 } action: { newReservedRegion in
                     barChartWidth = newReservedRegion
                 }
@@ -78,13 +80,13 @@ private struct ActivityCellView : View {
                 }
             }
     }
-    
+
 }
 
 private struct SummaryBarChartView: View {
-    
+
     let bars: [ActivityListViewData.SummaryBar]
-    
+
     var body: some View {
         GeometryReader { proxy in
             HStack(

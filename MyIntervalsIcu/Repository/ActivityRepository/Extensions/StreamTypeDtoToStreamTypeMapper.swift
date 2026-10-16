@@ -8,7 +8,7 @@
 import Foundation
 
 extension StreamTypeDto {
-    
+
     func mapToStreamTypeLink(with activity: ActivityDto) -> StreamTypeLink {
         let dataStreamTypeId = asDataStreamType.rawValue
         return StreamTypeLink(
@@ -17,7 +17,7 @@ extension StreamTypeDto {
             activityId: activity.id
         )
     }
-    
+
     var asDataStreamType: StreamType {
         return switch self {
         case .altitude: .altitude

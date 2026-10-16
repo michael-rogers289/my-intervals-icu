@@ -14,11 +14,11 @@ import GRDB
     static let shared = DatabaseActor()
 }
 
-final class ActivityDao : Sendable {
-    
+final class ActivityDao: Sendable {
+
     let calendarRepository: CalendarRepository
     private let databaseQueue: DatabaseQueue
-        
+
     init(
         databaseQueue: DatabaseQueue,
         calendarRepository: CalendarRepository
@@ -31,7 +31,7 @@ final class ActivityDao : Sendable {
             fatalError("Failed to create database tables\(error)")
         }
     }
-    
+
     @DatabaseActor
     func insertAll(
         activities: [Activity],
@@ -39,14 +39,14 @@ final class ActivityDao : Sendable {
         powerZones: [ActivityPowerZone],
         summaryChartBars: [SummaryChartBar],
     ) async throws {
-        try await databaseQueue.write { db in
-            try activities.insertAll(in: db)
-            try heartRateZones.insertAll(in: db)
-            try powerZones.insertAll(in: db)
-            try summaryChartBars.insertAll(in: db)
+        try await databaseQueue.write { database in
+            try activities.insertAll(in: database)
+            try heartRateZones.insertAll(in: database)
+            try powerZones.insertAll(in: database)
+            try summaryChartBars.insertAll(in: database)
         }
     }
-        
+
     func getActivities(in interval: DateInterval) -> AnyPublisher<[Activity], Error> {
         ValueObservation.tracking { database in
             try Activity.fetchAll(database)
@@ -56,7 +56,7 @@ final class ActivityDao : Sendable {
         .publisher(in: databaseQueue)
         .eraseToAnyPublisher()
     }
-    
+
     func getActivity(byId id: Activity.ActivityId) -> AnyPublisher<Activity?, Error> {
         ValueObservation.tracking { database in
             try Activity.filter(id: id).fetchOne(database)
@@ -64,17 +64,19 @@ final class ActivityDao : Sendable {
         .publisher(in: databaseQueue)
         .eraseToAnyPublisher()
     }
-    
+
     @DatabaseActor
     func getGroupedSummaryChartBars(for activityIds: [Activity.ActivityId]) throws -> [String: [SummaryChartBar]] {
         return try databaseQueue.read { database in
             return Dictionary(
-                grouping: try SummaryChartBar.filter(activityIds.contains(SummaryChartBar.Columns.activityId)).fetchAll(database),
+                grouping: try SummaryChartBar
+                    .filter(activityIds.contains(SummaryChartBar.Columns.activityId))
+                    .fetchAll(database),
                 by: { $0.activityId }
             )
         }
     }
-    
+
     func getTotalDistance(from start: Date, to end: Date) -> AnyPublisher<Double, Error> {
         return ValueObservation
             .tracking {
@@ -89,7 +91,7 @@ final class ActivityDao : Sendable {
             .publisher(in: databaseQueue)
             .eraseToAnyPublisher()
     }
-    
+
     func getPowerZonesGroupedByZone(
         between start: Date,
         and end: Date,
@@ -103,7 +105,7 @@ final class ActivityDao : Sendable {
         )
         return valueObservation(from: statement.raw)
     }
-        
+
     func getHeartRateZonesGroupedByZone(
         between start: Date,
         and end: Date,
@@ -117,23 +119,26 @@ final class ActivityDao : Sendable {
         )
         return valueObservation(from: statement.raw)
     }
-    
-    //MARK: Private Methods
-        
+
+    // MARK: Private Methods
+
     private func getStatement<T>(
         between start: Date,
         and end: Date,
         zone: PartialKeyPath<T>,
         secondsInZone: PartialKeyPath<T>,
         activityId: PartialKeyPath<T>
-    ) -> Sql<T> where T : Zone {
+    ) -> Sql<T> where T: Zone {
         Sql(
             select: Select { factory in
                 factory.column(from: zone)
                 Sum(operand: factory.operand(from: secondsInZone)).asOther(name: "sum_seconds_in_zone")
                 Parentheses {
                     Sum(operand: factory.operand(from: secondsInZone)) * Operands.Raw(numeric: 100.0) /
-                    Sum(operand: Sum(operand: factory.operand(from: secondsInZone))).over(partition: Partition(keyPath: \Stream.activityId))
+                    Sum(
+                        operand: Sum(operand: factory.operand(from: secondsInZone)))
+                    .over(partition: Partition(keyPath: \Stream.activityId)
+                    )
                 }.asOther(name: "percentage_in_zone")
             },
             join: Join(firstTablePath: activityId, onOtherPath: \Activity.id),
@@ -144,7 +149,7 @@ final class ActivityDao : Sendable {
             orderdBy: OrderBy(path: zone),
         )
     }
-    
+
     private func valueObservation(from statement: String) -> AnyPublisher<[ZoneSummary], Error> {
         ValueObservation
             .tracking {
@@ -162,5 +167,5 @@ final class ActivityDao : Sendable {
             .publisher(in: databaseQueue)
             .eraseToAnyPublisher()
     }
-    
+
 }

@@ -8,11 +8,11 @@
 import CodingKeysMacro
 import GRDB
 
-struct StreamSummary : Codable, FetchableRecord {
-    
+struct StreamSummary: Codable, FetchableRecord {
+
     let type: StreamType
     let min: Double
     let max: Double
     let average: Double
-    
+
 }

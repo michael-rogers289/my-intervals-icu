@@ -7,10 +7,10 @@
 
 import SwiftUI
 
-struct StreamSummaryView : View {
-    
+struct StreamSummaryView: View {
+
     let viewData: [any StreamSummaryViewData]
-    
+
     var body: some View {
         Grid(verticalSpacing: .spacingMedium) {
             GridRow(alignment: .center) {
@@ -21,7 +21,7 @@ struct StreamSummaryView : View {
             }
             .font(.headline)
             .frame(maxWidth: .infinity)
-            
+
             ForEach(viewData, id: \.type) { data in
                 Divider()
                 GridRow(alignment: .center) {
@@ -38,7 +38,7 @@ struct StreamSummaryView : View {
         }
         .cornerRadius(.spacingSmall)
     }
-    
+
 }
 
 private extension StreamSummaryViewData {
@@ -48,14 +48,14 @@ private extension StreamSummaryViewData {
             format: format
         )
     }
-    
+
     var averageText: Text {
         Text(
             average,
             format: format
         )
     }
-    
+
     var maxText: Text {
         Text(
             max,

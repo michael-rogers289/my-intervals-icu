@@ -8,9 +8,9 @@
 import FactoryKit
 
 extension Container {
-    
+
     var detailActivityIdSelector: Factory<Activity.ActivityId?> {
         self { nil }
     }
-    
+
 }

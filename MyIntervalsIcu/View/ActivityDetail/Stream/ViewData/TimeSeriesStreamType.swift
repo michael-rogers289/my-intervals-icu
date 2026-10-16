@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-enum TimeSeriesStreamType : Int, CaseIterable {
+enum TimeSeriesStreamType: Int, CaseIterable {
     case watts = 1
     case heartrate
     case cadence
@@ -23,8 +23,8 @@ enum TimeSeriesStreamType : Int, CaseIterable {
     case leftTorqueEffectiveness
     case rightTorqueEffectiveness
     case verticalSpeed
-    
-    
+
+    // swiftlint:disable:next cyclomatic_complexity
     init?(streamType: StreamType) {
         let value: TimeSeriesStreamType? = switch streamType {
         case .time,
@@ -46,11 +46,11 @@ enum TimeSeriesStreamType : Int, CaseIterable {
         case .skinTemperature: .skinTemperature
         case .verticalSpeed: .verticalSpeed
         }
-        
+
         guard let value else { return nil }
         self = value
     }
-    
+
     var asData: StreamType {
         switch self {
         case .watts: .watts
@@ -70,7 +70,7 @@ enum TimeSeriesStreamType : Int, CaseIterable {
         case .verticalSpeed: .verticalSpeed
         }
     }
-    
+
     var title: String {
         switch self {
         case .watts: "Power"
@@ -90,7 +90,7 @@ enum TimeSeriesStreamType : Int, CaseIterable {
         case .verticalSpeed: "Vertical Speed"
         }
     }
-    
+
     var defaultPlottable: Bool {
         switch self {
         case .smoothVelocity,
@@ -110,7 +110,7 @@ enum TimeSeriesStreamType : Int, CaseIterable {
                 .coreTemperature: true
         }
     }
-    
+
     var measurementType: some Dimension? {
         return switch self {
         case .watts: UnitPower.watts
@@ -124,11 +124,11 @@ enum TimeSeriesStreamType : Int, CaseIterable {
         default: nil
         }
     }
-    
+
     var removeZerosWhenComputingAverage: Bool {
         self == .cadence || self == .coreTemperature
     }
-    
+
     var color: Color {
         return switch self {
         case .watts: .blue
@@ -148,7 +148,7 @@ enum TimeSeriesStreamType : Int, CaseIterable {
         case .skinTemperature: .mint
         }
     }
-    
+
     var isAreaChart: Bool {
         return switch self {
         case .watts,

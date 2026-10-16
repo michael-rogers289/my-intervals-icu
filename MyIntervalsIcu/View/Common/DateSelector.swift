@@ -8,12 +8,12 @@
 import SwiftUI
 
 struct DateSelector: View {
-    
+
     let totalDistance: Double
     let displayDate: Date
     let onPreviousSelected: () -> Void
     let onNextSelected: () -> Void
-    
+
     var body: some View {
         HStack {
             Button(action: onPreviousSelected) {
@@ -30,11 +30,11 @@ struct DateSelector: View {
                     )
                 )
             }
-            
+
             Button(action: onNextSelected) {
                 Image(systemName: "chevron.right")
             }
         }.buttonStyle(.glass)
     }
-    
+
 }
