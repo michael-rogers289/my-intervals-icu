@@ -7,20 +7,20 @@
 
 import SwiftUI
 
-
-
 struct StreamSummaryView : View {
     
     let viewData: [any StreamSummaryViewData]
     
     var body: some View {
-        Grid {
+        Grid(verticalSpacing: .spacingMedium) {
             GridRow(alignment: .center) {
                 Text("Metric")
                 Text("Min")
                 Text("Average")
                 Text("Max")
-            }.font(.title3)
+            }
+            .font(.headline)
+            .frame(maxWidth: .infinity)
             
             ForEach(viewData, id: \.type) { data in
                 Divider()
@@ -32,7 +32,11 @@ struct StreamSummaryView : View {
                 }.font(.callout)
             }
         }
-        
+        .padding(.spacingSmall)
+        .background {
+            Color.gray.opacity(0.2)
+        }
+        .cornerRadius(.spacingSmall)
     }
     
 }

@@ -19,12 +19,13 @@ struct ActivityListView : View {
                     Text(viewData.activityDate, style: .date)
                         .font(.title)
                         .padding(.bottom, .spacingSmall)
-                    
                     ForEach(viewData.activities) { activity in
-                        ActivityCellView(activity: activity)
-                            .onTapGesture {
-                                navigationViewModel.pushDetail(with: activity.id)
-                            }
+                        Button {
+                            navigationViewModel.pushDetail(with: activity.id)
+                        } label: {
+                            ActivityCellView(activity: activity)
+                                .foregroundStyle(.foreground)
+                        }
                     }
                 }
             }

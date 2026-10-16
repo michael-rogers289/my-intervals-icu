@@ -10,23 +10,38 @@ import SwiftUI
 struct StreamLegendView : View {
     
     @Binding var viewData: [StreamLegendViewData]
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     
     var body: some View {
-        CascadingGridLayout {
-            ForEach(0..<viewData.count, id: \.self) { index in
-                let data = viewData[index]
-                ToggleableButton(
-                    isSelected: data.isSelected,
-                    label: Text(data.streamType.title).font(.caption)) {
-                        Circle()
-                            .fill(data.streamType.color)
-                            .frame(width: .spacingMedium)
-                    } onTap: {
-                        withAnimation {
-                            viewData[index].toggle()
-                        }
-                    }
+        switch horizontalSizeClass {
+        case .regular:
+            CascadingGridLayout {
+                toggleableButtons
             }
+        default:
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack {
+                    toggleableButtons
+                }
+            }
+        }
+        
+    }
+    
+    private var toggleableButtons: some View {
+        ForEach(0..<viewData.count, id: \.self) { index in
+            let data = viewData[index]
+            ToggleableButton(
+                isSelected: data.isSelected,
+                label: Text(data.streamType.title).font(.caption)) {
+                    Circle()
+                        .fill(data.streamType.color)
+                        .frame(width: .spacingMedium)
+                } onTap: {
+                    withAnimation {
+                        viewData[index].toggle()
+                    }
+                }
         }
     }
 }
@@ -37,6 +52,7 @@ private struct ToggleableButton<LabelView: View>: View {
     let label: Text
     let icon: () -> LabelView
     let onTap: () -> Void
+    @State var isOn = true
     
     init(
         isSelected: Bool,
@@ -51,19 +67,19 @@ private struct ToggleableButton<LabelView: View>: View {
     }
     
     var body: some View {
-        Label {
-            label.lineLimit(1)
-        } icon: {
-            icon()
-        }
-        .padding(.spacingSmall)
-        .background {
-            if isSelected {
-                Color.gray.opacity(0.75)
+        Button {
+            onTap()
+        } label: {
+            Label {
+                label.lineLimit(1)
+            } icon: {
+                icon()
             }
+            .padding(.spacingSmall)
         }
-        .clipShape(.capsule)
-        .onTapGesture(perform: onTap)
+        .buttonStyle(.glass)
+        .buttonBorderShape(.capsule)
+        .tint(isSelected ? nil : .gray)
     }
     
 }

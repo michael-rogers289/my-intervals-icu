@@ -18,14 +18,13 @@ struct ActivityDetailView : View {
                     ActivitySummaryInfoView(
                         viewData: summaryInfo
                     )
-                    .padding(.spacingMedium)
                     StreamView()
                 } else {
                     EmptyView()
                 }
             }
         }
-        .padding(.spacingLarge)
+        .padding(.spacingMedium)
         .onAppear { viewModel.startObservation() }
     }
     

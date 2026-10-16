@@ -134,7 +134,7 @@ enum TimeSeriesStreamType : Int, CaseIterable {
         case .watts: .blue
         case .cadence: .purple
         case .heartrate: .red
-        case .altitude: .gray.opacity(0.3)
+        case .altitude: .gray
         case .smoothVelocity: .yellow
         case .verticalSpeed: .yellow
         case .torque: .green
@@ -146,6 +146,26 @@ enum TimeSeriesStreamType : Int, CaseIterable {
         case .rightTorqueEffectiveness: .blue
         case .coreTemperature: .green
         case .skinTemperature: .mint
+        }
+    }
+    
+    var isAreaChart: Bool {
+        return switch self {
+        case .watts,
+        .cadence,
+        .verticalSpeed,
+        .torque: false
+        case .smoothVelocity,
+        .heartrate,
+        .altitude,
+        .temp,
+        .leftRightBalance,
+        .leftPedalSmoothness,
+        .rightPedalSmoothness,
+        .leftTorqueEffectiveness,
+        .rightTorqueEffectiveness,
+        .coreTemperature,
+        .skinTemperature: true
         }
     }
 }
