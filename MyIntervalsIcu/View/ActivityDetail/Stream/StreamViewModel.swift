@@ -49,7 +49,7 @@ final class StreamViewModel {
             )
         }
     }
-    private(set) var streamSummaryData: [any StreamSummaryViewData] = []
+    private(set) var streamSummaryData: [StreamSummaryViewData] = []
 
     var subsectionStartIndex: Int?
     var subsectionEndIndex: Int?
@@ -107,14 +107,25 @@ final class StreamViewModel {
                 ) else { return }
                 for try await summary in summaries {
                     self?.streamSummaryData = summary
-                        .compactMap { summary in
-                            guard let timeSeriesType = TimeSeriesStreamType(streamType: summary.type),
-                                let measurementType = timeSeriesType.measurementType else { return nil }
-                            return AStreamSummaryViewData(
+                        .compactMap { summary -> StreamSummaryViewData? in
+                            guard let timeSeriesType = TimeSeriesStreamType(streamType: summary.type) else {
+                                return nil
+                            }
+
+                            let average = if timeSeriesType.removesZerosComputingAverage {
+                                timeSeriesType.measurementType(for: summary.averageExcludingZeros)
+                            } else {
+                                timeSeriesType.measurementType(for: summary.averageIncludingZeros)
+                            }
+                            let min = timeSeriesType.measurementType(for: summary.min)
+                            let max = timeSeriesType.measurementType(for: summary.max)
+                            guard let average, let min, let max else { return nil }
+
+                            return StreamSummaryViewData(
                                 type: timeSeriesType,
-                                min: Measurement(value: summary.min, unit: measurementType),
-                                average: Measurement(value: summary.average, unit: measurementType),
-                                max: Measurement(value: summary.max, unit: measurementType)
+                                min: min,
+                                average: average,
+                                max: max
                             )
                         }
                 }

@@ -111,22 +111,27 @@ enum TimeSeriesStreamType: Int, CaseIterable {
         }
     }
 
-    var measurementType: some Dimension? {
-        return switch self {
-        case .watts: UnitPower.watts
-        case .cadence: UnitFrequency.rotationsPerMinute
-        case .heartrate: UnitFrequency.heartBeatsPerMinute
-        case .altitude: UnitLength.meters
-        case .smoothVelocity: UnitSpeed.metersPerSecond
-        case .verticalSpeed: UnitSpeed.metersPerSecond
-        case .torque: UnitTorque.newtonMeter
-        case .temp, .coreTemperature, .skinTemperature: UnitTemperature.celsius
-        default: nil
-        }
+    var removesZerosComputingAverage: Bool {
+        self == .altitude || self == .cadence || self == .coreTemperature
     }
 
-    var removeZerosWhenComputingAverage: Bool {
-        self == .cadence || self == .coreTemperature
+    func measurementType(for value: Double) -> TimeSeriesStreamTypeMeasurement? {
+        let measurement: Measurement<Dimension>? = switch self {
+        case .watts: Measurement(value: value, unit: UnitPower.watts)
+        case .cadence: Measurement(value: value, unit: UnitFrequency.rotationsPerMinute)
+        case .heartrate: Measurement(value: value, unit: UnitFrequency.heartBeatsPerMinute)
+        case .altitude: Measurement(value: value, unit: UnitLength.meters)
+        case .smoothVelocity,
+                .verticalSpeed: Measurement(value: value, unit: UnitSpeed.metersPerSecond)
+                .converted(to: UnitSpeed.kilometersPerHour)
+        case .torque: Measurement(value: value, unit: UnitTorque.newtonMeter)
+        case .temp, .coreTemperature, .skinTemperature: Measurement(value: value, unit: UnitTemperature.celsius)
+        default: nil
+        }
+
+        guard let measurement else { return nil }
+
+        return TimeSeriesStreamTypeMeasurement(measurement: measurement)
     }
 
     var color: Color {
@@ -168,4 +173,13 @@ enum TimeSeriesStreamType: Int, CaseIterable {
         .skinTemperature: true
         }
     }
+}
+
+struct TimeSeriesStreamTypeMeasurement {
+    let measurement: Measurement<Dimension>
+    let format: Measurement<Dimension>.FormatStyle = Measurement<Dimension>.FormatStyle(
+        width: .narrow,
+        usage: .asProvided,
+        numberFormatStyle: .number.precision(.fractionLength(1))
+    )
 }

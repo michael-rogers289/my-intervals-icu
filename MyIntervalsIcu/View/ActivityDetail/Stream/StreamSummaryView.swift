@@ -9,7 +9,7 @@ import SwiftUI
 
 struct StreamSummaryView: View {
 
-    let viewData: [any StreamSummaryViewData]
+    let viewData: [StreamSummaryViewData]
 
     var body: some View {
         Grid(verticalSpacing: .spacingMedium) {
@@ -26,9 +26,18 @@ struct StreamSummaryView: View {
                 Divider()
                 GridRow(alignment: .center) {
                     Text(data.type.title)
-                    data.minText
-                    data.averageText
-                    data.maxText
+                    Text(
+                        data.min.measurement,
+                        format: data.min.format
+                    )
+                    Text(
+                        data.average.measurement,
+                        format: data.average.format
+                    )
+                    Text(
+                        data.max.measurement,
+                        format: data.average.format
+                    )
                 }.font(.callout)
             }
         }
@@ -39,27 +48,4 @@ struct StreamSummaryView: View {
         .cornerRadius(.spacingSmall)
     }
 
-}
-
-private extension StreamSummaryViewData {
-    var minText: Text {
-        Text(
-            min,
-            format: format
-        )
-    }
-
-    var averageText: Text {
-        Text(
-            average,
-            format: format
-        )
-    }
-
-    var maxText: Text {
-        Text(
-            max,
-            format: format
-        )
-    }
 }
