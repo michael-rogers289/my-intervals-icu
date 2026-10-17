@@ -137,8 +137,7 @@ final class ActivityDao: Sendable {
                     Sum(operand: factory.operand(from: secondsInZone)) * Operands.Raw(numeric: 100.0) /
                     Sum(
                         operand: Sum(operand: factory.operand(from: secondsInZone)))
-                    .over(partition: Partition(keyPath: \Stream.activityId)
-                    )
+                    .over()
                 }.asOther(name: "percentage_in_zone")
             },
             join: Join(firstTablePath: activityId, onOtherPath: \Activity.id),
