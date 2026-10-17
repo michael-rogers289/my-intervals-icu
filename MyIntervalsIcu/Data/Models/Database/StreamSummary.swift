@@ -13,6 +13,7 @@ struct StreamSummary: Codable, FetchableRecord {
     let type: StreamType
     let min: Double
     let max: Double
-    let average: Double
+    let averageIncludingZeros: Double
+    let averageExcludingZeros: Double
 
 }

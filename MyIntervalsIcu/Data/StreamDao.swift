@@ -43,7 +43,8 @@ class StreamDao {
                 .select(
                     [
                         Stream.Columns.type,
-                        average(Stream.Columns.value).forKey("average"),
+                        average(Stream.Columns.value).forKey("averageIncludingZeros"),
+                        SQL("AVG(NULLIF(value, 0))").forKey("averageExcludingZeros"),
                         min(Stream.Columns.value).forKey("min"),
                         max(Stream.Columns.value).forKey("max")
                     ]
@@ -68,7 +69,8 @@ class StreamDao {
                 .select(
                     [
                         Stream.Columns.type,
-                        average(Stream.Columns.value).forKey("average"),
+                        average(Stream.Columns.value).forKey("averageIncludingZeros"),
+                        SQL("AVG(NULLIF(value, 0))").forKey("averageExcludingZeros"),
                         min(Stream.Columns.value).forKey("min"),
                         max(Stream.Columns.value).forKey("max")
                     ]
