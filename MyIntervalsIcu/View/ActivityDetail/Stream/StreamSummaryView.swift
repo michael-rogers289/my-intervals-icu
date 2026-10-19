@@ -13,7 +13,7 @@ struct StreamSummaryView: View {
     let secondViewData: StreamSummaryViewData?
 
     var body: some View {
-        Grid(verticalSpacing: .spacingMedium) {
+        return Grid(verticalSpacing: .spacingSmall) {
             GridRow(alignment: .center) {
                 Color.clear
                 Text("Min")
@@ -24,23 +24,45 @@ struct StreamSummaryView: View {
             .frame(maxWidth: .infinity)
 
             Divider()
-            summary(for: firstViewData)
-            if let secondViewData {
-                Divider()
-                summary(for: secondViewData)
+
+            summary(for: firstViewData) {
+                ViewThatFits(in: .horizontal) {
+                    Label(
+                        "Activity",
+                        systemImage: "point.bottomleft.forward.to.point.topright.scurvepath.fill"
+                    )
+                    Text("Activity")
+                }
             }
 
+            if let secondViewData {
+                Divider()
+
+                summary(for: secondViewData) {
+                    ViewThatFits(in: .horizontal) {
+                        Label(
+                            "Selected",
+                            systemImage: "line.3.horizontal.decrease.circle.fill"
+                        )
+                        Text("Selected")
+                    }
+                }
+            }
         }
-        .padding(.spacingSmall)
+        .textScale(Text.Scale.secondary)
+        .padding(.spacingXSmall)
         .background {
             Color.gray.opacity(0.2)
         }
         .cornerRadius(.spacingSmall)
     }
 
-    private func summary(for viewData: StreamSummaryViewData) -> some View {
+    private func summary(
+        for viewData: StreamSummaryViewData,
+        @ViewBuilder label: () -> some View
+    ) -> some View {
         GridRow(alignment: .center) {
-            Text(viewData.type.title)
+            label()
             Text(
                 viewData.min.measurement,
                 format: viewData.min.format

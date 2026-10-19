@@ -20,19 +20,26 @@ struct StreamView: View {
 
             VStack(alignment: .center, spacing: .spacingLarge) {
                 ForEach(viewModel.viewData, id: \.streamType) { timeSeries in
-                    StreamChartView(
-                        viewData: timeSeries,
-                        isAreaChart: timeSeries.isAreaChart,
-                        overlayRect: $overlayRect,
-                        selectedStartIndex: $viewModel.subsectionStartIndex,
-                        selectedEndIndex: $viewModel.subsectionEndIndex,
-                    )
-                    .aspectRatio(1.0 / 0.2, contentMode: .fill)
-                    if let summary = timeSeries.summary {
-                        StreamSummaryView(firstViewData: summary, secondViewData: timeSeries.filteredSummary)
-                            .padding([.top, .bottom], .spacingLarge)
+                    GroupBox {
+                        StreamChartView(
+                            viewData: timeSeries,
+                            isAreaChart: timeSeries.isAreaChart,
+                            overlayRect: $overlayRect,
+                            selectedStartIndex: $viewModel.subsectionStartIndex,
+                            selectedEndIndex: $viewModel.subsectionEndIndex,
+                        )
+                        .aspectRatio(1.0 / 0.2, contentMode: .fill)
+                        if let summary = timeSeries.summary {
+                            StreamSummaryView(
+                                firstViewData: summary,
+                                secondViewData: timeSeries.filteredSummary
+                            )
+                                .padding(.top, .spacingLarge)
+                        }
+                    } label: {
+                        Text(timeSeries.title)
+                            .padding(.bottom, .spacingLarge)
                     }
-
                 }
             }
             .padding(.top, .spacingLarge)
