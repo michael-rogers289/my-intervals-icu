@@ -13,19 +13,20 @@ struct StreamLegendView: View {
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
 
     var body: some View {
-        switch horizontalSizeClass {
-        case .regular:
-            CascadingGridLayout {
-                toggleableButtons
-            }
-        default:
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack {
+        GlassEffectContainer {
+            switch horizontalSizeClass {
+            case .regular:
+                CascadingGridLayout {
                     toggleableButtons
+                }
+            default:
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack {
+                        toggleableButtons
+                    }
                 }
             }
         }
-
     }
 
     private var toggleableButtons: some View {
@@ -71,15 +72,16 @@ private struct ToggleableButton<LabelView: View>: View {
             onTap()
         } label: {
             Label {
-                label.lineLimit(1)
+                label
+                    .tint(.primary)
+                    .lineLimit(1)
             } icon: {
                 icon()
             }
             .padding(.spacingSmall)
         }
-        .buttonStyle(.glass)
+        .glassEffect(isSelected ? .regular.tint(.gray.opacity(0.5)) : .regular)
         .buttonBorderShape(.capsule)
-        .tint(isSelected ? nil : .gray)
     }
 
 }
