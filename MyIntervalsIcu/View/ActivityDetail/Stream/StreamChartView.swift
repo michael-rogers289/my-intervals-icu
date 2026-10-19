@@ -13,15 +13,21 @@ struct StreamChartView: View {
     private let viewData: StreamViewData.TimeSeries
     private let isAreaChart: Bool
     @Binding private var overlayRect: CGRect?
+    @Binding private var selectedStartIndex: Int?
+    @Binding private var selectedEndIndex: Int?
 
     init(
         viewData: StreamViewData.TimeSeries,
         isAreaChart: Bool,
-        overlayRect: Binding<CGRect?>
+        overlayRect: Binding<CGRect?>,
+        selectedStartIndex: Binding<Int?>,
+        selectedEndIndex: Binding<Int?>,
     ) {
         self.viewData = viewData
         self.isAreaChart = isAreaChart
         self._overlayRect = overlayRect
+        self._selectedStartIndex = selectedStartIndex
+        self._selectedEndIndex = selectedEndIndex
     }
 
     var body: some View {
@@ -48,11 +54,11 @@ struct StreamChartView: View {
                         return
                     }
 
-//                        if selectedStartIndex == nil {
-//                            selectedStartIndex = index
-//                        } else {
-//                            selectedEndIndex = index
-//                        }
+                    if selectedStartIndex == nil {
+                        selectedStartIndex = index
+                    } else {
+                        selectedEndIndex = index
+                    }
                 }
 
                 if let overlayRect {
@@ -70,8 +76,8 @@ struct StreamChartView: View {
                 }
             }
             .onTapGesture {
-//                selectedStartIndex = nil
-//                selectedEndIndex = nil
+                selectedStartIndex = nil
+                selectedEndIndex = nil
                 overlayRect = nil
             }
     }

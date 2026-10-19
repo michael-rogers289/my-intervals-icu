@@ -10,7 +10,7 @@ import Combine
 import GRDB
 import SqlDsl
 
-class StreamDao {
+final class StreamDao: Sendable {
 
     private let databaseQueue: DatabaseQueue
     private static let streamVirtualTable = Table("VirtualStreamType")
@@ -33,10 +33,11 @@ class StreamDao {
         }
     }
 
+    @DatabaseActor
     func getSummaries(
         for activityId: Activity.ActivityId,
         filteringBy types: [StreamType],
-        overTimeRange timeRange: Range<Int>
+        overTimeRange timeRange: Range<Int>?
     ) async throws -> [StreamSummary] {
         try await databaseQueue.read { database in
             try Stream
@@ -49,7 +50,7 @@ class StreamDao {
                         max(Stream.Columns.value).forKey("max")
                     ]
                 )
-                .filter { $0.activityId == activityId && timeRange.contains($0.order)}
+                .filter { $0.activityId == activityId && (timeRange?.contains($0.order) ?? true) }
                 .joining(required: Stream.streamType)
                 .group(\.type)
                 .asRequest(of: StreamSummary.self)
@@ -58,38 +59,12 @@ class StreamDao {
     }
 
     @DatabaseActor
-    func observeSummaries(
+    func getStreams(
         for activityId: Activity.ActivityId,
         filteringBy types: [StreamType]
-    ) async throws -> AsyncValueObservation<[StreamSummary]> {
+    ) async throws -> [StreamType: [StreamPoint]] {
         try await createVirtualTable(with: types)
-
-        return ValueObservation.tracking { database in
-            try Stream
-                .select(
-                    [
-                        Stream.Columns.type,
-                        average(Stream.Columns.value).forKey("averageIncludingZeros"),
-                        SQL("AVG(NULLIF(value, 0))").forKey("averageExcludingZeros"),
-                        min(Stream.Columns.value).forKey("min"),
-                        max(Stream.Columns.value).forKey("max")
-                    ]
-                )
-                .filter { $0.activityId == activityId }
-                .joining(required: Stream.streamType)
-                .group(\.type)
-                .asRequest(of: StreamSummary.self)
-                .fetchAll(database)
-        }.values(in: databaseQueue)
-    }
-
-    @DatabaseActor
-    func observeStreams(
-        for activityId: Activity.ActivityId,
-        filteringBy types: [StreamType]
-    ) async throws -> AsyncValueObservation<[StreamType: [StreamPoint]]> {
-        try await createVirtualTable(with: types)
-        return ValueObservation.tracking { database in
+        return try await databaseQueue.read { database in
             let streams = try Stream
                 .filter { $0.activityId == activityId }
                 .joining(required: Stream.streamType)
@@ -98,7 +73,6 @@ class StreamDao {
                 .fetchAll(database)
             return Dictionary(grouping: streams, by: \.type)
         }
-        .values(in: databaseQueue)
     }
 
     func getStreamTypes(for activityId: Activity.ActivityId) -> AnyPublisher<[StreamTypeLink], Error> {

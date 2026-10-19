@@ -9,7 +9,7 @@ import Foundation
 import GRDB
 import Combine
 
-class ActivityStreamRepository {
+final class ActivityStreamRepository: Sendable {
 
     private let networkManager: NetworkManager
     private let streamDao: StreamDao
@@ -31,23 +31,16 @@ class ActivityStreamRepository {
     func getSummaries(
         for activityId: Activity.ActivityId,
         filteringBy types: [StreamType],
-        overTimeRange timeRange: Range<Int>
+        overTimeRange timeRange: Range<Int>? = nil,
     ) async throws -> [StreamSummary] {
         try await streamDao.getSummaries(for: activityId, filteringBy: types, overTimeRange: timeRange)
     }
 
-    func observeSummaries(
+    func getStreams(
         for activityId: Activity.ActivityId,
         filteringBy types: [StreamType]
-    ) async throws -> AsyncValueObservation<[StreamSummary]> {
-        try await streamDao.observeSummaries(for: activityId, filteringBy: types)
-    }
-
-    func observeStreams(
-        for activityId: Activity.ActivityId,
-        filteringBy types: [StreamType]
-    ) async throws -> AsyncValueObservation<[StreamType: [StreamPoint]]> {
-        try await streamDao.observeStreams(for: activityId, filteringBy: types)
+    ) async throws -> [StreamType: [StreamPoint]] {
+        try await streamDao.getStreams(for: activityId, filteringBy: types)
     }
 
     func getStreams(_ types: [StreamType], for activityId: Activity.ActivityId) async throws {

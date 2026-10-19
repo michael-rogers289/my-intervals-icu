@@ -23,15 +23,19 @@ struct StreamView: View {
                     StreamChartView(
                         viewData: timeSeries,
                         isAreaChart: timeSeries.isAreaChart,
-                        overlayRect: $overlayRect
+                        overlayRect: $overlayRect,
+                        selectedStartIndex: $viewModel.subsectionStartIndex,
+                        selectedEndIndex: $viewModel.subsectionEndIndex,
                     )
                     .aspectRatio(1.0 / 0.2, contentMode: .fill)
+                    if let summary = timeSeries.summary {
+                        StreamSummaryView(firstViewData: summary, secondViewData: timeSeries.filteredSummary)
+                            .padding([.top, .bottom], .spacingLarge)
+                    }
+
                 }
             }
             .padding(.top, .spacingLarge)
-
-            StreamSummaryView(viewData: viewModel.streamSummaryData)
-                .padding([.top, .bottom], .spacingLarge)
         }
     }
 

@@ -20,6 +20,8 @@ struct StreamViewData {
     struct TimeSeries {
         let streamType: TimeSeriesStreamType
         let plottableData: [Point]
+        let summary: StreamSummaryViewData?
+        let filteredSummary: StreamSummaryViewData?
 
         subscript<T>(dynamicMember dynamicMember: KeyPath<TimeSeriesStreamType, T>) -> T {
             streamType[keyPath: dynamicMember]

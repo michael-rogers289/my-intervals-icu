@@ -9,12 +9,13 @@ import SwiftUI
 
 struct StreamSummaryView: View {
 
-    let viewData: [StreamSummaryViewData]
+    let firstViewData: StreamSummaryViewData
+    let secondViewData: StreamSummaryViewData?
 
     var body: some View {
         Grid(verticalSpacing: .spacingMedium) {
             GridRow(alignment: .center) {
-                Text("Metric")
+                Color.clear
                 Text("Min")
                 Text("Average")
                 Text("Max")
@@ -22,30 +23,37 @@ struct StreamSummaryView: View {
             .font(.headline)
             .frame(maxWidth: .infinity)
 
-            ForEach(viewData, id: \.type) { data in
+            Divider()
+            summary(for: firstViewData)
+            if let secondViewData {
                 Divider()
-                GridRow(alignment: .center) {
-                    Text(data.type.title)
-                    Text(
-                        data.min.measurement,
-                        format: data.min.format
-                    )
-                    Text(
-                        data.average.measurement,
-                        format: data.average.format
-                    )
-                    Text(
-                        data.max.measurement,
-                        format: data.average.format
-                    )
-                }.font(.callout)
+                summary(for: secondViewData)
             }
+
         }
         .padding(.spacingSmall)
         .background {
             Color.gray.opacity(0.2)
         }
         .cornerRadius(.spacingSmall)
+    }
+
+    private func summary(for viewData: StreamSummaryViewData) -> some View {
+        GridRow(alignment: .center) {
+            Text(viewData.type.title)
+            Text(
+                viewData.min.measurement,
+                format: viewData.min.format
+            )
+            Text(
+                viewData.average.measurement,
+                format: viewData.average.format
+            )
+            Text(
+                viewData.max.measurement,
+                format: viewData.average.format
+            )
+        }.font(.callout)
     }
 
 }
