@@ -8,7 +8,7 @@
 import CodingKeysMacro
 import GRDB
 
-struct StreamSummary: Codable, FetchableRecord {
+struct StreamSummary: Codable, Equatable, FetchableRecord {
 
     let type: StreamType
     let min: Double

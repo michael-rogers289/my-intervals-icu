@@ -23,7 +23,7 @@ struct StreamTypeLink: TableRecord, PersistableRecord, FetchableRecord, Codable 
     }
 }
 
-enum StreamType: String, CaseIterable, Codable, TableRecord, PersistableRecord, DatabaseValueConvertible {
+enum StreamType: String, Equatable, CaseIterable, Codable, TableRecord, PersistableRecord, DatabaseValueConvertible {
     case time
     case watts
     case cadence

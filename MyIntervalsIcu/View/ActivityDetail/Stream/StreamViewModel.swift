@@ -147,7 +147,9 @@ final class StreamViewModel {
                     for: selectedActivityId,
                     filteringBy: types,
                     overTimeRange: selectedTimeRange,
-                ).sink { completion in
+                )
+                .removeDuplicates()
+                .sink { completion in
                     switch completion {
                     case .finished: break
                     case .failure(let error):
@@ -176,6 +178,7 @@ final class StreamViewModel {
         }
         summaryStreamCancellable?.cancel()
         summaryStreamCancellable = streamRepository.getSummaries(for: selectedActivityId, filteringBy: types)
+            .removeDuplicates()
             .sink { completion in
                 switch completion {
                 case .finished: break
@@ -197,7 +200,9 @@ final class StreamViewModel {
         streamCancellable = streamRepository.getStreams(
             for: selectedActivityId,
             filteringBy: types
-        ).sink { completion in
+        )
+        .removeDuplicates()
+        .sink { completion in
             switch completion {
             case .finished: break
             case .failure(let error):

@@ -8,7 +8,7 @@
 import Foundation
 import GRDB
 
-struct StreamPoint: Codable, TableRecord, FetchableRecord {
+struct StreamPoint: Codable, Equatable, TableRecord, FetchableRecord {
     let value: Double
     let order: Int
     let type: StreamType
