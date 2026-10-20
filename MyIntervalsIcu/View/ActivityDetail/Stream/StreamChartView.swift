@@ -43,36 +43,41 @@ struct StreamChartView: View {
                 AxisMarks(position: .leading, values: .automatic)
             }
             .chartOverlay { chartProxy in
-                HorizontalPanGesture {
-                    Rectangle()
-                        .fill(.clear)
-                        .contentShape(.rect)
-                } onChanged: { frame in
-                    overlayRect = frame
+                GeometryReader { geometryProxy in
+                    HorizontalPanGesture {
+                        Rectangle()
+                            .fill(.clear)
+                            .contentShape(.rect)
+                    } onChanged: { frame in
+                        overlayRect = frame
+                        guard
+                            let plotContainerFrame = chartProxy.plotFrame,
+                            let index = chartProxy.value(
+                                atX: frame.origin.x + frame.width - geometryProxy[plotContainerFrame].minX,
+                                as: Int.self
+                            )
+                        else { return }
 
-                    guard let index: Int = chartProxy.value(atX: frame.origin.x + frame.width) else {
-                        return
+                        if selectedStartIndex == nil {
+                            selectedStartIndex = index
+                        } else {
+                            selectedEndIndex = index
+                        }
                     }
 
-                    if selectedStartIndex == nil {
-                        selectedStartIndex = index
-                    } else {
-                        selectedEndIndex = index
+                    if let overlayRect {
+                        Rectangle()
+                            .fill(.gray.opacity(0.3))
+                            .containerShape(.rect)
+                            .frame(
+                                width: overlayRect.width,
+                                height: overlayRect.height
+                            )
+                            .position(
+                                x: overlayRect.midX,
+                                y: overlayRect.midY
+                            )
                     }
-                }
-
-                if let overlayRect {
-                    Rectangle()
-                        .fill(.gray.opacity(0.3))
-                        .containerShape(.rect)
-                        .frame(
-                            width: overlayRect.width,
-                            height: overlayRect.height
-                        )
-                        .position(
-                            x: overlayRect.midX,
-                            y: overlayRect.midY
-                        )
                 }
             }
             .onTapGesture {
