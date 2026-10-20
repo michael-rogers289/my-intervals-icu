@@ -19,10 +19,13 @@ class SummaryViewModel {
 
     // MARK: Private Variables
     @ObservationIgnored
-    private var activityRepository = Container.shared.activityRepository.resolve()
+    private let activityRepository = Container.shared.activityRepository.resolve()
 
     @ObservationIgnored
-    private var calendarRepository = Container.shared.calendarRepository.resolve()
+    private let calendarRepository = Container.shared.calendarRepository.resolve()
+
+    @ObservationIgnored
+    private let viewLogger = Container.shared.viewLogger.resolve()
 
     private var currentWeek: DateInterval
     private var refreshTask: Task<Void, Never>?
@@ -47,6 +50,7 @@ class SummaryViewModel {
         do {
             currentWeek = try calendarRepository.getWeek(by: .startingAt(date: Date()))
         } catch {
+            viewLogger.logError(message: "CalendarRepository unable to create date for current week \(error)")
             fatalError("Unable to create date for current week")
         }
     }
@@ -56,25 +60,28 @@ class SummaryViewModel {
         refresh()
         cancellables.removeAll()
         activityRepository.getHeartRateZonesGroupedByZone(for: currentWeek)
-            .replaceError(with: [])
-            .combineLatest($summaryType)
+            .combineLatest($summaryType.setFailureType(to: Error.self))
             .map { zoneSummaries, summaryType in
                 zoneSummaries.map { ZoneSummaryViewData(zoneSummary: $0, summaryType: summaryType) }
             }
-            .sink { [weak self] summary in self?.heartRateSummaries = summary }
+            .sink { [weak self] in
+                self?.viewLogger.logError(message: "Failed to get heart rate zones \($0)")
+            } onReceieveValue: { [weak self] summary in self?.heartRateSummaries = summary }
             .store(in: &cancellables)
         activityRepository.getPowerZonesGroupedByZone(for: currentWeek)
-            .replaceError(with: [])
-            .combineLatest($summaryType)
+            .combineLatest($summaryType.setFailureType(to: Error.self))
             .map { zoneSummaries, summaryType in
                 zoneSummaries.map { ZoneSummaryViewData(zoneSummary: $0, summaryType: summaryType) }
             }
-            .sink { [weak self] summary in self?.powerSummaries = summary }
+            .sink { [weak self] in
+                self?.viewLogger.logError(message: "Failed to get power zones \($0)")
+            } onReceieveValue: { [weak self] summary in self?.powerSummaries = summary }
             .store(in: &cancellables)
         activityRepository.getDistanceSummaryByDayBetween(for: currentWeek)
-            .replaceError(with: Double.zero)
             // distance is stored in meters and we'd like to format to KM
-            .sink { [weak self] in self?.distanceForWeek = $0 / 1000.0 }
+            .sink { [weak self] in
+                self?.viewLogger.logError(message: "Failed to get distance \($0)")
+            } onReceieveValue: { [weak self] in self?.distanceForWeek = $0 / 1000.0 }
             .store(in: &cancellables)
     }
 
@@ -99,7 +106,7 @@ class SummaryViewModel {
             do {
                 try await self?.activityRepository.fetchActivitiesForDateRange(range: currentWeekRange)
             } catch {
-                print("Got error from network: \(error)")
+                self?.viewLogger.logError(message: "Got error from network: \(error)")
             }
         }
     }
@@ -110,7 +117,7 @@ class SummaryViewModel {
         do {
             currentWeek = try calendarRepository.getWeek(by: configuration)
         } catch {
-            print("Unable to create date starting at \(configuration.date)")
+            viewLogger.logError(message: "Unable to create date starting at \(configuration.date)")
         }
     }
 }

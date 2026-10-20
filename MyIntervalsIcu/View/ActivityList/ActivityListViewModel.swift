@@ -22,6 +22,9 @@ final class ActivityListViewModel {
     @ObservationIgnored
     private let calendarRepository = Container.shared.calendarRepository.resolve()
 
+    @ObservationIgnored
+    private let viewLogger = Container.shared.viewLogger.resolve()
+
     private let activityMapper = ActivityMapper()
     private var currentMonth: DateInterval
     private var refreshTask: Task<Void, Never>?
@@ -36,7 +39,8 @@ final class ActivityListViewModel {
         do {
             currentMonth = try calendarRepository.getCurrentMonth(from: Date())
         } catch {
-            fatalError("Unable to create date for current week")
+            viewLogger.logError(message: "CalendarRepository unable to create date for current week \(error)")
+            fatalError("Unable to create date for current week \(error)")
         }
     }
 
@@ -46,8 +50,9 @@ final class ActivityListViewModel {
         refresh()
         cancellables.removeAll()
         activityRepository.getActivities(for: currentMonth)
-            .replaceError(with: [])
-            .sink { [weak self] activities in self?.getSummaryChartBars(for: activities) }
+            .sink { [weak self] in
+                self?.viewLogger.logError(message: "Error observing activities: \($0)")
+            } onReceieveValue: { [weak self] activities in self?.getSummaryChartBars(for: activities) }
             .store(in: &cancellables)
     }
 
@@ -61,22 +66,24 @@ final class ActivityListViewModel {
             do {
                 try await self?.activityRepository.fetchActivitiesForDateRange(range: currentMonth)
             } catch {
-                print("Got error from network: \(error)")
+                self?.viewLogger.logError(message: "Error fetching activities: \(error)")
             }
         }
     }
 
     private func getSummaryChartBars(for activities: [Activity]) {
-        summaryChartTask = Task {
+        summaryChartTask = Task { [weak self] in
             var charts: [String: [SummaryChartBar]] = [:]
             do {
-                charts = try await activityRepository.getGroupedSummaryChartBars(for: activities)
+                charts = try await self?.activityRepository.getGroupedSummaryChartBars(for: activities) ?? [:]
             } catch {
-                print("Error while getting charts: \(error)")
+                self?.viewLogger.logError(message: "Error while getting charts: \(error)")
             }
 
+            guard let self else { return }
+
             self.activities = Dictionary(grouping: activities) { activity in
-                calendarRepository.startOfDay(on: activity.startDate)
+                self.calendarRepository.startOfDay(on: activity.startDate)
             }
             .map { startDate, activities in
                 ActivityListViewData(

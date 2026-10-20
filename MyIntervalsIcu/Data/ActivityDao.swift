@@ -60,8 +60,10 @@ final class ActivityDao: Sendable {
         .eraseToAnyPublisher()
     }
 
-    func getGroupedSummaryChartBars(for activityIds: [Activity.ActivityId]) throws -> [String: [SummaryChartBar]] {
-        return try databaseQueue.read { database in
+    func getGroupedSummaryChartBars(
+        for activityIds: [Activity.ActivityId]
+    ) async throws -> [String: [SummaryChartBar]] {
+        return try await databaseQueue.read { database in
             return Dictionary(
                 grouping: try SummaryChartBar
                     .filter(activityIds.contains(SummaryChartBar.Columns.activityId))

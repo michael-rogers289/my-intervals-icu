@@ -25,6 +25,10 @@ final class StreamViewModel {
     @Injected(\.detailActivityIdSelector)
     private var selectedActivityId
 
+    @ObservationIgnored
+    @Injected(\.viewLogger)
+    private var viewLogger
+
     private var streamLegendCancellable: AnyCancellable?
     private var streamCancellable: AnyCancellable?
     private var selectedTimeRangeSummaryCancellable: AnyCancellable?
@@ -89,15 +93,15 @@ final class StreamViewModel {
 
     private func getStreams(forActivity activityId: Activity.ActivityId, with types: [StreamType]) {
         streamRefreshTask?.cancel()
-        streamRefreshTask = Task {
+        streamRefreshTask = Task { [weak self] in
             do {
-                try await streamRepository.getStreams(
+                try await self?.streamRepository.getStreams(
                     types,
                     for: activityId
                 )
-                print("Got streams")
+                self?.viewLogger.logDebug(message: "successfully got streams")
             } catch {
-                print("Error getting streams: \(error)")
+                self?.viewLogger.logError(message: "Error getting streams: \(error)")
             }
         }
     }
@@ -105,13 +109,9 @@ final class StreamViewModel {
     private func startAllowedStreamsObservation(with selectedActivityId: Activity.ActivityId) {
         streamLegendCancellable = streamRepository.observeAllowedStreams(for: selectedActivityId)
             .removeDuplicates()
-            .sink { completion in
-                switch completion {
-                case .finished: break
-                case .failure(let error):
-                    print("unable to start stream observation \(error)")
-                }
-            } receiveValue: { [weak self] in
+            .sink { [weak self] in
+                self?.viewLogger.logError(message: "Error observing stream types \($0)")
+            } onReceieveValue: { [weak self] in
                 guard !$0.isEmpty else {
                     self?.resetObservers()
                     return
@@ -149,21 +149,17 @@ final class StreamViewModel {
                     overTimeRange: selectedTimeRange,
                 )
                 .removeDuplicates()
-                .sink { completion in
-                    switch completion {
-                    case .finished: break
-                    case .failure(let error):
-                        print("Error getting filtered summaries: \(error)")
-                    }
-                } receiveValue: { [weak self] in
-                    print("receiving filtered summaries")
+                .sink { [weak self] in
+                    self?.viewLogger.logError(message: "Error getting filtered summaries: \($0)")
+                } onReceieveValue: { [weak self] in
+                    self?.viewLogger.logDebug(message: "receiving filtered summaries")
                     self?.filteredSummaryViewData = $0.asSummaryDictionary
                 }
             } catch {
                 guard !(error is CancellationError) else {
                     return
                 }
-                print("Error getting filtered summaries: \(error)")
+                self?.viewLogger.logError(message: "Error getting filtered summaries: \(error)")
             }
         }
     }
@@ -179,15 +175,11 @@ final class StreamViewModel {
         summaryStreamCancellable?.cancel()
         summaryStreamCancellable = streamRepository.getSummaries(for: selectedActivityId, filteringBy: types)
             .removeDuplicates()
-            .sink { completion in
-                switch completion {
-                case .finished: break
-                case .failure(let error):
-                    print("Error getting summaries: \(error)")
-                }
-            } receiveValue: { [weak self] in
-                print("receiving summaries")
+            .sink { [weak self] in
+                self?.viewLogger.logError(message: "Error getting summaries: \($0)")
+            } onReceieveValue: { [weak self] in
                 self?.summaryViewData = $0.asSummaryDictionary
+                self?.viewLogger.logDebug(message: "receiving summaries")
             }
     }
 
@@ -202,14 +194,9 @@ final class StreamViewModel {
             filteringBy: types
         )
         .removeDuplicates()
-        .sink { completion in
-            switch completion {
-            case .finished: break
-            case .failure(let error):
-                print("Streams error: \(error)")
-            }
-        } receiveValue: { [weak self] in
-            print("received streams")
+        .sink { [weak self] in
+            self?.viewLogger.logError(message: "Streams error: \($0)")
+        } onReceieveValue: { [weak self] in
             self?.viewData = $0.compactMap { (key, value) -> StreamViewData.TimeSeries? in
                 guard let timeSeriesType = TimeSeriesStreamType(streamType: key) else { return nil }
                 return StreamViewData.TimeSeries(
@@ -217,6 +204,7 @@ final class StreamViewModel {
                     plottableData: value.map { StreamViewData.Point(x: Double($0.order), y: $0.value) }
                 )
             }.sorted { $0.streamType.rawValue < $1.streamType.rawValue }
+            self?.viewLogger.logDebug(message: "received streams")
         }
     }
 

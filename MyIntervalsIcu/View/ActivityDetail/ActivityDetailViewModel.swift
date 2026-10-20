@@ -24,6 +24,10 @@ final class ActivityDetailViewModel {
     @Injected(\.detailActivityIdSelector)
     private var selectedActivityId
 
+    @ObservationIgnored
+    @Injected(\.viewLogger)
+    private var viewLogger
+
     private let activityMapper = ActivityMapper()
     private var cancellables: Set<AnyCancellable> = []
 
@@ -37,8 +41,9 @@ final class ActivityDetailViewModel {
         guard let selectedActivityId else { return }
         activityRepository
             .getActivity(byId: selectedActivityId)
-            .replaceError(with: nil)
-            .sink { [weak self] activity in
+            .sink { [weak self] in
+                self?.viewLogger.logError(message: "Error observing activity: \($0)")
+            } onReceieveValue: { [weak self] activity in
                 guard let activity else {
                     self?.summaryInfo = nil
                     return
