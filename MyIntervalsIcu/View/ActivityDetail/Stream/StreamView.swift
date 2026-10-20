@@ -29,10 +29,10 @@ struct StreamView: View {
                             selectedEndIndex: $viewModel.subsectionEndIndex,
                         )
                         .aspectRatio(1.0 / 0.2, contentMode: .fill)
-                        if let summary = timeSeries.summary {
+                        if let summary = viewModel.summaryViewData[timeSeries.streamType] {
                             StreamSummaryView(
                                 firstViewData: summary,
-                                secondViewData: timeSeries.filteredSummary
+                                secondViewData: viewModel.filteredSummaryViewData[summary.type]
                             )
                                 .padding(.top, .spacingLarge)
                         }

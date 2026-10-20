@@ -25,10 +25,12 @@ final class StreamViewModel {
     @Injected(\.detailActivityIdSelector)
     private var selectedActivityId
 
-    private var cancellables: Set<AnyCancellable> = []
-    private var streamsObservationTask: Task<Void, Never>?
-    private var streamTask: Task<Void, Never>?
-    private var subsectionStreamTask: Task<Void, Never>?
+    private var streamLegendCancellable: AnyCancellable?
+    private var streamCancellable: AnyCancellable?
+    private var selectedTimeRangeSummaryCancellable: AnyCancellable?
+    private var summaryStreamCancellable: AnyCancellable?
+    private var streamRefreshTask: Task<Void, Never>?
+    private var selectedTimeRangeDebounceTask: Task<Void, Never>?
 
     private var selectedTimeRange: Range<Int>? {
         guard let subsectionStartIndex, let subsectionEndIndex else { return nil }
@@ -43,13 +45,19 @@ final class StreamViewModel {
     // MARK: Public Variables
 
     private(set) var viewData: [StreamViewData.TimeSeries] = []
+    private(set) var summaryViewData: [TimeSeriesStreamType: StreamSummaryViewData] = [:]
+    private(set) var filteredSummaryViewData: [TimeSeriesStreamType: StreamSummaryViewData] = [:]
     var selectableStreamTypes: [StreamLegendViewData] = [] {
         didSet {
             guard let selectedActivityId = selectedActivityId else { return }
+            let selectedStreams = selectedStreamTypes
+            print("Starting observation: \(selectedStreams)")
             startStreamObservation(
                 with: selectedActivityId,
-                filteringBy: selectedStreamTypes
+                filteringBy: selectedStreams
             )
+            startSummaryObservation(with: selectedActivityId, filteringBy: selectedStreams)
+            getStreamsForSubsectionIndexIfNeeded(filteredBy: selectedStreams)
         }
     }
 
@@ -69,9 +77,20 @@ final class StreamViewModel {
 
     // MARK: Private Methods
 
+    private func resetObservers() {
+        selectableStreamTypes = []
+        summaryStreamCancellable?.cancel()
+        summaryStreamCancellable = nil
+        streamCancellable?.cancel()
+        streamCancellable = nil
+        filteredSummaryViewData = [:]
+        selectedTimeRangeSummaryCancellable?.cancel()
+        selectedTimeRangeSummaryCancellable = nil
+    }
+
     private func getStreams(forActivity activityId: Activity.ActivityId, with types: [StreamType]) {
-        streamTask?.cancel()
-        streamTask = Task {
+        streamRefreshTask?.cancel()
+        streamRefreshTask = Task {
             do {
                 try await streamRepository.getStreams(
                     types,
@@ -85,52 +104,58 @@ final class StreamViewModel {
     }
 
     private func startAllowedStreamsObservation(with selectedActivityId: Activity.ActivityId) {
-        streamRepository.observeAllowedStreams(for: selectedActivityId)
-            .replaceError(with: []) // TODO: REMOVE ME
+        streamLegendCancellable = streamRepository.observeAllowedStreams(for: selectedActivityId)
             .removeDuplicates()
-            .sink { [weak self] in
+            .sink { completion in
+                switch completion {
+                case .finished: break
+                case .failure(let error):
+                    print("unable to start stream observation \(error)")
+                }
+            } receiveValue: { [weak self] in
                 guard !$0.isEmpty else {
-                    self?.selectableStreamTypes = []
+                    self?.resetObservers()
                     return
                 }
+
                 self?.getStreams(forActivity: selectedActivityId, with: $0)
+
                 self?.selectableStreamTypes = $0.compactMap {
                     guard let streamType = TimeSeriesStreamType(streamType: $0) else { return nil }
                     return StreamLegendViewData(streamType: streamType, isSelected: streamType.defaultPlottable)
                 }
                 .sorted { $0.streamType.rawValue < $1.streamType.rawValue }
             }
-            .store(in: &cancellables)
     }
 
-    private func getStreamsForSubsectionIndexIfNeeded(filteredBy streams: [StreamType]) {
-        guard streams.isEmpty == false, // TODO: Reset
+    private func getStreamsForSubsectionIndexIfNeeded(filteredBy types: [StreamType]) {
+        guard types.isEmpty == false,
               let selectedActivityId,
               let selectedTimeRange else {
+            filteredSummaryViewData = [:]
             return
         }
-        subsectionStreamTask?.cancel()
-        subsectionStreamTask = Task { [weak self] in
+
+        selectedTimeRangeSummaryCancellable?.cancel()
+        selectedTimeRangeDebounceTask?.cancel()
+
+        selectedTimeRangeDebounceTask = Task { [weak self] in
             do {
                 try await Task.sleep(for: .milliseconds(400))
-                guard !Task.isCancelled,
-                      let currentViewData = self?.viewData else { return }
+                guard !Task.isCancelled else { return }
 
-                let subsectionStreamSummary = try await self?.streamRepository.getSummaries(
+                self?.selectedTimeRangeSummaryCancellable = self?.streamRepository.getSummaries(
                     for: selectedActivityId,
-                    filteringBy: streams,
+                    filteringBy: types,
                     overTimeRange: selectedTimeRange,
-                )
-
-                self?.viewData = currentViewData.map { timeSeries -> StreamViewData.TimeSeries in
-                    return StreamViewData.TimeSeries(
-                        streamType: timeSeries.streamType,
-                        plottableData: timeSeries.plottableData,
-                        summary: timeSeries.summary,
-                        filteredSummary: subsectionStreamSummary?
-                            .first(where: { TimeSeriesStreamType(streamType: $0.type) == timeSeries.streamType })
-                            .map { StreamSummaryViewData(summary: $0, timeSeriesType: timeSeries.streamType) }
-                    )
+                ).sink { completion in
+                    switch completion {
+                    case .finished: break
+                    case .failure(let error):
+                        print("Error getting filtered summaries: \(error)")
+                    }
+                } receiveValue: { [weak self] in
+                    self?.filteredSummaryViewData = $0.asSummaryDictionary
                 }
             } catch {
                 guard !(error is CancellationError) else {
@@ -141,72 +166,63 @@ final class StreamViewModel {
         }
     }
 
+    private func startSummaryObservation(
+        with selectedActivityId: Activity.ActivityId,
+        filteringBy types: [StreamType]
+    ) {
+        guard types.isEmpty == false else {
+            summaryViewData = [:]
+            return
+        }
+        summaryStreamCancellable?.cancel()
+        summaryStreamCancellable = streamRepository.getSummaries(for: selectedActivityId, filteringBy: types)
+            .sink { completion in
+                switch completion {
+                case .finished: break
+                case .failure(let error):
+                    print("Error getting summaries: \(error)")
+                }
+            } receiveValue: { [weak self] in
+                self?.summaryViewData = $0.asSummaryDictionary
+            }
+    }
+
     private func startStreamObservation(with selectedActivityId: Activity.ActivityId, filteringBy types: [StreamType]) {
         guard !types.isEmpty else {
             viewData = []
             return
         }
-
-        streamsObservationTask?.cancel()
-        streamsObservationTask = Task { [weak self] in
-            do {
-                async let streams = try await self?.streamRepository.getStreams(
-                    for: selectedActivityId,
-                    filteringBy: types
+        streamCancellable?.cancel()
+        streamCancellable = streamRepository.getStreams(
+            for: selectedActivityId,
+            filteringBy: types
+        ).map {
+            $0.compactMap { (key, value) -> StreamViewData.TimeSeries? in
+                guard let timeSeriesType = TimeSeriesStreamType(streamType: key) else { return nil }
+                return StreamViewData.TimeSeries(
+                    streamType: timeSeriesType,
+                    plottableData: value.map { StreamViewData.Point(x: Double($0.order), y: $0.value) }
                 )
-                async let summary = try await self?.streamRepository.getSummaries(
-                    for: selectedActivityId,
-                    filteringBy: types,
-                )
-
-                let filteredSummary: [StreamSummary]? = if let selectedTimeRange = self?.selectedTimeRange {
-                    try await self?.streamRepository.getSummaries(
-                        for: selectedActivityId,
-                        filteringBy: types,
-                        overTimeRange: selectedTimeRange,
-                    )
-                } else {
-                    nil
-                }
-
-                guard let streams = try await streams,
-                      let summary = try await summary else {
-                    return
-                }
-
-                let mapped = streams.compactMap { (key, value) -> StreamViewData.TimeSeries? in
-                    guard let timeSeriesType = TimeSeriesStreamType(streamType: key) else { return nil }
-                    return StreamViewData.TimeSeries(
-                        streamType: timeSeriesType,
-                        plottableData: value.map {
-                            StreamViewData.Point(
-                                x: Double($0.order),
-                                y: $0.value
-                            )
-                        },
-                        summary: summary
-                            .first(where: { $0.type == key })
-                            .map { StreamSummaryViewData(summary: $0, timeSeriesType: timeSeriesType) },
-                        filteredSummary: filteredSummary?.first(where: { $0.type == key })
-                            .map { StreamSummaryViewData(summary: $0, timeSeriesType: timeSeriesType) }
-                    )
-                }.sorted { $0.streamType.rawValue < $1.streamType.rawValue }
-                self?.viewData = mapped
-            } catch {
+            }.sorted { $0.streamType.rawValue < $1.streamType.rawValue }
+        }.sink { completion in
+            switch completion {
+            case .finished: break
+            case .failure(let error):
                 print("Streams error: \(error)")
             }
+        } receiveValue: { [weak self] in
+            self?.viewData = $0
         }
     }
 
 }
 
-extension Optional {
+fileprivate extension Array<StreamSummary> {
 
-    func map<R>(_ body: (Wrapped) throws -> R?) rethrows -> R? {
-        if let wrapped = self {
-            try body(wrapped)
-        } else {
-            nil
+    var asSummaryDictionary: [TimeSeriesStreamType: StreamSummaryViewData] {
+        self.reduce(into: [:]) { summaryDictionary, summary in
+            guard let type = TimeSeriesStreamType(streamType: summary.type) else { return }
+            summaryDictionary[type] = StreamSummaryViewData(summary: summary, timeSeriesType: type)
         }
     }
 

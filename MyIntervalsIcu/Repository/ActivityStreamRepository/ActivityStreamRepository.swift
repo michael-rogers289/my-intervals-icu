@@ -32,15 +32,15 @@ final class ActivityStreamRepository: Sendable {
         for activityId: Activity.ActivityId,
         filteringBy types: [StreamType],
         overTimeRange timeRange: Range<Int>? = nil,
-    ) async throws -> [StreamSummary] {
-        try await streamDao.getSummaries(for: activityId, filteringBy: types, overTimeRange: timeRange)
+    ) -> AnyPublisher<[StreamSummary], Error> {
+        streamDao.observeSummaries(for: activityId, filteringBy: types, overTimeRange: timeRange)
     }
 
     func getStreams(
         for activityId: Activity.ActivityId,
         filteringBy types: [StreamType]
-    ) async throws -> [StreamType: [StreamPoint]] {
-        try await streamDao.getStreams(for: activityId, filteringBy: types)
+    ) -> AnyPublisher<[StreamType: [StreamPoint]], Error> {
+        streamDao.observeStreams(for: activityId, filteringBy: types)
     }
 
     func getStreams(_ types: [StreamType], for activityId: Activity.ActivityId) async throws {

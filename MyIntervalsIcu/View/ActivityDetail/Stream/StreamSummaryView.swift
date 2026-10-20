@@ -75,7 +75,9 @@ struct StreamSummaryView: View {
                 viewData.max.measurement,
                 format: viewData.average.format
             )
-        }.font(.callout)
+        }
+        .font(.callout)
+        .padding(.vertical, .spacingSmall)
     }
 
 }
