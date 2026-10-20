@@ -18,6 +18,7 @@ struct ActivityDetailView: View {
                     ActivitySummaryInfoView(
                         viewData: summaryInfo
                     )
+                    StreamMapView()
                     StreamView()
                 } else {
                     EmptyView()

@@ -21,4 +21,17 @@ extension NetworkManager {
         return try await self.fetchAndDecode(with: request)
     }
 
+    func getStreamCoordinates(for activityId: Activity.ActivityId) async throws -> StreamDto? {
+        let request = NetworkRequestBuilder.makeActivityRequest(
+            activityId: activityId,
+            appendingPath: "streamsjson",
+            addingQueryParameters: URLQueryItem(
+                name: "types",
+                value: StreamTypeDto.lattitudeLongitude.rawValue
+            )
+        )
+        let streams: [StreamDto] = try await self.fetchAndDecode(with: request)
+        return streams.first
+    }
+
 }

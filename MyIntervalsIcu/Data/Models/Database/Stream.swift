@@ -7,10 +7,8 @@
 
 import CodingKeysMacro
 import GRDB
-import SqlDsl
 
 @CodingKeys(.all)
-@CodingKeyMappable
 struct Stream: Codable, TableRecord, FetchableRecord, PersistableRecord {
 
     static let streamType = hasOne(

@@ -20,6 +20,7 @@ extension DatabaseQueue {
         case activityheartRateZone = "ActivityHeartRateZone"
         case stream = "Stream"
         case streamTypeLink = "StreamTypeLink"
+        case activityCoordinate = "ActivityCoordinate"
     }
 
     func createTables() throws {
@@ -30,6 +31,7 @@ extension DatabaseQueue {
             try createSummaryChartBarTable(with: database)
             try createStreamTypeTables(with: database)
             try createStreamTable(with: database)
+            try createActivityCoordinateTable(with: database)
         }
     }
 
@@ -199,6 +201,30 @@ extension DatabaseQueue {
                 Stream.Columns.order.name
             ],
         )
+    }
+
+    private func createActivityCoordinateTable(with database: Database) throws {
+        guard try !database.tableExists(Tables.activityCoordinate.rawValue) else { return }
+        try database.create(table: Tables.activityCoordinate.rawValue) { table in
+            table.column(ActivityCoordinate.Columns.id.name, .text)
+                .primaryKey(onConflict: .replace)
+            table.column(ActivityCoordinate.Columns.activityId.name, .text)
+                .indexed()
+                .notNull()
+            table.column(ActivityCoordinate.Columns.latitude.name, .numeric)
+            table.column(ActivityCoordinate.Columns.longitude.name, .numeric)
+            table.column(ActivityCoordinate.Columns.order.name, .integer)
+                .indexed()
+                .notNull()
+
+            table.foreignKey(
+                [ActivityCoordinate.Columns.activityId.name],
+                references: Tables.activity.rawValue,
+                columns: [Activity.codingKey(for: \.id)],
+                onDelete: .cascade,
+                onUpdate: .cascade
+            )
+        }
     }
 
 }

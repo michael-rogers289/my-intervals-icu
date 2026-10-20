@@ -26,6 +26,12 @@ extension Container {
         }.singleton
     }
 
+    var activityCoordinateDao: Factory<ActivityCoordinateDao> {
+        self {
+            ActivityCoordinateDao(databaseQueue: Container.shared.databaseQueue.resolve())
+        }.singleton
+    }
+
     var databaseQueue: Factory<DatabaseQueue> {
         self {
 #if DEBUG
