@@ -95,10 +95,10 @@ final class StreamViewModel {
                     types,
                     for: activityId
                 )
+                print("Got streams")
             } catch {
                 print("Error getting streams: \(error)")
             }
-
         }
     }
 
@@ -154,6 +154,7 @@ final class StreamViewModel {
                         print("Error getting filtered summaries: \(error)")
                     }
                 } receiveValue: { [weak self] in
+                    print("receiving filtered summaries")
                     self?.filteredSummaryViewData = $0.asSummaryDictionary
                 }
             } catch {
@@ -182,6 +183,7 @@ final class StreamViewModel {
                     print("Error getting summaries: \(error)")
                 }
             } receiveValue: { [weak self] in
+                print("receiving summaries")
                 self?.summaryViewData = $0.asSummaryDictionary
             }
     }
@@ -195,22 +197,21 @@ final class StreamViewModel {
         streamCancellable = streamRepository.getStreams(
             for: selectedActivityId,
             filteringBy: types
-        ).map {
-            $0.compactMap { (key, value) -> StreamViewData.TimeSeries? in
-                guard let timeSeriesType = TimeSeriesStreamType(streamType: key) else { return nil }
-                return StreamViewData.TimeSeries(
-                    streamType: timeSeriesType,
-                    plottableData: value.map { StreamViewData.Point(x: Double($0.order), y: $0.value) }
-                )
-            }.sorted { $0.streamType.rawValue < $1.streamType.rawValue }
-        }.sink { completion in
+        ).sink { completion in
             switch completion {
             case .finished: break
             case .failure(let error):
                 print("Streams error: \(error)")
             }
         } receiveValue: { [weak self] in
-            self?.viewData = $0
+            print("received streams")
+            self?.viewData = $0.compactMap { (key, value) -> StreamViewData.TimeSeries? in
+                guard let timeSeriesType = TimeSeriesStreamType(streamType: key) else { return nil }
+                return StreamViewData.TimeSeries(
+                    streamType: timeSeriesType,
+                    plottableData: value.map { StreamViewData.Point(x: Double($0.order), y: $0.value) }
+                )
+            }.sorted { $0.streamType.rawValue < $1.streamType.rawValue }
         }
     }
 

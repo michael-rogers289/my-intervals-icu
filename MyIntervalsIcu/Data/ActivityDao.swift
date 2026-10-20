@@ -10,10 +10,6 @@ import Foundation
 import SqlDsl
 import GRDB
 
-@globalActor actor DatabaseActor {
-    static let shared = DatabaseActor()
-}
-
 final class ActivityDao: Sendable {
 
     let calendarRepository: CalendarRepository
@@ -32,7 +28,6 @@ final class ActivityDao: Sendable {
         }
     }
 
-    @DatabaseActor
     func insertAll(
         activities: [Activity],
         heartRateZones: [ActivityHeartRateZone],
@@ -65,7 +60,6 @@ final class ActivityDao: Sendable {
         .eraseToAnyPublisher()
     }
 
-    @DatabaseActor
     func getGroupedSummaryChartBars(for activityIds: [Activity.ActivityId]) throws -> [String: [SummaryChartBar]] {
         return try databaseQueue.read { database in
             return Dictionary(

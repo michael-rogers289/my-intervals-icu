@@ -65,7 +65,7 @@ final class ActivityStreamRepository: Sendable {
             } ?? []
         }
 
-        await streamDao.store(streams: streams)
+        try await streamDao.store(streams: streams)
     }
 
 }

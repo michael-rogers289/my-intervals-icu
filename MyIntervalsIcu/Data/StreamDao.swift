@@ -19,16 +19,14 @@ final class StreamDao: Sendable {
         self.databaseQueue = databaseQueue
     }
 
-    @DatabaseActor
     func store(streamTypeLinks: [StreamTypeLink]) async {
         try? await databaseQueue.write { database in
             try streamTypeLinks.insertAll(in: database)
         }
     }
 
-    @DatabaseActor
-    func store(streams: [Stream]) async {
-        try? await databaseQueue.write { database in
+    func store(streams: [Stream]) async throws {
+        try await databaseQueue.write { database in
             try streams.insertAll(in: database)
         }
     }
