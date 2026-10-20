@@ -51,7 +51,6 @@ final class StreamViewModel {
         didSet {
             guard let selectedActivityId = selectedActivityId else { return }
             let selectedStreams = selectedStreamTypes
-            print("Starting observation: \(selectedStreams)")
             startStreamObservation(
                 with: selectedActivityId,
                 filteringBy: selectedStreams
