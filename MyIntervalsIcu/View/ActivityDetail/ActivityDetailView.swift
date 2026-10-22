@@ -19,7 +19,6 @@ struct ActivityDetailView: View {
                         viewData: summaryInfo
                     )
                     StreamMapView()
-                    DoubleSliderView()
                     StreamView()
                 } else {
                     EmptyView()

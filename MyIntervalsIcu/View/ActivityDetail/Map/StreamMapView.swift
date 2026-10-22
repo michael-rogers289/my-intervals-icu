@@ -13,17 +13,27 @@ struct StreamMapView: View {
     @State private var viewModel = StreamMapViewModel()
 
     var body: some View {
-        Group {
-            if viewModel.mapMarks.isEmpty {
-                ProgressView()
-            } else {
-                Map {
-                    MapPolyline(points: viewModel.mapMarks)
-                        .stroke(.blue, lineWidth: 5.0)
+        VStack {
+            Group {
+                if viewModel.viewData.selectedMapMarks.isEmpty {
+                    ProgressView()
+                } else {
+                    Map {
+                        MapPolyline(points: viewModel.viewData.selectedMapMarks)
+                            .stroke(.blue, lineWidth: 5.0)
+
+                        Group {
+                            MapPolyline(points: viewModel.viewData.lowerExcludedMapMarks)
+                            MapPolyline(points: viewModel.viewData.upperExcludedMapMarks)
+                        }.stroke(.gray, lineWidth: 2.0)
+                    }
+                    .disabled(true)
+                    .mapControlVisibility(.hidden)
                 }
-                .mapControlVisibility(.hidden)
             }
+            .aspectRatio(1.0 / 0.4, contentMode: .fill)
+
+            DoubleSliderView(selection: $viewModel.selectionViewData)
         }
-        .aspectRatio(1.0 / 0.4, contentMode: .fill)
     }
 }
