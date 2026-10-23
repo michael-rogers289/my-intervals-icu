@@ -42,7 +42,6 @@
 		173CA36C2EC0364C008FEAA6 /* Exceptions for "MyIntervalsIcu" folder in "MyIntervalsIcu" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				Config/Api.xcconfig,
 				Info.plist,
 			);
 			target = 1760FCC52EBFFC6800AAD022 /* MyIntervalsIcu */;
