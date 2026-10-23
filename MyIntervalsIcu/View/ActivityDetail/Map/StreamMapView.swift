@@ -5,12 +5,14 @@
 //  Created by Mike Rogers on 10/20/26.
 //
 
-import SwiftUI
+import FactoryKit
 import MapKit
+import SwiftUI
 
 struct StreamMapView: View {
 
     @State private var viewModel = StreamMapViewModel()
+    @State private var selectionViewmModel = Container.shared.activityDetailViewModel.resolve()
 
     var body: some View {
         VStack {
@@ -33,7 +35,10 @@ struct StreamMapView: View {
             }
             .aspectRatio(1.0 / 0.4, contentMode: .fill)
 
-            DoubleSliderView(selection: $viewModel.selectionViewData)
+            DoubleSliderView(
+                lowerSelectionRangeAsPercent: $selectionViewmModel.lowerSelectionRangeAsPercent,
+                upperSelectionRangeAsPercent: $selectionViewmModel.upperSelectionRangeAsPercent
+            )
         }
     }
 }

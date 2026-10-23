@@ -13,4 +13,11 @@ extension Container {
         self { nil }
     }
 
+    @MainActor
+    var activityDetailViewModel: Factory<ActivityDetailViewModel & SelectionViewModel> {
+        self {
+            ActivityDetailViewModel()
+        }.shared
+    }
+
 }

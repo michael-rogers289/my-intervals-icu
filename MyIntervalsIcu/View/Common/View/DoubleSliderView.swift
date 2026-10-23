@@ -9,12 +9,6 @@ import SwiftUI
 
 struct DoubleSliderView: View {
 
-    struct Selection: Equatable {
-        static let `default` = Selection(upperSelectionRangeAsPercent: 1.0, lowerSelectionRangeAsPercent: 0.0)
-        let upperSelectionRangeAsPercent: Double
-        let lowerSelectionRangeAsPercent: Double
-    }
-
     private enum Constant {
         static let indicatorSize: CGFloat = 22.0
         static let fullIndicatorSize: CGFloat = indicatorSize * 2.0
@@ -22,17 +16,19 @@ struct DoubleSliderView: View {
         static let barHeight: CGFloat = 3.0
     }
 
-    @State private var leadingLocation: CGFloat = .zero
-    @State private var trailingLocation: CGFloat = .zero
-
-    @Binding var selection: Selection
-
-    init(selection: Binding<Selection>) {
-        self._selection = selection
-    }
+    @Binding var lowerSelectionRangeAsPercent: Double
+    @Binding var upperSelectionRangeAsPercent: Double
 
     var body: some View {
         GeometryReader { proxy in
+            let leadingLocation = min(
+                max(proxy.size.width * lowerSelectionRangeAsPercent, .zero),
+                proxy.size.width - Constant.fullIndicatorSize
+            )
+            let trailingLocation = min(
+                max(proxy.size.width * (1 - upperSelectionRangeAsPercent), .zero),
+                proxy.size.width - Constant.fullIndicatorSize
+            )
             ZStack(alignment: .center) {
                 RoundedRectangle(cornerSize: CGSize(width: Constant.barCornerRadius, height: Constant.barCornerRadius))
                     .size(
@@ -45,14 +41,12 @@ struct DoubleSliderView: View {
                 HStack(alignment: .center, spacing: .zero) {
                     Color.clear.frame(width: leadingLocation)
                     indicator { float in
-                        leadingLocation = min(
+                        let updatedLeadingLocation = min(
                             max(leadingLocation + float, .zero),
                             proxy.size.width - trailingLocation - Constant.fullIndicatorSize
                         )
-                        selection = Selection(
-                            upperSelectionRangeAsPercent: selection.upperSelectionRangeAsPercent,
-                            lowerSelectionRangeAsPercent: leadingLocation / (proxy.size.width - Constant.indicatorSize)
-                        )
+                        lowerSelectionRangeAsPercent = updatedLeadingLocation
+                        / (proxy.size.width - Constant.indicatorSize)
                     }
                     RoundedRectangle(
                         cornerSize: CGSize(
@@ -68,15 +62,12 @@ struct DoubleSliderView: View {
                         .fill(.blue.opacity(0.8))
 
                     indicator { float in
-                        trailingLocation = min(
+                        let updatedTrailingLocation = min(
                             max(trailingLocation - float, .zero),
                             proxy.size.width - leadingLocation - Constant.fullIndicatorSize
                         )
-                        selection = Selection(
-                            upperSelectionRangeAsPercent: 1 - trailingLocation / (
-                                proxy.size.width - Constant.indicatorSize
-                            ),
-                            lowerSelectionRangeAsPercent: selection.lowerSelectionRangeAsPercent
+                        upperSelectionRangeAsPercent = 1 - updatedTrailingLocation / (
+                            proxy.size.width - Constant.indicatorSize
                         )
                     }
                     Color.clear.frame(width: trailingLocation)
@@ -106,5 +97,5 @@ struct DoubleSliderView: View {
 }
 
 #Preview {
-    DoubleSliderView(selection: Binding.constant(DoubleSliderView.Selection.default))
+    DoubleSliderView(lowerSelectionRangeAsPercent: .constant(0.35), upperSelectionRangeAsPercent: .constant(0.85))
 }

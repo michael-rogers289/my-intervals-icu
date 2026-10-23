@@ -34,16 +34,13 @@ final class StreamMapViewModel {
 
     private let coordinateRepository = Container.shared.activityCoordinateRepository.resolve()
     private let selectedActivityId = Container.shared.detailActivityIdSelector.resolve()
-    private var viewLogger = Container.shared.viewLogger.resolve()
+    private let viewLogger = Container.shared.viewLogger.resolve()
+    private let selectionViewModel: SelectionViewModel = Container.shared.activityDetailViewModel.resolve()
     private var latLongCancellable: AnyCancellable?
 
     // MARK: Public Variables
 
     private(set) var viewData = ViewData()
-
-    @ObservationIgnored
-    @Published
-    var selectionViewData: DoubleSliderView.Selection = .default
 
     // MARK: Life Cycle
 
@@ -59,17 +56,13 @@ final class StreamMapViewModel {
 
         latLongCancellable = coordinateRepository
             .observeCoordinates(for: selectedActivityId)
-            .combineLatest(
-                $selectionViewData
-                    .debounce(for: .milliseconds(300), scheduler: DispatchQueue.main)
-                    .setFailureType(to: Error.self)
-            ) { coordinates, selection -> ViewData in
+            .combineLatest(selectionViewModel.selections) { coordinates, selection -> ViewData in
                 guard !coordinates.isEmpty else {
                     return ViewData()
                 }
 
-                let upperIndex = Int(selection.upperSelectionRangeAsPercent * Double(coordinates.count))
-                let lowerIndex = Int(selection.lowerSelectionRangeAsPercent * Double(coordinates.count))
+                let upperIndex = Int(selection.upperBound * Double(coordinates.count))
+                let lowerIndex = Int(selection.lowerBound * Double(coordinates.count))
 
                 let selection = coordinates[lowerIndex..<upperIndex].toMkMapPoint()
                 let lowerExcluded = coordinates[0..<lowerIndex].toMkMapPoint()

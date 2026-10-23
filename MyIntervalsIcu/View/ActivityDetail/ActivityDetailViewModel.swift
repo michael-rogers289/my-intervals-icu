@@ -12,7 +12,7 @@ import SwiftUI
 
 @Observable
 @MainActor
-final class ActivityDetailViewModel {
+final class ActivityDetailViewModel: SelectionViewModel {
 
     // MARK: Private Properties
 
@@ -28,12 +28,40 @@ final class ActivityDetailViewModel {
     @Injected(\.viewLogger)
     private var viewLogger
 
+    private let rangePublisher = CurrentValueSubject<Range<Double>, Never>(0.5..<1.0)
     private let activityMapper = ActivityMapper()
     private var cancellables: Set<AnyCancellable> = []
 
     // MARK: Public Properties
 
     private(set) var summaryInfo: ActivitySummaryInfoViewData?
+
+    var upperSelectionRangeAsPercent: Double = 1.0 {
+        didSet {
+            let validatedValue = max(min(upperSelectionRangeAsPercent, 1.0), lowerSelectionRangeAsPercent)
+            rangePublisher.value = (lowerSelectionRangeAsPercent..<validatedValue)
+
+            guard validatedValue != upperSelectionRangeAsPercent else { return }
+            upperSelectionRangeAsPercent = validatedValue
+        }
+    }
+
+    var lowerSelectionRangeAsPercent: Double = 0.5 {
+        didSet {
+            let validatedValue = max(min(lowerSelectionRangeAsPercent, upperSelectionRangeAsPercent), 0.0)
+            rangePublisher.value = (validatedValue..<upperSelectionRangeAsPercent)
+
+            guard validatedValue != lowerSelectionRangeAsPercent else { return }
+            lowerSelectionRangeAsPercent = validatedValue
+        }
+    }
+
+    var selections: AnyPublisher<Range<Double>, Error> {
+        rangePublisher
+            .debounce(for: .milliseconds(300), scheduler: DispatchQueue.main)
+            .setFailureType(to: Error.self)
+            .eraseToAnyPublisher()
+    }
 
     // MARK: Public Methods
 
