@@ -24,9 +24,6 @@ struct StreamView: View {
                         StreamChartView(
                             viewData: timeSeries,
                             isAreaChart: timeSeries.isAreaChart,
-                            overlayRect: $overlayRect,
-                            selectedStartIndex: $viewModel.subsectionStartIndex,
-                            selectedEndIndex: $viewModel.subsectionEndIndex,
                         )
                         .aspectRatio(1.0 / 0.2, contentMode: .fill)
                         if let summary = viewModel.summaryViewData[timeSeries.streamType] {

@@ -6,28 +6,21 @@
 //
 
 import Charts
+import FactoryKit
 import SwiftUI
 
 struct StreamChartView: View {
 
+    @State private var selectionViewmModel: SelectionViewModel = Container.shared.activityDetailViewModel.resolve()
     private let viewData: StreamViewData.TimeSeries
     private let isAreaChart: Bool
-    @Binding private var overlayRect: CGRect?
-    @Binding private var selectedStartIndex: Int?
-    @Binding private var selectedEndIndex: Int?
 
     init(
         viewData: StreamViewData.TimeSeries,
         isAreaChart: Bool,
-        overlayRect: Binding<CGRect?>,
-        selectedStartIndex: Binding<Int?>,
-        selectedEndIndex: Binding<Int?>,
     ) {
         self.viewData = viewData
         self.isAreaChart = isAreaChart
-        self._overlayRect = overlayRect
-        self._selectedStartIndex = selectedStartIndex
-        self._selectedEndIndex = selectedEndIndex
     }
 
     var body: some View {
@@ -44,46 +37,46 @@ struct StreamChartView: View {
             }
             .chartOverlay { chartProxy in
                 GeometryReader { geometryProxy in
-                    HorizontalPanGesture {
-                        Rectangle()
-                            .fill(.clear)
-                            .contentShape(.rect)
-                    } onChanged: { frame in
-                        overlayRect = frame
-                        guard
-                            let plotContainerFrame = chartProxy.plotFrame,
-                            let index = chartProxy.value(
-                                atX: frame.origin.x + frame.width - geometryProxy[plotContainerFrame].minX,
-                                as: Int.self
-                            )
-                        else { return }
+                    if let plotContainerFrameAnchor = chartProxy.plotFrame {
+                        let plotContainerFrame = geometryProxy[plotContainerFrameAnchor]
 
-                        if selectedStartIndex == nil {
-                            selectedStartIndex = index
-                        } else {
-                            selectedEndIndex = index
+                        HorizontalPanGesture {
+                            Rectangle()
+                                .fill(.clear)
+                                .contentShape(.rect)
+                        } onChanged: { translation in
+                            let updatedLocation = translation / (plotContainerFrame.width - plotContainerFrame.minX)
+
+                            if selectionViewmModel.lowerSelectionRangeAsPercent == nil {
+                                selectionViewmModel.lowerSelectionRangeAsPercent = updatedLocation
+                            } else {
+                                selectionViewmModel.upperSelectionRangeAsPercent = updatedLocation
+                            }
                         }
-                    }
 
-                    if let overlayRect {
-                        Rectangle()
-                            .fill(.gray.opacity(0.3))
-                            .containerShape(.rect)
-                            .frame(
-                                width: overlayRect.width,
-                                height: overlayRect.height
-                            )
-                            .position(
-                                x: overlayRect.midX,
-                                y: overlayRect.midY
-                            )
+                        if let upperRange = selectionViewmModel.upperSelectionRangeAsPercent,
+                           let lowerRange = selectionViewmModel.lowerSelectionRangeAsPercent {
+                            let upperLocation = upperRange * (plotContainerFrame.width - plotContainerFrame.minX)
+                            let lowerLocation = lowerRange * (plotContainerFrame.width - plotContainerFrame.minX)
+                            let width = upperLocation - lowerLocation
+
+                            Rectangle()
+                                .fill(.gray.opacity(0.3))
+                                .containerShape(.rect)
+                                .frame(
+                                    width: width,
+                                    height: plotContainerFrame.height
+                                )
+                                .position(
+                                    x: lowerLocation + width / 2.0,
+                                    y: plotContainerFrame.midY
+                                )
+                        }
                     }
                 }
             }
             .onTapGesture {
-                selectedStartIndex = nil
-                selectedEndIndex = nil
-                overlayRect = nil
+                selectionViewmModel.resetSelectionRange()
             }
     }
 }

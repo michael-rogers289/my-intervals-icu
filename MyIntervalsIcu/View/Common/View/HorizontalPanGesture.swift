@@ -11,10 +11,10 @@ import UIKit
 struct HorizontalPanGesture<Content: View>: UIViewRepresentable {
 
     final class Coordinator: NSObject, UIGestureRecognizerDelegate {
-        private let onChanged: ((CGRect) -> Void)?
+        private let onChanged: ((CGFloat) -> Void)?
         private var startLocationX: CGFloat = .zero
 
-        init(onChanged: ((CGRect) -> Void)?) {
+        init(onChanged: ((CGFloat) -> Void)?) {
             self.onChanged = onChanged
         }
 
@@ -22,23 +22,9 @@ struct HorizontalPanGesture<Content: View>: UIViewRepresentable {
             switch recognizer.state {
             case .began:
                 startLocationX = recognizer.location(in: recognizer.view).x
-                onChanged?(
-                    CGRect(
-                        x: startLocationX,
-                        y: .zero,
-                        width: .zero,
-                        height: recognizer.view?.frame.height ?? .zero
-                    )
-                )
+                onChanged?(startLocationX)
             case .changed:
-                onChanged?(
-                    CGRect(
-                        x: startLocationX,
-                        y: .zero,
-                        width: recognizer.translation(in: recognizer.view).x,
-                        height: recognizer.view?.frame.height ?? .zero
-                    )
-                )
+                onChanged?(startLocationX + recognizer.translation(in: recognizer.view).x)
             default:
                 break
             }
@@ -61,11 +47,11 @@ struct HorizontalPanGesture<Content: View>: UIViewRepresentable {
     }
 
     let content: Content
-    let onChanged: (CGRect) -> Void
+    let onChanged: (CGFloat) -> Void
 
     init(
         @ViewBuilder content: () -> Content,
-        onChanged: @escaping (CGRect) -> Void
+        onChanged: @escaping (CGFloat) -> Void
     ) {
         self.content = content()
         self.onChanged = onChanged

@@ -36,20 +36,26 @@ final class ActivityDetailViewModel: SelectionViewModel {
 
     private(set) var summaryInfo: ActivitySummaryInfoViewData?
 
-    var upperSelectionRangeAsPercent: Double = 1.0 {
+    var upperSelectionRangeAsPercent: Double? {
         didSet {
-            let validatedValue = max(min(upperSelectionRangeAsPercent, 1.0), lowerSelectionRangeAsPercent)
-            rangePublisher.value = (lowerSelectionRangeAsPercent..<validatedValue)
+            let validatedValue = max(
+                min(upperSelectionRangeAsPercent ?? 1.0, 1.0),
+                lowerSelectionRangeAsPercent ?? .zero
+            )
+            rangePublisher.value = ((lowerSelectionRangeAsPercent ?? .zero)..<validatedValue)
 
             guard validatedValue != upperSelectionRangeAsPercent else { return }
             upperSelectionRangeAsPercent = validatedValue
         }
     }
 
-    var lowerSelectionRangeAsPercent: Double = 0.5 {
+    var lowerSelectionRangeAsPercent: Double? {
         didSet {
-            let validatedValue = max(min(lowerSelectionRangeAsPercent, upperSelectionRangeAsPercent), 0.0)
-            rangePublisher.value = (validatedValue..<upperSelectionRangeAsPercent)
+            let validatedValue = max(
+                min(lowerSelectionRangeAsPercent ?? .zero, upperSelectionRangeAsPercent ?? 1.0),
+                0.0
+            )
+            rangePublisher.value = (validatedValue..<(upperSelectionRangeAsPercent ?? 1.0))
 
             guard validatedValue != lowerSelectionRangeAsPercent else { return }
             lowerSelectionRangeAsPercent = validatedValue
@@ -79,6 +85,11 @@ final class ActivityDetailViewModel: SelectionViewModel {
                 self?.summaryInfo = self?.activityMapper.map(activity: activity)
             }
             .store(in: &cancellables)
+    }
+
+    func resetSelectionRange() {
+        upperSelectionRangeAsPercent = nil
+        lowerSelectionRangeAsPercent = nil
     }
 
 }

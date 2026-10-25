@@ -9,7 +9,9 @@ import Combine
 
 @MainActor
 protocol SelectionViewModel: AnyObject {
-    var upperSelectionRangeAsPercent: Double { get set }
-    var lowerSelectionRangeAsPercent: Double { get set }
+    var upperSelectionRangeAsPercent: Double? { get set }
+    var lowerSelectionRangeAsPercent: Double? { get set }
     var selections: AnyPublisher<Range<Double>, Error> { get }
+
+    func resetSelectionRange()
 }

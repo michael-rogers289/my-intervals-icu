@@ -16,17 +16,17 @@ struct DoubleSliderView: View {
         static let barHeight: CGFloat = 3.0
     }
 
-    @Binding var lowerSelectionRangeAsPercent: Double
-    @Binding var upperSelectionRangeAsPercent: Double
+    @Binding var lowerSelectionRangeAsPercent: Double?
+    @Binding var upperSelectionRangeAsPercent: Double?
 
     var body: some View {
         GeometryReader { proxy in
             let leadingLocation = min(
-                max(proxy.size.width * lowerSelectionRangeAsPercent, .zero),
+                max(proxy.size.width * (lowerSelectionRangeAsPercent ?? .zero), .zero),
                 proxy.size.width - Constant.fullIndicatorSize
             )
             let trailingLocation = min(
-                max(proxy.size.width * (1 - upperSelectionRangeAsPercent), .zero),
+                max(proxy.size.width * (1 - (upperSelectionRangeAsPercent ?? 1)), .zero),
                 proxy.size.width - Constant.fullIndicatorSize
             )
             ZStack(alignment: .center) {
