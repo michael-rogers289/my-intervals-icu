@@ -34,11 +34,28 @@ struct StreamMapView: View {
                 }
             }
             .aspectRatio(1.0 / 0.4, contentMode: .fill)
+            HStack(alignment: .center, spacing: .spacingMedium) {
+                DoubleSliderView(
+                    lowerSelectionRangeAsPercent: $selectionViewmModel.firstSelectionRangeAsPercent,
+                    upperSelectionRangeAsPercent: $selectionViewmModel.secondSelectionRangeAsPercent
+                )
+                Button {
+                    selectionViewmModel.resetSelectionRange()
+                } label: {
+                    Image(systemName: "x.circle.fill")
+                        .resizable()
+                        .padding(.spacingSmall)
+                        .frame(minWidth: 44.0, idealWidth: 44.0, minHeight: 44.0)
+                        .fixedSize()
+                }
+                .tint(Color.primary)
+                .accessibilityLabel("Clear Selected Workout Time Range")
+                .disabled(
+                    selectionViewmModel.secondSelectionRangeAsPercent == nil &&
+                    selectionViewmModel.firstSelectionRangeAsPercent == nil
+                )
+            }
 
-            DoubleSliderView(
-                lowerSelectionRangeAsPercent: $selectionViewmModel.firstSelectionRangeAsPercent,
-                upperSelectionRangeAsPercent: $selectionViewmModel.secondSelectionRangeAsPercent
-            )
         }
     }
 }

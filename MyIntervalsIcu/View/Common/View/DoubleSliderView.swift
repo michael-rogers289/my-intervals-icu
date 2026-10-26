@@ -80,8 +80,8 @@ struct DoubleSliderView: View {
         onPanGestureChange: @escaping (CGFloat) -> Void
     ) -> some View {
         Circle()
-            .stroke(Color.black)
-            .fill(Color.white)
+            .stroke(Color.accentColor)
+            .fill(Color.primary)
             .frame(
                 width: Constant.indicatorSize,
                 height: Constant.indicatorSize,
