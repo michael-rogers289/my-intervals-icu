@@ -47,15 +47,15 @@ struct StreamChartView: View {
                         } onChanged: { translation in
                             let updatedLocation = translation / plotContainerFrame.width
 
-                            if selectionViewmModel.lowerSelectionRangeAsPercent == nil {
-                                selectionViewmModel.lowerSelectionRangeAsPercent = updatedLocation
+                            if selectionViewmModel.firstSelectionRangeAsPercent == nil {
+                                selectionViewmModel.firstSelectionRangeAsPercent = updatedLocation
                             } else {
-                                selectionViewmModel.upperSelectionRangeAsPercent = updatedLocation
+                                selectionViewmModel.secondSelectionRangeAsPercent = updatedLocation
                             }
                         }
 
-                        if let upperRange = selectionViewmModel.upperSelectionRangeAsPercent,
-                           let lowerRange = selectionViewmModel.lowerSelectionRangeAsPercent {
+                        if let upperRange = selectionViewmModel.secondSelectionRangeAsPercent,
+                           let lowerRange = selectionViewmModel.firstSelectionRangeAsPercent {
                             let upperLocation = upperRange * plotContainerFrame.width
                             let lowerLocation = lowerRange * plotContainerFrame.width
                             let width = upperLocation - lowerLocation

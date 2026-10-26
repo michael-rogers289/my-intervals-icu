@@ -36,8 +36,8 @@ struct StreamMapView: View {
             .aspectRatio(1.0 / 0.4, contentMode: .fill)
 
             DoubleSliderView(
-                lowerSelectionRangeAsPercent: $selectionViewmModel.lowerSelectionRangeAsPercent,
-                upperSelectionRangeAsPercent: $selectionViewmModel.upperSelectionRangeAsPercent
+                lowerSelectionRangeAsPercent: $selectionViewmModel.firstSelectionRangeAsPercent,
+                upperSelectionRangeAsPercent: $selectionViewmModel.secondSelectionRangeAsPercent
             )
         }
     }

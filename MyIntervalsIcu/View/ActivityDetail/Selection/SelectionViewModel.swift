@@ -9,8 +9,18 @@ import Combine
 
 @MainActor
 protocol SelectionViewModel: AnyObject {
-    var upperSelectionRangeAsPercent: Double? { get set }
-    var lowerSelectionRangeAsPercent: Double? { get set }
+    /**
+     The second selected point in a range selection. This _may_ or _may not_ be the upper bound of the selection depending on
+    where the user has swiped and should be checked against the second point to create a valid range.
+     */
+    var secondSelectionRangeAsPercent: Double? { get set }
+    /**
+     The first selected point in a range selection. This _may_ or _may not_ be the lower bound of the selection depending on
+     where the user has swiped and should be checked against the second point to create a valid range.
+     */
+    var firstSelectionRangeAsPercent: Double? { get set }
+
+    /// A validated range encompasing the first and second selections
     var selections: AnyPublisher<Range<Double>?, Error> { get }
 
     func resetSelectionRange()

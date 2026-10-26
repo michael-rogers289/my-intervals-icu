@@ -36,46 +36,21 @@ final class ActivityDetailViewModel: SelectionViewModel {
 
     private(set) var summaryInfo: ActivitySummaryInfoViewData?
 
-    var upperSelectionRangeAsPercent: Double? {
+    var secondSelectionRangeAsPercent: Double? {
         didSet {
-            guard let lowerSelectionRangeAsPercent,
-                  let upperSelectionRangeAsPercent else {
-                rangePublisher.send(nil)
-                return
-            }
-
-            let validatedValue = max(
-                min(upperSelectionRangeAsPercent, 1.0),
-                lowerSelectionRangeAsPercent
-            )
-            rangePublisher.value = (lowerSelectionRangeAsPercent..<validatedValue)
-
-            guard validatedValue != upperSelectionRangeAsPercent else { return }
-            self.upperSelectionRangeAsPercent = validatedValue
+            validateRanges()
         }
     }
 
-    var lowerSelectionRangeAsPercent: Double? {
+    var firstSelectionRangeAsPercent: Double? {
         didSet {
-            guard let lowerSelectionRangeAsPercent,
-                  let upperSelectionRangeAsPercent else {
-                rangePublisher.send(nil)
-                return
-            }
-
-            let validatedValue = max(
-                min(lowerSelectionRangeAsPercent, upperSelectionRangeAsPercent),
-                0.0
-            )
-            rangePublisher.value = (validatedValue..<(upperSelectionRangeAsPercent))
-
-            guard validatedValue != lowerSelectionRangeAsPercent else { return }
-            self.lowerSelectionRangeAsPercent = validatedValue
+            validateRanges()
         }
     }
 
     var selections: AnyPublisher<Range<Double>?, Error> {
         rangePublisher
+            .removeDuplicates()
             .debounce(for: .milliseconds(300), scheduler: DispatchQueue.main)
             .setFailureType(to: Error.self)
             .eraseToAnyPublisher()
@@ -100,8 +75,31 @@ final class ActivityDetailViewModel: SelectionViewModel {
     }
 
     func resetSelectionRange() {
-        upperSelectionRangeAsPercent = nil
-        lowerSelectionRangeAsPercent = nil
+        secondSelectionRangeAsPercent = nil
+        firstSelectionRangeAsPercent = nil
+    }
+
+    // MARK: Private Methods
+
+    private func validateRanges() {
+        guard let firstSelectionRangeAsPercent,
+              let secondSelectionRangeAsPercent else {
+            rangePublisher.send(nil)
+            return
+        }
+
+        let actualBottom = max(min(firstSelectionRangeAsPercent, secondSelectionRangeAsPercent), 0.0)
+        let actualTop = min(max(firstSelectionRangeAsPercent, secondSelectionRangeAsPercent), 1.0)
+
+        rangePublisher.value = (actualBottom..<actualTop)
+
+        if actualBottom != firstSelectionRangeAsPercent {
+            self.firstSelectionRangeAsPercent = actualBottom
+        }
+
+        if actualTop != secondSelectionRangeAsPercent {
+            self.secondSelectionRangeAsPercent = actualTop
+        }
     }
 
 }
