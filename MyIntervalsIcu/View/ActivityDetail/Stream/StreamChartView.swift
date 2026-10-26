@@ -45,7 +45,7 @@ struct StreamChartView: View {
                                 .fill(.clear)
                                 .contentShape(.rect)
                         } onChanged: { translation in
-                            let updatedLocation = translation / (plotContainerFrame.width - plotContainerFrame.minX)
+                            let updatedLocation = translation / plotContainerFrame.width
 
                             if selectionViewmModel.lowerSelectionRangeAsPercent == nil {
                                 selectionViewmModel.lowerSelectionRangeAsPercent = updatedLocation
@@ -56,8 +56,8 @@ struct StreamChartView: View {
 
                         if let upperRange = selectionViewmModel.upperSelectionRangeAsPercent,
                            let lowerRange = selectionViewmModel.lowerSelectionRangeAsPercent {
-                            let upperLocation = upperRange * (plotContainerFrame.width - plotContainerFrame.minX)
-                            let lowerLocation = lowerRange * (plotContainerFrame.width - plotContainerFrame.minX)
+                            let upperLocation = upperRange * plotContainerFrame.width
+                            let lowerLocation = lowerRange * plotContainerFrame.width
                             let width = upperLocation - lowerLocation
 
                             Rectangle()

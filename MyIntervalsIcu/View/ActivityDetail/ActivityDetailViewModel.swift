@@ -28,7 +28,7 @@ final class ActivityDetailViewModel: SelectionViewModel {
     @Injected(\.viewLogger)
     private var viewLogger
 
-    private let rangePublisher = CurrentValueSubject<Range<Double>, Never>(0.5..<1.0)
+    private let rangePublisher = CurrentValueSubject<Range<Double>?, Never>(nil)
     private let activityMapper = ActivityMapper()
     private var cancellables: Set<AnyCancellable> = []
 
@@ -38,31 +38,43 @@ final class ActivityDetailViewModel: SelectionViewModel {
 
     var upperSelectionRangeAsPercent: Double? {
         didSet {
+            guard let lowerSelectionRangeAsPercent,
+                  let upperSelectionRangeAsPercent else {
+                rangePublisher.send(nil)
+                return
+            }
+
             let validatedValue = max(
-                min(upperSelectionRangeAsPercent ?? 1.0, 1.0),
-                lowerSelectionRangeAsPercent ?? .zero
+                min(upperSelectionRangeAsPercent, 1.0),
+                lowerSelectionRangeAsPercent
             )
-            rangePublisher.value = ((lowerSelectionRangeAsPercent ?? .zero)..<validatedValue)
+            rangePublisher.value = (lowerSelectionRangeAsPercent..<validatedValue)
 
             guard validatedValue != upperSelectionRangeAsPercent else { return }
-            upperSelectionRangeAsPercent = validatedValue
+            self.upperSelectionRangeAsPercent = validatedValue
         }
     }
 
     var lowerSelectionRangeAsPercent: Double? {
         didSet {
+            guard let lowerSelectionRangeAsPercent,
+                  let upperSelectionRangeAsPercent else {
+                rangePublisher.send(nil)
+                return
+            }
+
             let validatedValue = max(
-                min(lowerSelectionRangeAsPercent ?? .zero, upperSelectionRangeAsPercent ?? 1.0),
+                min(lowerSelectionRangeAsPercent, upperSelectionRangeAsPercent),
                 0.0
             )
-            rangePublisher.value = (validatedValue..<(upperSelectionRangeAsPercent ?? 1.0))
+            rangePublisher.value = (validatedValue..<(upperSelectionRangeAsPercent))
 
             guard validatedValue != lowerSelectionRangeAsPercent else { return }
-            lowerSelectionRangeAsPercent = validatedValue
+            self.lowerSelectionRangeAsPercent = validatedValue
         }
     }
 
-    var selections: AnyPublisher<Range<Double>, Error> {
+    var selections: AnyPublisher<Range<Double>?, Error> {
         rangePublisher
             .debounce(for: .milliseconds(300), scheduler: DispatchQueue.main)
             .setFailureType(to: Error.self)

@@ -61,17 +61,19 @@ final class StreamMapViewModel {
                     return ViewData()
                 }
 
-                let upperIndex = Int(selection.upperBound * Double(coordinates.count))
-                let lowerIndex = Int(selection.lowerBound * Double(coordinates.count))
+                let selectedRange = selection ?? 0.0..<1.0
 
-                let selection = coordinates[lowerIndex..<upperIndex].toMkMapPoint()
+                let upperIndex = Int(selectedRange.upperBound * Double(coordinates.count))
+                let lowerIndex = Int(selectedRange.lowerBound * Double(coordinates.count))
+
+                let fullMapSelection = coordinates[lowerIndex..<upperIndex].toMkMapPoint()
                 let lowerExcluded = coordinates[0..<lowerIndex].toMkMapPoint()
                 let upperExcluded = coordinates[upperIndex..<coordinates.count].toMkMapPoint()
 
                 return ViewData(
                     lowerExcludedMapMarks: lowerExcluded,
                     upperExcludedMapMarks: upperExcluded,
-                    selectedMapMarks: selection
+                    selectedMapMarks: fullMapSelection
                 )
             }
             .sink { [weak self] in
