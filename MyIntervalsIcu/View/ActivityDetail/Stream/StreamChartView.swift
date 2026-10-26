@@ -37,7 +37,7 @@ struct StreamChartView: View {
             }
             .chartOverlay { chartProxy in
                 GeometryReader { geometryProxy in
-                    if let plotContainerFrameAnchor = chartProxy.plotFrame {
+                    if let plotContainerFrameAnchor = chartProxy.plotContainerFrame {
                         let plotContainerFrame = geometryProxy[plotContainerFrameAnchor]
 
                         HorizontalPanGesture {
@@ -45,7 +45,7 @@ struct StreamChartView: View {
                                 .fill(.clear)
                                 .contentShape(.rect)
                         } onChanged: { translation in
-                            let updatedLocation = translation / plotContainerFrame.width
+                            let updatedLocation = translation / (plotContainerFrame.width - plotContainerFrame.origin.x)
 
                             if selectionViewmModel.firstSelectionRangeAsPercent == nil {
                                 selectionViewmModel.firstSelectionRangeAsPercent = updatedLocation
@@ -56,8 +56,8 @@ struct StreamChartView: View {
 
                         if let upperRange = selectionViewmModel.secondSelectionRangeAsPercent,
                            let lowerRange = selectionViewmModel.firstSelectionRangeAsPercent {
-                            let upperLocation = upperRange * plotContainerFrame.width
-                            let lowerLocation = lowerRange * plotContainerFrame.width
+                            let upperLocation = upperRange * plotContainerFrame.width + plotContainerFrame.origin.x
+                            let lowerLocation = lowerRange * plotContainerFrame.width + plotContainerFrame.origin.x
                             let width = upperLocation - lowerLocation
 
                             Rectangle()
