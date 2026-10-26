@@ -31,6 +31,17 @@ final class StreamDao: Sendable {
         }
     }
 
+    func observerLastSecond(for activityId: Activity.ActivityId) -> AnyPublisher<Double?, Error> {
+        return ValueObservation.tracking { database in
+            try Stream
+                .filter { $0.activityId == activityId && $0.type == StreamType.time }
+                .select({ max($0.value) }, as: Double.self)
+                .fetchOne(database)
+        }
+        .publisher(in: databaseQueue)
+        .eraseToAnyPublisher()
+    }
+
     func observeSummaries(
         for activityId: Activity.ActivityId,
         filteringBy types: [StreamType],

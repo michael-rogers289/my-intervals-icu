@@ -29,17 +29,18 @@ final class StreamViewModel {
     @Injected(\.viewLogger)
     private var viewLogger
 
+    @ObservationIgnored
+    @Injected(\.activityDetailViewModel)
+    private var activityDetailViewModel
+
     private var streamLegendCancellable: AnyCancellable?
     private var streamCancellable: AnyCancellable?
     private var selectedTimeRangeSummaryCancellable: AnyCancellable?
     private var summaryStreamCancellable: AnyCancellable?
+    private var lastSecondCancellable: AnyCancellable?
     private var streamRefreshTask: Task<Void, Never>?
-    private var selectedTimeRangeDebounceTask: Task<Void, Never>?
+    private var currentTimeSeriesMax: Double?
 
-    private var selectedTimeRange: Range<Int>? {
-        guard let subsectionStartIndex, let subsectionEndIndex else { return nil }
-        return min(subsectionStartIndex, subsectionEndIndex)..<max(subsectionEndIndex, subsectionStartIndex)
-    }
     private var selectedStreamTypes: [StreamType] {
         selectableStreamTypes
             .filter { $0.isSelected }
@@ -64,18 +65,18 @@ final class StreamViewModel {
         }
     }
 
-    var subsectionStartIndex: Int?
-    var subsectionEndIndex: Int? {
-        didSet {
-            getStreamsForSubsectionIndexIfNeeded(filteredBy: selectedStreamTypes)
-        }
-    }
-
     // MARK: Life Cycle
 
     init() {
         guard let selectedActivityId = selectedActivityId else { return }
         startAllowedStreamsObservation(with: selectedActivityId)
+        lastSecondCancellable = streamRepository.observerLastSecond(for: selectedActivityId)
+            .sink { [weak self] error in
+                self?.viewLogger.logError(message: "Error fetching last time second: \(error)")
+            } onReceieveValue: { [weak self] in
+                self?.currentTimeSeriesMax = $0
+            }
+
     }
 
     // MARK: Private Methods
@@ -129,38 +130,34 @@ final class StreamViewModel {
 
     private func getStreamsForSubsectionIndexIfNeeded(filteredBy types: [StreamType]) {
         guard types.isEmpty == false,
-              let selectedActivityId,
-              let selectedTimeRange else {
+              let selectedActivityId else {
             filteredSummaryViewData = [:]
             return
         }
 
         selectedTimeRangeSummaryCancellable?.cancel()
-        selectedTimeRangeDebounceTask?.cancel()
+        selectedTimeRangeSummaryCancellable = activityDetailViewModel.selections
+            .flatMap { [weak self] selectedRange -> AnyPublisher<[StreamSummary], Error> in
+                guard let selectedRange,
+                      let currentTimeSeriesMax = self?.currentTimeSeriesMax else {
+                    return Just([]).setFailureType(to: Error.self).eraseToAnyPublisher()
+                }
 
-        selectedTimeRangeDebounceTask = Task { [weak self] in
-            do {
-                try await Task.sleep(for: .milliseconds(400))
-                guard !Task.isCancelled else { return }
+                let upperRange = Int(selectedRange.upperBound * currentTimeSeriesMax)
+                let lowerRange = Int(selectedRange.lowerBound * currentTimeSeriesMax)
 
-                self?.selectedTimeRangeSummaryCancellable = self?.streamRepository.getSummaries(
+                return self?.streamRepository.getSummaries(
                     for: selectedActivityId,
                     filteringBy: types,
-                    overTimeRange: selectedTimeRange,
-                )
-                .removeDuplicates()
-                .sink { [weak self] in
-                    self?.viewLogger.logError(message: "Error getting filtered summaries: \($0)")
-                } onReceieveValue: { [weak self] in
-                    self?.viewLogger.logDebug(message: "receiving filtered summaries")
-                    self?.filteredSummaryViewData = $0.asSummaryDictionary
-                }
-            } catch {
-                guard !(error is CancellationError) else {
-                    return
-                }
-                self?.viewLogger.logError(message: "Error getting filtered summaries: \(error)")
+                    overTimeRange: lowerRange..<upperRange,
+                ) ?? Just([]).setFailureType(to: Error.self).eraseToAnyPublisher()
             }
+        .removeDuplicates()
+        .sink { [weak self] in
+            self?.viewLogger.logError(message: "Error getting filtered summaries: \($0)")
+        } onReceieveValue: { [weak self] in
+            self?.viewLogger.logDebug(message: "receiving filtered summaries")
+            self?.filteredSummaryViewData = $0.asSummaryDictionary
         }
     }
 
@@ -204,6 +201,7 @@ final class StreamViewModel {
                     plottableData: value.map { StreamViewData.Point(x: Double($0.order), y: $0.value) }
                 )
             }.sorted { $0.streamType.rawValue < $1.streamType.rawValue }
+
             self?.viewLogger.logDebug(message: "received streams")
         }
     }
