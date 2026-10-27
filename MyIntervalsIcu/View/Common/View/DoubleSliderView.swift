@@ -47,6 +47,7 @@ struct DoubleSliderView: View {
                         )
                         lowerSelectionRangeAsPercent = updatedLeadingLocation
                         / (proxy.size.width - Constant.indicatorSize)
+                        upperSelectionRangeAsPercent = upperSelectionRangeAsPercent ?? 1.0
                     }
                     RoundedRectangle(
                         cornerSize: CGSize(
@@ -69,6 +70,7 @@ struct DoubleSliderView: View {
                         upperSelectionRangeAsPercent = 1 - updatedTrailingLocation / (
                             proxy.size.width - Constant.indicatorSize
                         )
+                        lowerSelectionRangeAsPercent = lowerSelectionRangeAsPercent ?? 0.0
                     }
                     Color.clear.frame(width: trailingLocation)
                 }
