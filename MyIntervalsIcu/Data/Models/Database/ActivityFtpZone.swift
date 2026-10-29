@@ -9,14 +9,22 @@ import CodingKeysMacro
 import GRDB
 
 @CodingKeys(.all)
-struct ActivityFtpZone: Codable, FetchableRecord, PersistableRecord {
+struct ActivityFtpZone: Codable, FetchableRecord, PersistableRecord, TableRecord {
     var id: Int64?
     let upperValue: Double
     let activityId: String
 
     enum Columns {
-        static let id = Column(CodingKeys.id)
-        static let upperValue = Column(CodingKeys.upperValue)
-        static let activityId = Column(CodingKeys.activityId)
+        static let id = Column(CodingKeys.id.rawValue)
+        static let upperValue = Column(CodingKeys.upperValue.rawValue)
+        static let activityId = Column(CodingKeys.activityId.rawValue)
     }
+}
+
+extension ActivityFtpZone: MutablePersistableRecord {
+
+    mutating func didInsert(_ inserted: InsertionSuccess) {
+        id = inserted.rowID
+    }
+
 }

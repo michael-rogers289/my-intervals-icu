@@ -39,4 +39,9 @@ struct Activity: Identifiable, Codable, PersistableRecord, FetchableRecord {
     // MARK: Heart Rate
     let maxHeartRate: Int?
     let averageHeartRate: Int?
+
+    enum Columns {
+        static let id = Column(CodingKeys.id.rawValue)
+        static let ftp = Column(CodingKeys.ftp.rawValue)
+    }
 }

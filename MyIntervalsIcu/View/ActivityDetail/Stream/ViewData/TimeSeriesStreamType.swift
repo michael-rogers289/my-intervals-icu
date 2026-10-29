@@ -157,20 +157,20 @@ enum TimeSeriesStreamType: Int, CaseIterable {
     var isAreaChart: Bool {
         return switch self {
         case .watts,
-        .cadence,
-        .verticalSpeed,
-        .torque: false
+                .cadence,
+                .verticalSpeed,
+                .torque: false
         case .smoothVelocity,
-        .heartrate,
-        .altitude,
-        .temp,
-        .leftRightBalance,
-        .leftPedalSmoothness,
-        .rightPedalSmoothness,
-        .leftTorqueEffectiveness,
-        .rightTorqueEffectiveness,
-        .coreTemperature,
-        .skinTemperature: true
+                .heartrate,
+                .altitude,
+                .temp,
+                .leftRightBalance,
+                .leftPedalSmoothness,
+                .rightPedalSmoothness,
+                .leftTorqueEffectiveness,
+                .rightTorqueEffectiveness,
+                .coreTemperature,
+                .skinTemperature: true
         }
     }
 }

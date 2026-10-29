@@ -81,6 +81,7 @@ final class ActivityDetailViewModel: SelectionViewModel {
 
     // MARK: Private Methods
 
+    //TODO: THIS IS BROKEN
     private func validateRanges() {
         guard let firstSelectionRangeAsPercent,
               let secondSelectionRangeAsPercent else {

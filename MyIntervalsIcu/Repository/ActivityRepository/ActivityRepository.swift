@@ -52,8 +52,20 @@ class ActivityRepository {
         activityDao.getActivity(byId: activityId)
     }
 
-    func getFtpZones(for activityId: Activity.ActivityId) async throws -> [ActivityFtpZone] {
-        try await activityDao.getFtpZones(for: activityId)
+    func getFtpZonesAsPercentOfFtp(for activityId: Activity.ActivityId) -> AnyPublisher<[ActivityFtpZone], Error> {
+        activityDao.getFtpZones(for: activityId)
+            .combineLatest(activityDao.getFtp(for: activityId))
+            .map { ftpZones, ftp in
+                guard let ftp else { return [] }
+                return ftpZones.map {
+                    ActivityFtpZone(
+                        id: $0.id,
+                        upperValue: ($0.upperValue / 100.0) * ftp,
+                        activityId: activityId
+                    )
+                }
+            }
+            .eraseToAnyPublisher()
     }
 
     func fetchActivitiesForDateRange(range: DateInterval) async throws {

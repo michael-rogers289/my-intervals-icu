@@ -33,6 +33,7 @@ extension DatabaseQueue {
             try createStreamTypeTables(with: database)
             try createStreamTable(with: database)
             try createActivityCoordinateTable(with: database)
+            try createActivityFtpZoneTable(with: database)
         }
     }
 

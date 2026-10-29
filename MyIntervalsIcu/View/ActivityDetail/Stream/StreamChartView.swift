@@ -93,18 +93,25 @@ struct StreamChartViewChart: View {
 
     var body: some View {
         Chart {
+            let foregroundStyle: AnyShapeStyle = switch viewData.colorType {
+            case .solid(let color):
+                AnyShapeStyle(color.opacity(0.5))
+            case .gradient(let gradientStops):
+                AnyShapeStyle(LinearGradient(stops: gradientStops, startPoint: .bottom, endPoint: .top))
+            }
+
             if isAreaChart {
                 AreaPlot(
                     viewData.plottableData,
                     x: .value("Time", \.x),
                     y: .value(viewData.streamType.title, \.y)
-                ).foregroundStyle(viewData.streamType.color.opacity(0.5))
+                ).foregroundStyle(foregroundStyle)
             } else {
                 LinePlot(
                     viewData.plottableData,
                     x: .value("Time", \.x),
                     y: .value(viewData.streamType.title, \.y)
-                ).foregroundStyle(viewData.streamType.color)
+                ).foregroundStyle(foregroundStyle)
             }
         }
     }
