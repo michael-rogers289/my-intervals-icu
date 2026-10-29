@@ -33,12 +33,14 @@ final class ActivityDao: Sendable {
         heartRateZones: [ActivityHeartRateZone],
         powerZones: [ActivityPowerZone],
         summaryChartBars: [SummaryChartBar],
+        ftpZones: [ActivityFtpZone],
     ) async throws {
         try await databaseQueue.write { database in
             try activities.insertAll(in: database)
             try heartRateZones.insertAll(in: database)
             try powerZones.insertAll(in: database)
             try summaryChartBars.insertAll(in: database)
+            try ftpZones.insertAll(in: database)
         }
     }
 
@@ -114,6 +116,15 @@ final class ActivityDao: Sendable {
             activityId: \.activityId
         )
         return valueObservation(from: statement.raw)
+    }
+
+    func getFtpZones(for activityId: Activity.ActivityId) async throws -> [ActivityFtpZone] {
+        try await databaseQueue.read { database in
+            try ActivityFtpZone
+                .filter { $0.activityId == activityId }
+                .order { $0.upperValue.asc }
+                .fetchAll(database)
+        }
     }
 
     // MARK: Private Methods

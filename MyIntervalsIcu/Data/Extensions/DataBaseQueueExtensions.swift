@@ -21,6 +21,7 @@ extension DatabaseQueue {
         case stream = "Stream"
         case streamTypeLink = "StreamTypeLink"
         case activityCoordinate = "ActivityCoordinate"
+        case activityFtpZone = "ActivityFtpZone"
     }
 
     func createTables() throws {
@@ -58,6 +59,7 @@ extension DatabaseQueue {
             table.column(Activity.codingKey(for: \.deviceWatts))
             table.column(Activity.codingKey(for: \.maxHeartRate))
             table.column(Activity.codingKey(for: \.averageHeartRate))
+            table.column(Activity.codingKey(for: \.ftp), .integer)
         }
     }
 
@@ -219,6 +221,27 @@ extension DatabaseQueue {
 
             table.foreignKey(
                 [ActivityCoordinate.Columns.activityId.name],
+                references: Tables.activity.rawValue,
+                columns: [Activity.codingKey(for: \.id)],
+                onDelete: .cascade,
+                onUpdate: .cascade
+            )
+        }
+    }
+
+    func createActivityFtpZoneTable(with database: Database) throws {
+        guard try !database.tableExists(Tables.activityFtpZone.rawValue) else { return }
+        try database.create(table: Tables.activityFtpZone.rawValue) { table in
+            table.autoIncrementedPrimaryKey(ActivityFtpZone.Columns.id.name)
+            table.column(ActivityFtpZone.Columns.upperValue.name, .double)
+                .notNull()
+                .indexed()
+            table.column(ActivityFtpZone.Columns.activityId.name, .text)
+                .notNull()
+                .indexed()
+
+            table.foreignKey(
+                [ActivityFtpZone.Columns.activityId.name],
                 references: Tables.activity.rawValue,
                 columns: [Activity.codingKey(for: \.id)],
                 onDelete: .cascade,

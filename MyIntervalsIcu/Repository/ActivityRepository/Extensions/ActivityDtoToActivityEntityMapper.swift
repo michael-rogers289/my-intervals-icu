@@ -30,6 +30,7 @@ extension ActivityDto {
             normalizedWatts: icuWeightedAvgWatts,
             icuAverageWatts: icuAverageWatts,
             deviceWatts: deviceWatts,
+            ftp: icuFtp,
             maxHeartRate: maxHeartRate,
             averageHeartRate: averageHeartRate
         )
@@ -93,6 +94,12 @@ extension ActivityDto {
             return chartBar
         }
 
+    }
+
+    func mapToActivityFtpZones() -> [ActivityFtpZone] {
+        icuPowerZones.map {
+            ActivityFtpZone(upperValue: $0, activityId: id)
+        }
     }
 
 }

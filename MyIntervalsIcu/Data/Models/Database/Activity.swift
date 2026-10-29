@@ -34,6 +34,7 @@ struct Activity: Identifiable, Codable, PersistableRecord, FetchableRecord {
     let normalizedWatts: Int?
     let icuAverageWatts: Int?
     let deviceWatts: Bool?
+    let ftp: Int?
 
     // MARK: Heart Rate
     let maxHeartRate: Int?

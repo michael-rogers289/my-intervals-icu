@@ -52,6 +52,10 @@ class ActivityRepository {
         activityDao.getActivity(byId: activityId)
     }
 
+    func getFtpZones(for activityId: Activity.ActivityId) async throws -> [ActivityFtpZone] {
+        try await activityDao.getFtpZones(for: activityId)
+    }
+
     func fetchActivitiesForDateRange(range: DateInterval) async throws {
         let activities = try await networkManager.getActivities(for: range)
         try await activityDao.insertAll(
@@ -64,6 +68,7 @@ class ActivityRepository {
             heartRateZones: activities.flatMap { $0.mapToHeartRateZones() },
             powerZones: activities.flatMap { $0.mapToPowerZones() },
             summaryChartBars: activities.flatMap { $0.mapToSummaryChartBars() },
+            ftpZones: activities.flatMap { $0.mapToActivityFtpZones() }
         )
 
         let streamTypes = activities.flatMap { activity in
