@@ -44,8 +44,8 @@ struct StreamChartView: View {
                             Rectangle()
                                 .fill(.clear)
                                 .contentShape(.rect)
-                        } onChanged: { translation in
-                            let updatedLocation = translation / (plotContainerFrame.width - plotContainerFrame.origin.x)
+                        } onChanged: { location in
+                            let updatedLocation = location / plotContainerFrame.width
 
                             if selectionViewmModel.firstSelectionRangeAsPercent == nil {
                                 selectionViewmModel.firstSelectionRangeAsPercent = updatedLocation
@@ -97,7 +97,9 @@ struct StreamChartViewChart: View {
             case .solid(let color):
                 AnyShapeStyle(color.opacity(0.5))
             case .gradient(let gradientStops):
-                AnyShapeStyle(LinearGradient(stops: gradientStops, startPoint: .bottom, endPoint: .top))
+                AnyShapeStyle(
+                    LinearGradient(stops: gradientStops, startPoint: .bottom, endPoint: .top)
+                )
             }
 
             if isAreaChart {
@@ -105,13 +107,15 @@ struct StreamChartViewChart: View {
                     viewData.plottableData,
                     x: .value("Time", \.x),
                     y: .value(viewData.streamType.title, \.y)
-                ).foregroundStyle(foregroundStyle)
+                )
+                .foregroundStyle(foregroundStyle)
             } else {
                 LinePlot(
                     viewData.plottableData,
                     x: .value("Time", \.x),
                     y: .value(viewData.streamType.title, \.y)
-                ).foregroundStyle(foregroundStyle)
+                )
+                .foregroundStyle(foregroundStyle)
             }
         }
     }

@@ -35,7 +35,7 @@ final class StreamDao: Sendable {
         return ValueObservation.tracking { database in
             try Stream
                 .filter { $0.activityId == activityId && $0.type == StreamType.time }
-                .select({ max($0.value) }, as: Double.self)
+                .select({ max($0.order) }, as: Double.self)
                 .fetchOne(database)
         }
         .publisher(in: databaseQueue)

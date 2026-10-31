@@ -56,7 +56,7 @@ final class StreamMapViewModel {
 
         latLongCancellable = coordinateRepository
             .observeCoordinates(for: selectedActivityId)
-            .combineLatest(selectionViewModel.selections) { coordinates, selection -> ViewData in
+            .combineLatest(selectionViewModel.selectionRanges) { coordinates, selection -> ViewData in
                 guard !coordinates.isEmpty else {
                     return ViewData()
                 }

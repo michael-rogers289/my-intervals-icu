@@ -140,7 +140,7 @@ final class StreamViewModel {
         }
 
         selectedTimeRangeSummaryCancellable?.cancel()
-        selectedTimeRangeSummaryCancellable = activityDetailViewModel.selections
+        selectedTimeRangeSummaryCancellable = activityDetailViewModel.selectionRanges
             .flatMap { [weak self] selectedRange -> AnyPublisher<[StreamSummary], Error> in
                 guard let selectedRange,
                       let currentTimeSeriesMax = self?.currentTimeSeriesMax else {

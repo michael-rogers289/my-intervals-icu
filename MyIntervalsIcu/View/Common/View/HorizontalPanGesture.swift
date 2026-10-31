@@ -24,7 +24,7 @@ struct HorizontalPanGesture<Content: View>: UIViewRepresentable {
                 startLocationX = recognizer.location(in: recognizer.view).x
                 onChanged?(startLocationX)
             case .changed:
-                onChanged?(startLocationX + recognizer.translation(in: recognizer.view).x)
+                onChanged?(recognizer.location(in: recognizer.view).x)
             default:
                 break
             }

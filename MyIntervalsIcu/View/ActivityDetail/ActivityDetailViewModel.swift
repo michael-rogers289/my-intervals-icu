@@ -14,6 +14,10 @@ import SwiftUI
 @MainActor
 final class ActivityDetailViewModel: SelectionViewModel {
 
+    enum Constant {
+        static let defaultRange: Range<Double> = 0.0..<1.0
+    }
+
     // MARK: Private Properties
 
     @ObservationIgnored
@@ -28,7 +32,8 @@ final class ActivityDetailViewModel: SelectionViewModel {
     @Injected(\.viewLogger)
     private var viewLogger
 
-    private let rangePublisher = CurrentValueSubject<Range<Double>?, Never>(nil)
+    @ObservationIgnored
+    @Published private var selectedRange: Range<Double>?
     private let activityMapper = ActivityMapper()
     private var cancellables: Set<AnyCancellable> = []
 
@@ -48,8 +53,13 @@ final class ActivityDetailViewModel: SelectionViewModel {
         }
     }
 
-    var selections: AnyPublisher<Range<Double>?, Error> {
-        rangePublisher
+    @ObservationTracked
+    var currentSelectionRange: Range<Double>? {
+        selectedRange
+    }
+
+    var selectionRanges: AnyPublisher<Range<Double>?, Error> {
+        $selectedRange
             .removeDuplicates()
             .debounce(for: .milliseconds(300), scheduler: DispatchQueue.main)
             .setFailureType(to: Error.self)
@@ -81,18 +91,24 @@ final class ActivityDetailViewModel: SelectionViewModel {
 
     // MARK: Private Methods
 
-    //TODO: THIS IS BROKEN
     private func validateRanges() {
-        guard let firstSelectionRangeAsPercent,
-              let secondSelectionRangeAsPercent else {
-            rangePublisher.send(nil)
+        guard
+            var firstSelectionRangeAsPercent = firstSelectionRangeAsPercent?.clamped(to: Constant.defaultRange),
+            var secondSelectionRangeAsPercent = secondSelectionRangeAsPercent?.clamped(to: Constant.defaultRange) else {
+            selectedRange = nil
             return
         }
 
-        let actualBottom = max(min(firstSelectionRangeAsPercent, secondSelectionRangeAsPercent), 0.0)
-        let actualTop = min(max(firstSelectionRangeAsPercent, secondSelectionRangeAsPercent), 1.0)
+        if firstSelectionRangeAsPercent ~= secondSelectionRangeAsPercent && firstSelectionRangeAsPercent != 1.0 {
+            secondSelectionRangeAsPercent += 0.01
+        } else if firstSelectionRangeAsPercent ~= secondSelectionRangeAsPercent && firstSelectionRangeAsPercent == 1.0 {
+            firstSelectionRangeAsPercent -= 0.01
+        }
 
-        rangePublisher.value = (actualBottom..<actualTop)
+        let actualBottom = min(firstSelectionRangeAsPercent, secondSelectionRangeAsPercent)
+        let actualTop = max(firstSelectionRangeAsPercent, secondSelectionRangeAsPercent)
+
+        selectedRange = (actualBottom..<actualTop)
 
         if actualBottom != firstSelectionRangeAsPercent {
             self.firstSelectionRangeAsPercent = actualBottom
