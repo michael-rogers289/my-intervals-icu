@@ -53,11 +53,10 @@ class ActivityRepository {
     }
 
     func getFtpZonesAsPercentOfFtp(for activityId: Activity.ActivityId) -> AnyPublisher<[ActivityFtpZone], Error> {
-        activityDao.getFtpZones(for: activityId)
-            .combineLatest(activityDao.getFtp(for: activityId))
-            .map { ftpZones, ftp in
-                guard let ftp else { return [] }
-                return ftpZones.map {
+        activityDao.getFtpSummary(for: activityId)
+            .map { summary in
+                guard let ftp = summary.activityFtp else { return [] }
+                return summary.activityFtpZones.map {
                     ActivityFtpZone(
                         id: $0.id,
                         upperValue: ($0.upperValue / 100.0) * ftp,
