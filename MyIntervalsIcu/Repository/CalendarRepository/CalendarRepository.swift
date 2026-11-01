@@ -37,6 +37,7 @@ protocol CalendarRepository: Sendable {
     func iso8601Format(_ date: Date) -> String
     func formatInterval(from start: Date, to end: Date) -> String?
     func getTime(from date: Date) -> String
+    func getRollingThirtyDays(from date: Date) throws -> DateInterval
 }
 
 struct LiveCalendarRepository: CalendarRepository {
@@ -77,6 +78,13 @@ struct LiveCalendarRepository: CalendarRepository {
         case .endingAt: DateInterval(start: endOfWeek, end: startOfWeek)
         case .startingAt: DateInterval(start: startOfWeek, end: endOfWeek)
         }
+    }
+
+    func getRollingThirtyDays(from date: Date) throws -> DateInterval {
+        guard let startDate = Self.calendar.date(byAdding: .day, value: -30, to: date) else {
+            throw CalendarError.dateCreationError
+        }
+        return DateInterval(start: startDate, end: date)
     }
 
     func getCurrentMonth(from date: Date) throws(CalendarError) -> DateInterval {

@@ -37,7 +37,7 @@ final class ActivityListViewModel {
     // MARK: Init
     init() {
         do {
-            currentMonth = try calendarRepository.getCurrentMonth(from: Date())
+            currentMonth = try calendarRepository.getRollingThirtyDays(from: Date())
         } catch {
             viewLogger.logError(message: "CalendarRepository unable to create date for current week \(error)")
             fatalError("Unable to create date for current week \(error)")
