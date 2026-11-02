@@ -52,21 +52,6 @@ class ActivityRepository {
         activityDao.getActivity(byId: activityId)
     }
 
-    func getFtpZonesAsPercentOfFtp(for activityId: Activity.ActivityId) -> AnyPublisher<[ActivityFtpZone], Error> {
-        activityDao.getFtpSummary(for: activityId)
-            .map { summary in
-                guard let ftp = summary.activityFtp else { return [] }
-                return summary.activityFtpZones.map {
-                    ActivityFtpZone(
-                        id: $0.id,
-                        upperValue: ($0.upperValue / 100.0) * ftp,
-                        activityId: activityId
-                    )
-                }
-            }
-            .eraseToAnyPublisher()
-    }
-
     func fetchActivitiesForDateRange(range: DateInterval) async throws {
         let activities = try await networkManager.getActivities(for: range)
         try await activityDao.insertAll(

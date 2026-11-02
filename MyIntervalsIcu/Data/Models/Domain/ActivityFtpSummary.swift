@@ -5,7 +5,7 @@
 //  Created by Mike Rogers on 11/1/26.
 //
 
-import GRDB
+import Foundation
 
 struct ActivityFtpSummary {
     let activityFtp: Double?

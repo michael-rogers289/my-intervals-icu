@@ -20,11 +20,7 @@ final class StreamViewModel {
     @ObservationIgnored
     @Injected(\.streamRepository)
     private var streamRepository
-
-    @ObservationIgnored
-    @Injected(\.activityRepository)
-    private var activityRepository
-
+    
     @ObservationIgnored
     @Injected(\.detailActivityIdSelector)
     private var selectedActivityId
@@ -194,18 +190,17 @@ final class StreamViewModel {
             for: selectedActivityId,
             filteringBy: types
         )
-        .combineLatest(activityRepository.getFtpZonesAsPercentOfFtp(for: selectedActivityId))
         .sink { [weak self] in
             self?.viewLogger.logError(message: "Streams error: \($0)")
-        } onReceieveValue: { [weak self] (streams, ftpZones) in
-            self?.viewData = streams.compactMap { (key, value) -> StreamViewData.TimeSeries? in
+        } onReceieveValue: { [weak self] streamSummary in
+            self?.viewData = streamSummary.streams.compactMap { (key, value) -> StreamViewData.TimeSeries? in
                 guard let timeSeriesType = TimeSeriesStreamType(streamType: key) else { return nil }
                 let plottableData = value.map { StreamViewData.Point(x: Double($0.order), y: $0.value) }
 
                 return if timeSeriesType == .watts {
                     self?.getPowerTimeSeries(
                         using: plottableData,
-                        andFtpZones: ftpZones
+                        andFtpZoneSummary: streamSummary.activityFtpSummary
                     )
                 } else {
                     StreamViewData.TimeSeries(
@@ -221,9 +216,10 @@ final class StreamViewModel {
 
     private func getPowerTimeSeries(
         using plottableData: [StreamViewData.Point],
-        andFtpZones activityFtpZones: [ActivityFtpZone]
+        andFtpZoneSummary summary: ActivityFtpSummary
     ) -> StreamViewData.TimeSeries {
-        guard let minPower = plottableData.min(by: { $0.y < $1.y }),
+        guard let activityFtp = summary.activityFtp,
+              let minPower = plottableData.min(by: { $0.y < $1.y }),
               let maxPower = plottableData.max(by: { $0.y < $1.y }) else {
             return StreamViewData.TimeSeries(
                     streamType: .watts,
@@ -235,12 +231,12 @@ final class StreamViewModel {
         let actualPowerRange = minPower.y...maxPower.y
         let slope = 1 / (actualPowerRange.upperBound - actualPowerRange.lowerBound)
 
-        let stops: [Gradient.Stop] = activityFtpZones
+        let stops: [Gradient.Stop] = summary.activityFtpZones
             .enumerated()
             .map { index, ftpZone in
             Gradient.Stop(
                 color: index.zoneColor,
-                location: CGFloat(slope * ftpZone.upperValue)
+                location: CGFloat(slope * (ftpZone.upperValue / 100.0 * activityFtp))
             )
         }
         return StreamViewData.TimeSeries(

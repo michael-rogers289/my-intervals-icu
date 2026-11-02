@@ -74,14 +74,29 @@ final class StreamDao: Sendable {
     func observeStreams(
         for activityId: Activity.ActivityId,
         filteringBy types: [StreamType]
-    ) -> AnyPublisher<[StreamType: [StreamPoint]], Error> {
+    ) -> AnyPublisher<ActivityStreamSummary, Error> {
         return ValueObservation.tracking { database in
             let streams = try Stream
                 .filter { $0.activityId == activityId && types.contains($0.type) }
                 .order { $0.order.asc }
                 .asRequest(of: StreamPoint.self)
                 .fetchAll(database)
-            return Dictionary(grouping: streams, by: \.type)
+
+            let ftpSummary = ActivityFtpSummary(
+                activityFtp: try Activity
+                    .filter { $0.id == activityId }
+                    .select({ $0.ftp }, as: Double.self)
+                    .fetchOne(database),
+                activityFtpZones: try ActivityFtpZone
+                    .filter { $0.activityId == activityId }
+                    .order { $0.upperValue.asc }
+                    .fetchAll(database)
+            )
+
+            return ActivityStreamSummary(
+                activityFtpSummary: ftpSummary,
+                streams: Dictionary(grouping: streams, by: \.type)
+            )
         }
         .publisher(in: databaseQueue)
         .eraseToAnyPublisher()

@@ -43,7 +43,7 @@ final class ActivityStreamRepository: Sendable {
     func getStreams(
         for activityId: Activity.ActivityId,
         filteringBy types: [StreamType]
-    ) -> AnyPublisher<[StreamType: [StreamPoint]], Error> {
+    ) -> AnyPublisher<ActivityStreamSummary, Error> {
         streamDao.observeStreams(for: activityId, filteringBy: types)
     }
 

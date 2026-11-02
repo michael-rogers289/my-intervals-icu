@@ -120,23 +120,6 @@ final class ActivityDao: Sendable {
         return valueObservation(from: statement.raw)
     }
 
-    func getFtpSummary(for activityId: Activity.ActivityId) -> AnyPublisher<ActivityFtpSummary, Error> {
-        ValueObservation.tracking { database in
-            let zones = try ActivityFtpZone
-                .filter { $0.activityId == activityId }
-                .order { $0.upperValue.asc }
-                .fetchAll(database)
-
-            let ftp = try Activity
-                .filter { $0.id == activityId }
-                .select({ $0.ftp }, as: Double.self)
-                .fetchOne(database)
-            return ActivityFtpSummary(activityFtp: ftp, activityFtpZones: zones)
-        }
-        .publisher(in: databaseQueue)
-        .eraseToAnyPublisher()
-    }
-
     // MARK: Private Methods
 
     private func getStatement<T>(
