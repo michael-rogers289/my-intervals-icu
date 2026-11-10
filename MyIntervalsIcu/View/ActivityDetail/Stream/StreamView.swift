@@ -12,6 +12,7 @@ struct StreamView: View {
 
     @State private var viewModel = StreamViewModel()
     @State private var overlayRect: CGRect?
+    let selectedTimeRangeViewData: TimeRangeViewData?
 
     var body: some View {
         VStack {
@@ -29,7 +30,8 @@ struct StreamView: View {
                         if let summary = viewModel.summaryViewData[timeSeries.streamType] {
                             StreamSummaryView(
                                 firstViewData: summary,
-                                secondViewData: viewModel.filteredSummaryViewData[summary.type]
+                                secondViewData: viewModel.filteredSummaryViewData[summary.type],
+                                selectedTimeRangeViewData: selectedTimeRangeViewData
                             )
                                 .padding(.top, .spacingLarge)
                         }

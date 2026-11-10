@@ -63,7 +63,7 @@ struct DoubleSliderView<LowerLabel: View, UpperLabel: View>: View {
                     upperSelectionRangeAsPercent = upperSelectionRangeAsPercent ?? 1.0
                 }
                 .popover(isPresented: $isLowerLabelShown) { lowerLabel() }
-                
+
                 Spacer()
 
                 indicator {

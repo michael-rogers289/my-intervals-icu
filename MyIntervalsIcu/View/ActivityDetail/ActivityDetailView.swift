@@ -20,7 +20,7 @@ struct ActivityDetailView: View {
                         viewData: summaryInfo
                     )
                     StreamMapView(detailViewModel: viewModel)
-                    StreamView()
+                    StreamView(selectedTimeRangeViewData: viewModel.timeRangeViewData)
                 } else {
                     EmptyView()
                 }

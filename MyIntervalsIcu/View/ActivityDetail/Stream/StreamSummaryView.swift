@@ -11,6 +11,7 @@ struct StreamSummaryView: View {
 
     let firstViewData: StreamSummaryViewData
     let secondViewData: StreamSummaryViewData?
+    let selectedTimeRangeViewData: TimeRangeViewData?
 
     var body: some View {
         return Grid(verticalSpacing: .spacingSmall) {
@@ -28,10 +29,10 @@ struct StreamSummaryView: View {
             summary(for: firstViewData) {
                 ViewThatFits(in: .horizontal) {
                     Label(
-                        "Activity",
+                        "Summary",
                         systemImage: "point.bottomleft.forward.to.point.topright.scurvepath.fill"
                     )
-                    Text("Activity")
+                    Text("Summary")
                 }
             }
 
@@ -40,11 +41,14 @@ struct StreamSummaryView: View {
 
                 summary(for: secondViewData) {
                     ViewThatFits(in: .horizontal) {
-                        Label(
-                            "Selected",
-                            systemImage: "line.3.horizontal.decrease.circle.fill"
-                        )
-                        Text("Selected")
+                        if let selectedTimeRangeViewData {
+                            let start = Text(selectedTimeRangeViewData.start, format: .timeDuration)
+                            let end = Text(selectedTimeRangeViewData.end, format: .timeDuration)
+                            Label("Filter: \(start) - \(end)", systemImage: "line.3.horizontal.decrease.circle.fill")
+                        }
+
+                        Label("Filter", systemImage: "line.3.horizontal.decrease.circle.fill")
+                        Text("Filter")
                     }
                 }
             }
