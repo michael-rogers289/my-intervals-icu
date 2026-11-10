@@ -93,8 +93,7 @@ enum TimeSeriesStreamType: Int, CaseIterable {
 
     var defaultPlottable: Bool {
         switch self {
-        case .smoothVelocity,
-                .temp,
+        case .temp,
                 .leftRightBalance,
                 .leftPedalSmoothness,
                 .rightPedalSmoothness,
@@ -107,7 +106,8 @@ enum TimeSeriesStreamType: Int, CaseIterable {
                 .cadence,
                 .heartrate,
                 .altitude,
-                .coreTemperature: true
+                .coreTemperature,
+                .smoothVelocity: true
         }
     }
 
