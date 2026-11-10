@@ -35,7 +35,7 @@ final class StreamMapViewModel {
     private let coordinateRepository = Container.shared.activityCoordinateRepository.resolve()
     private let selectedActivityId = Container.shared.detailActivityIdSelector.resolve()
     private let viewLogger = Container.shared.viewLogger.resolve()
-    private let selectionViewModel: SelectionViewModel = Container.shared.activityDetailViewModel.resolve()
+    private let selectionViewModel: SelectionViewModel = Container.shared.selectionViewModel.resolve()
     private var latLongCancellable: AnyCancellable?
 
     // MARK: Public Variables
@@ -56,7 +56,7 @@ final class StreamMapViewModel {
 
         latLongCancellable = coordinateRepository
             .observeCoordinates(for: selectedActivityId)
-            .combineLatest(selectionViewModel.selectionRanges) { coordinates, selection -> ViewData in
+            .combineLatest(selectionViewModel.selectionRangeAsPercent) { coordinates, selection -> ViewData in
                 guard !coordinates.isEmpty else {
                     return ViewData()
                 }

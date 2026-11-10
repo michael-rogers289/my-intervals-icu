@@ -31,12 +31,12 @@ final class StreamDao: Sendable {
         }
     }
 
-    func observerLastSecond(for activityId: Activity.ActivityId) -> AnyPublisher<Double?, Error> {
+    func observeTimeStream(for activityId: Activity.ActivityId) -> AnyPublisher<[Stream], Error> {
         return ValueObservation.tracking { database in
             try Stream
                 .filter { $0.activityId == activityId && $0.type == StreamType.time }
-                .select({ max($0.order) }, as: Double.self)
-                .fetchOne(database)
+                .order(Stream.Columns.order.asc)
+                .fetchAll(database)
         }
         .publisher(in: databaseQueue)
         .eraseToAnyPublisher()

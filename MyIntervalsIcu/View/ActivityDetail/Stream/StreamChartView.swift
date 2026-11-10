@@ -11,7 +11,7 @@ import SwiftUI
 
 struct StreamChartView: View {
 
-    @State private var selectionViewmModel: SelectionViewModel = Container.shared.activityDetailViewModel.resolve()
+    @State private var selectionViewmModel: SelectionViewModel = Container.shared.selectionViewModel.resolve()
     private let viewData: StreamViewData.TimeSeries
     private let isAreaChart: Bool
 

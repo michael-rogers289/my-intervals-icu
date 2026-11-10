@@ -22,8 +22,8 @@ final class ActivityStreamRepository: Sendable {
         self.streamDao = streamDao
     }
 
-    func observerLastSecond(for activityId: Activity.ActivityId) -> AnyPublisher<Double?, Error> {
-        streamDao.observerLastSecond(for: activityId)
+    func observeTimeStream(for activityId: Activity.ActivityId) -> AnyPublisher<[Stream], Error> {
+        streamDao.observeTimeStream(for: activityId)
     }
 
     func observeAllowedStreams(for activityId: Activity.ActivityId) -> AnyPublisher<[StreamType], Error> {

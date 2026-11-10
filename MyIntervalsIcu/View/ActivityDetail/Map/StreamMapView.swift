@@ -12,7 +12,8 @@ import SwiftUI
 struct StreamMapView: View {
 
     @State private var viewModel = StreamMapViewModel()
-    @State private var selectionViewmModel = Container.shared.activityDetailViewModel.resolve()
+    @State private var selectionViewmModel = Container.shared.selectionViewModel.resolve()
+    let detailViewModel: ActivityDetailViewModel
 
     var body: some View {
         VStack {
@@ -35,10 +36,24 @@ struct StreamMapView: View {
             }
             .aspectRatio(1.0 / 0.4, contentMode: .fill)
             HStack(alignment: .center, spacing: .spacingMedium) {
-                DoubleSliderView(
-                    lowerSelectionRangeAsPercent: $selectionViewmModel.firstSelectionRangeAsPercent,
-                    upperSelectionRangeAsPercent: $selectionViewmModel.secondSelectionRangeAsPercent
-                )
+                if let timeRangeViewData = detailViewModel.timeRangeViewData {
+                    DoubleSliderView(
+                        lowerSelectionRangeAsPercent: $selectionViewmModel.firstSelectionRangeAsPercent,
+                        upperSelectionRangeAsPercent: $selectionViewmModel.secondSelectionRangeAsPercent,
+                    ) {
+                        Text(timeRangeViewData.start, format: .timeDuration)
+
+                    } upperLabel: {
+                        Text(timeRangeViewData.end, format: .timeDuration)
+
+                    }
+                } else {
+                    DoubleSliderView(
+                        lowerSelectionRangeAsPercent: $selectionViewmModel.firstSelectionRangeAsPercent,
+                        upperSelectionRangeAsPercent: $selectionViewmModel.secondSelectionRangeAsPercent,
+                    )
+                }
+
                 Button {
                     selectionViewmModel.resetSelectionRange()
                 } label: {

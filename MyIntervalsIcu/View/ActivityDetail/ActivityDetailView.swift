@@ -10,7 +10,7 @@ import SwiftUI
 
 struct ActivityDetailView: View {
 
-    @State private var viewModel = Container.shared.activityDetailViewModel.resolve()
+    @State private var viewModel = ActivityDetailViewModel()
 
     var body: some View {
         ScrollView {
@@ -19,7 +19,7 @@ struct ActivityDetailView: View {
                     ActivitySummaryInfoView(
                         viewData: summaryInfo
                     )
-                    StreamMapView()
+                    StreamMapView(detailViewModel: viewModel)
                     StreamView()
                 } else {
                     EmptyView()

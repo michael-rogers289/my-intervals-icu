@@ -20,7 +20,7 @@ final class StreamViewModel {
     @ObservationIgnored
     @Injected(\.streamRepository)
     private var streamRepository
-    
+
     @ObservationIgnored
     @Injected(\.detailActivityIdSelector)
     private var selectedActivityId
@@ -30,22 +30,14 @@ final class StreamViewModel {
     private var viewLogger
 
     @ObservationIgnored
-    @Injected(\.activityDetailViewModel)
-    private var activityDetailViewModel
+    @Injected(\.selectionViewModel)
+    private var selectionViewModel
 
     private var streamLegendCancellable: AnyCancellable?
     private var streamCancellable: AnyCancellable?
     private var selectedTimeRangeSummaryCancellable: AnyCancellable?
     private var summaryStreamCancellable: AnyCancellable?
-    private var lastSecondCancellable: AnyCancellable?
     private var streamRefreshTask: Task<Void, Never>?
-    private var currentTimeSeriesMax: Double?
-
-    private var selectedStreamTypes: [StreamType] {
-        selectableStreamTypes
-            .filter { $0.isSelected }
-            .map { $0.streamType.asData }
-    }
 
     // MARK: Public Variables
 
@@ -55,7 +47,10 @@ final class StreamViewModel {
     var selectableStreamTypes: [StreamLegendViewData] = [] {
         didSet {
             guard let selectedActivityId = selectedActivityId else { return }
-            let selectedStreams = selectedStreamTypes
+            let selectedStreams = selectableStreamTypes
+                .filter { $0.isSelected }
+                .map { $0.streamType.asData }
+
             startStreamObservation(
                 with: selectedActivityId,
                 filteringBy: selectedStreams
@@ -70,13 +65,6 @@ final class StreamViewModel {
     init() {
         guard let selectedActivityId = selectedActivityId else { return }
         startAllowedStreamsObservation(with: selectedActivityId)
-        lastSecondCancellable = streamRepository.observerLastSecond(for: selectedActivityId)
-            .sink { [weak self] error in
-                self?.viewLogger.logError(message: "Error fetching last time second: \(error)")
-            } onReceieveValue: { [weak self] in
-                self?.currentTimeSeriesMax = $0
-            }
-
     }
 
     // MARK: Private Methods
@@ -136,20 +124,16 @@ final class StreamViewModel {
         }
 
         selectedTimeRangeSummaryCancellable?.cancel()
-        selectedTimeRangeSummaryCancellable = activityDetailViewModel.selectionRanges
+        selectedTimeRangeSummaryCancellable = selectionViewModel.selectionRangeAsOrder
             .flatMap { [weak self] selectedRange -> AnyPublisher<[StreamSummary], Error> in
-                guard let selectedRange,
-                      let currentTimeSeriesMax = self?.currentTimeSeriesMax else {
+                guard let selectedRange else {
                     return Just([]).setFailureType(to: Error.self).eraseToAnyPublisher()
                 }
-
-                let upperRange = Int(selectedRange.upperBound * currentTimeSeriesMax)
-                let lowerRange = Int(selectedRange.lowerBound * currentTimeSeriesMax)
 
                 return self?.streamRepository.getSummaries(
                     for: selectedActivityId,
                     filteringBy: types,
-                    overTimeRange: lowerRange..<upperRange,
+                    overTimeRange: selectedRange,
                 ) ?? Just([]).setFailureType(to: Error.self).eraseToAnyPublisher()
             }
         .removeDuplicates()

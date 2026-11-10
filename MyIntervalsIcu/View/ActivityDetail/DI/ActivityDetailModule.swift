@@ -14,9 +14,9 @@ extension Container {
     }
 
     @MainActor
-    var activityDetailViewModel: Factory<ActivityDetailViewModel & SelectionViewModel> {
+    var selectionViewModel: Factory<SelectionViewModel> {
         self {
-            ActivityDetailViewModel()
+            StreamSelectionViewModel()
         }.shared
     }
 

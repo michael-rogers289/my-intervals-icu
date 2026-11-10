@@ -12,11 +12,7 @@ import SwiftUI
 
 @Observable
 @MainActor
-final class ActivityDetailViewModel: SelectionViewModel {
-
-    enum Constant {
-        static let defaultRange: Range<Double> = 0.0..<1.0
-    }
+final class ActivityDetailViewModel {
 
     // MARK: Private Properties
 
@@ -33,38 +29,20 @@ final class ActivityDetailViewModel: SelectionViewModel {
     private var viewLogger
 
     @ObservationIgnored
-    @Published private var selectedRange: Range<Double>?
+    @Injected(\.selectionViewModel)
+    private var selectionViewModel
+
+    @ObservationIgnored
+    @Published
+    private var currentActivity: Activity?
+
     private let activityMapper = ActivityMapper()
     private var cancellables: Set<AnyCancellable> = []
 
     // MARK: Public Properties
 
     private(set) var summaryInfo: ActivitySummaryInfoViewData?
-
-    var secondSelectionRangeAsPercent: Double? {
-        didSet {
-            validateRanges()
-        }
-    }
-
-    var firstSelectionRangeAsPercent: Double? {
-        didSet {
-            validateRanges()
-        }
-    }
-
-    @ObservationTracked
-    var currentSelectionRange: Range<Double>? {
-        selectedRange
-    }
-
-    var selectionRanges: AnyPublisher<Range<Double>?, Error> {
-        $selectedRange
-            .removeDuplicates()
-            .debounce(for: .milliseconds(300), scheduler: DispatchQueue.main)
-            .setFailureType(to: Error.self)
-            .eraseToAnyPublisher()
-    }
+    private(set) var timeRangeViewData: TimeRangeViewData?
 
     // MARK: Public Methods
 
@@ -80,43 +58,23 @@ final class ActivityDetailViewModel: SelectionViewModel {
                     return
                 }
                 self?.summaryInfo = self?.activityMapper.map(activity: activity)
+                self?.currentActivity = activity
             }
             .store(in: &cancellables)
-    }
 
-    func resetSelectionRange() {
-        secondSelectionRangeAsPercent = nil
-        firstSelectionRangeAsPercent = nil
-    }
+        selectionViewModel.selectionRangeAsOrder
+            .combineLatest($currentActivity)
+            .sink { [weak self] selectedRange, activity in
+                guard let activity,
+                      let selectedRange else { return }
 
-    // MARK: Private Methods
-
-    private func validateRanges() {
-        guard
-            var firstSelectionRangeAsPercent = firstSelectionRangeAsPercent?.clamped(to: Constant.defaultRange),
-            var secondSelectionRangeAsPercent = secondSelectionRangeAsPercent?.clamped(to: Constant.defaultRange) else {
-            selectedRange = nil
-            return
-        }
-
-        if firstSelectionRangeAsPercent ~= secondSelectionRangeAsPercent && firstSelectionRangeAsPercent != 1.0 {
-            secondSelectionRangeAsPercent += 0.01
-        } else if firstSelectionRangeAsPercent ~= secondSelectionRangeAsPercent && firstSelectionRangeAsPercent == 1.0 {
-            firstSelectionRangeAsPercent -= 0.01
-        }
-
-        let actualBottom = min(firstSelectionRangeAsPercent, secondSelectionRangeAsPercent)
-        let actualTop = max(firstSelectionRangeAsPercent, secondSelectionRangeAsPercent)
-
-        selectedRange = (actualBottom..<actualTop)
-
-        if actualBottom != firstSelectionRangeAsPercent {
-            self.firstSelectionRangeAsPercent = actualBottom
-        }
-
-        if actualTop != secondSelectionRangeAsPercent {
-            self.secondSelectionRangeAsPercent = actualTop
-        }
+                self?.timeRangeViewData = TimeRangeViewData(
+                    activityStartTime: activity.startDate,
+                    startSelectedSecond: selectedRange.lowerBound.toDouble(),
+                    endSelectedSecond: selectedRange.upperBound.toDouble(),
+                )
+            }
+            .store(in: &cancellables)
     }
 
 }
