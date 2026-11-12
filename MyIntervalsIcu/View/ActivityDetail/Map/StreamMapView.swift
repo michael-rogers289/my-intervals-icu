@@ -35,23 +35,19 @@ struct StreamMapView: View {
                 }
             }
             .aspectRatio(1.0 / 0.4, contentMode: .fill)
+            .clipShape(ConcentricRectangle())
             HStack(alignment: .center, spacing: .spacingMedium) {
-                if let timeRangeViewData = detailViewModel.timeRangeViewData {
-                    DoubleSliderView(
-                        lowerSelectionRangeAsPercent: $selectionViewmModel.firstSelectionRangeAsPercent,
-                        upperSelectionRangeAsPercent: $selectionViewmModel.secondSelectionRangeAsPercent,
-                    ) {
-                        Text(timeRangeViewData.start, format: .timeDuration)
-
-                    } upperLabel: {
-                        Text(timeRangeViewData.end, format: .timeDuration)
-
+                DoubleSliderView(
+                    lowerSelectionRangeAsPercent: $selectionViewmModel.firstSelectionRangeAsPercent,
+                    upperSelectionRangeAsPercent: $selectionViewmModel.secondSelectionRangeAsPercent,
+                ) {
+                    if let start = detailViewModel.timeRangeViewData?.start {
+                        Text(start, format: .timeDuration)
                     }
-                } else {
-                    DoubleSliderView(
-                        lowerSelectionRangeAsPercent: $selectionViewmModel.firstSelectionRangeAsPercent,
-                        upperSelectionRangeAsPercent: $selectionViewmModel.secondSelectionRangeAsPercent,
-                    )
+                } upperLabel: {
+                    if let end = detailViewModel.timeRangeViewData?.end {
+                        Text(end, format: .timeDuration)
+                    }
                 }
 
                 Button {
