@@ -35,6 +35,9 @@ struct ActivityListView: View {
                     ActivityDetailView()
                 }
             }
+            .refreshable {
+                await viewModel.refreshActivitiesList()
+            }
             .navigationTitle("Activities")
         }
         .onAppear { viewModel.onViewAppeared() }

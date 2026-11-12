@@ -32,9 +32,11 @@ final class ActivityListViewModel {
     private var cancellables: Set<AnyCancellable> = []
 
     // MARK: Public Variables
+
     private(set) var activities: [ActivityListViewData] = []
 
     // MARK: Init
+    
     init() {
         do {
             currentMonth = try calendarRepository.getRollingThirtyDays(from: Date())
@@ -45,6 +47,7 @@ final class ActivityListViewModel {
     }
 
     // MARK: Public Methods
+
     func onViewAppeared() {
         Container.shared.detailActivityIdSelector.register { nil }
         refresh()
@@ -56,18 +59,24 @@ final class ActivityListViewModel {
             .store(in: &cancellables)
     }
 
+
+    func refreshActivitiesList() async {
+        do {
+            try await activityRepository.fetchActivitiesForDateRange(range: currentMonth)
+        } catch {
+            viewLogger.logError(message: "Error fetching activities: \(error)")
+        }
+    }
+
     // MARK: Private Methods
+
     private func refresh() {
         let currentMonth = currentMonth
         refreshTask = Task { [weak self] in
             defer {
                 self?.refreshTask = nil
             }
-            do {
-                try await self?.activityRepository.fetchActivitiesForDateRange(range: currentMonth)
-            } catch {
-                self?.viewLogger.logError(message: "Error fetching activities: \(error)")
-            }
+            await self?.refreshActivitiesList()
         }
     }
 
