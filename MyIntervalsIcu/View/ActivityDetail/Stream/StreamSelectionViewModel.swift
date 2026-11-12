@@ -45,13 +45,13 @@ final class StreamSelectionViewModel: SelectionViewModel {
 
     // MARK: Public Properties
 
-    var secondSelectionRangeAsPercent: Double? = Constant.defaultRange.upperBound {
+    var secondSelectionRangeAsPercent: Double? {
         didSet {
             validateRanges()
         }
     }
 
-    var firstSelectionRangeAsPercent: Double? = Constant.defaultRange.lowerBound {
+    var firstSelectionRangeAsPercent: Double? {
         didSet {
             validateRanges()
         }
@@ -106,17 +106,19 @@ final class StreamSelectionViewModel: SelectionViewModel {
     func resetSelectionRange() {
         secondSelectionRangeAsPercent = nil
         firstSelectionRangeAsPercent = nil
+        _selectionRangeAsOrder = nil
+        selectedRange = nil
     }
 
     // MARK: Private Methods
 
     private func validateRanges() {
-        var firstSelectionRangeAsPercent = firstSelectionRangeAsPercent?.clamped(
-            to: Constant.defaultRange
-        ) ?? Constant.defaultRange.lowerBound
-        var secondSelectionRangeAsPercent = secondSelectionRangeAsPercent?.clamped(
-            to: Constant.defaultRange
-        ) ?? Constant.defaultRange.upperBound
+        guard var firstSelectionRangeAsPercent = firstSelectionRangeAsPercent?
+            .clamped(to: Constant.defaultRange),
+              var secondSelectionRangeAsPercent = secondSelectionRangeAsPercent?
+            .clamped(to: Constant.defaultRange) else {
+            return
+        }
 
         if firstSelectionRangeAsPercent ~= secondSelectionRangeAsPercent && firstSelectionRangeAsPercent != 1.0 {
             secondSelectionRangeAsPercent += 0.01

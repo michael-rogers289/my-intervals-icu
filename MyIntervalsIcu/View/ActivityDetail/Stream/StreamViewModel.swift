@@ -120,21 +120,23 @@ final class StreamViewModel {
         guard types.isEmpty == false,
               let selectedActivityId else {
             filteredSummaryViewData = [:]
+            selectedTimeRangeSummaryCancellable?.cancel()
             return
         }
 
         selectedTimeRangeSummaryCancellable?.cancel()
         selectedTimeRangeSummaryCancellable = selectionViewModel.selectionRangeAsOrder
             .flatMap { [weak self] selectedRange -> AnyPublisher<[StreamSummary], Error> in
-                guard let selectedRange else {
+                guard let self,
+                    let selectedRange else {
                     return Just([]).setFailureType(to: Error.self).eraseToAnyPublisher()
                 }
 
-                return self?.streamRepository.getSummaries(
+                return self.streamRepository.getSummaries(
                     for: selectedActivityId,
                     filteringBy: types,
                     overTimeRange: selectedRange,
-                ) ?? Just([]).setFailureType(to: Error.self).eraseToAnyPublisher()
+                )
             }
         .removeDuplicates()
         .sink { [weak self] in
