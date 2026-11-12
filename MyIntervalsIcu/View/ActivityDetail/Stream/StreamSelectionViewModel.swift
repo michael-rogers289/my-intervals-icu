@@ -47,12 +47,18 @@ final class StreamSelectionViewModel: SelectionViewModel {
 
     var secondSelectionRangeAsPercent: Double? {
         didSet {
+            if secondSelectionRangeAsPercent != nil && firstSelectionRangeAsPercent == nil {
+                firstSelectionRangeAsPercent = Constant.defaultRange.lowerBound
+            }
             validateRanges()
         }
     }
 
     var firstSelectionRangeAsPercent: Double? {
         didSet {
+            if firstSelectionRangeAsPercent != nil && secondSelectionRangeAsPercent == nil {
+                secondSelectionRangeAsPercent = Constant.defaultRange.upperBound
+            }
             validateRanges()
         }
     }
