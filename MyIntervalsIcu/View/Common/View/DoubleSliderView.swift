@@ -38,66 +38,26 @@ struct DoubleSliderView<LowerLabel: View, UpperLabel: View>: View {
 
     var body: some View {
         GeometryReader { proxy in
-            let leadingLocation = min(
-                max(proxy.size.width * (lowerSelectionRangeAsPercent ?? .zero), .zero),
-                proxy.size.width - Constant.fullIndicatorSize
-            )
-            let trailingLocation = min(
-                max(proxy.size.width * (1 - (upperSelectionRangeAsPercent ?? 1)), .zero),
-                proxy.size.width - Constant.fullIndicatorSize
-            )
+            let proxyHeight = proxy.size.height
+            let proxyWidth = proxy.size.width
 
-            HStack(alignment: .midIndicator, spacing: .zero) {
-                Color.clear.frame(width: leadingLocation)
-                indicator {
-                    isLowerLabelShown = false
-                } onPanGestureChange: { float in
-                    isLowerLabelShown = true
+            let leadingLocation = proxyWidth * (lowerSelectionRangeAsPercent ?? .zero)
+            let trailingLocation = proxyWidth * (upperSelectionRangeAsPercent ?? 1.0)
 
-                    let updatedLeadingLocation = min(
-                        max(leadingLocation + float, .zero),
-                        proxy.size.width - trailingLocation - Constant.fullIndicatorSize
-                    )
-                    lowerSelectionRangeAsPercent = updatedLeadingLocation
-                    / (proxy.size.width - Constant.indicatorSize)
-                    upperSelectionRangeAsPercent = upperSelectionRangeAsPercent ?? 1.0
-                }
-                .popover(isPresented: $isLowerLabelShown) { lowerLabel() }
-
-                Spacer()
-
-                indicator {
-                    isUpperLabelShown = false
-                } onPanGestureChange: { float in
-                    isUpperLabelShown = true
-
-                    let updatedTrailingLocation = min(
-                        max(trailingLocation - float, .zero),
-                        proxy.size.width - leadingLocation - Constant.fullIndicatorSize
-                    )
-                    upperSelectionRangeAsPercent = 1 - updatedTrailingLocation / (
-                        proxy.size.width - Constant.indicatorSize
-                    )
-                    lowerSelectionRangeAsPercent = lowerSelectionRangeAsPercent ?? .zero
-                }
-                .popover(isPresented: $isUpperLabelShown) { upperLabel() }
-                Color.clear.frame(width: trailingLocation)
-            }
-            .background(alignment: Alignment(horizontal: .center, vertical: .midIndicator)) {
+            ZStack {
                 RoundedRectangle(
                     cornerSize: CGSize(
                         width: Constant.barCornerRadius,
                         height: Constant.barCornerRadius
                     )
                 )
-                .size(
-                    width: proxy.size.width - Constant.indicatorSize,
-                    height: Constant.barHeight,
-                    anchor: .center
-                )
                 .fill(.gray.opacity(0.25))
-            }
-            .background(alignment: Alignment(horizontal: .leadingBarIndicator, vertical: .midIndicator)) {
+                .frame(
+                    width: proxyWidth,
+                    height: Constant.barHeight,
+                )
+                .position(x: proxyWidth / 2.0, y: proxyHeight / 2.0)
+
                 RoundedRectangle(
                     cornerSize: CGSize(
                         width: Constant.barCornerRadius,
@@ -106,62 +66,88 @@ struct DoubleSliderView<LowerLabel: View, UpperLabel: View>: View {
                 )
                 .fill(.blue.opacity(0.8))
                 .frame(
-                    width: max(
-                        proxy.size.width - leadingLocation - trailingLocation - Constant.fullIndicatorSize,
-                        .zero
-                    ),
+                    width: trailingLocation - leadingLocation,
                     height: Constant.barHeight,
-                    alignment: Alignment(horizontal: .leadingBarIndicator, vertical: .midIndicator)
                 )
+                .position(
+                    // we start at the center of the view then shift the center towards the trailing end based on
+                    // the leading location, but also towards the leading end based on the trailing location.
+                    // Subtracting the trailing location from the full width gives the difference in the location of
+                    // since the trailing location is x% of the full width
+                    x: (proxyWidth + leadingLocation - (proxyWidth - trailingLocation)) / 2.0,
+                    y: proxyHeight / 2.0
+                )
+
+                indicator(label: lowerLabel, isLabelShown: $isLowerLabelShown) { location in
+                    lowerSelectionRangeAsPercent = max(
+                        min(
+                            (location + leadingLocation),
+                            trailingLocation - Constant.fullIndicatorSize
+                        ),
+                        .zero
+                    ) / proxyWidth
+                }
+                .position(x: leadingLocation, y: proxyHeight / 2.0)
+                .onTapGesture {
+                    withAnimation {
+                        isLowerLabelShown.toggle()
+                    }
+                }
+
+                indicator(label: upperLabel, isLabelShown: $isUpperLabelShown) { location in
+                    upperSelectionRangeAsPercent = max(
+                        min(location + trailingLocation, proxyWidth),
+                        leadingLocation + Constant.fullIndicatorSize
+                        )
+                    / proxyWidth
+                }
+                .position(x: trailingLocation, y: proxyHeight / 2.0)
+                .onTapGesture {
+                    withAnimation {
+                        isUpperLabelShown.toggle()
+                    }
+                }
             }
         }
+        .padding(.horizontal, Constant.indicatorSize)
     }
 
     func indicator(
-        onPanGestureEnd: @escaping () -> Void,
+        label: @escaping () -> some View,
+        isLabelShown: Binding<Bool>,
         onPanGestureChange: @escaping (CGFloat) -> Void
     ) -> some View {
-        Circle()
+        Capsule()
             .stroke(Color.accentColor)
             .fill(Color.primary)
             .frame(
-                width: Constant.indicatorSize,
+                width: Constant.fullIndicatorSize,
                 height: Constant.indicatorSize
             )
-            .alignmentGuide(.midIndicator) { $0[VerticalAlignment.center] }
-            .alignmentGuide(.leadingBarIndicator) { $0[HorizontalAlignment.center] }
+            .popover(isPresented: isLabelShown) { label() }
+            .contentShape(Rectangle())
             .gesture(
                 DragGesture()
-                    .onEnded { _ in  onPanGestureEnd() }
-                    .onChanged { value in onPanGestureChange(value.translation.width) }
+                    .onChanged { value in onPanGestureChange(value.location.x) }
+                    .onEnded { _ in
+                        isLabelShown.wrappedValue = true
+                        Task {
+                            try? await Task.sleep(for: .seconds(2))
+                            isLabelShown.wrappedValue = false
+                        }
+                    }
             )
+            .animation(.bouncy, value: isLabelShown.wrappedValue)
     }
-}
-
-extension VerticalAlignment {
-    struct MidIndicatorAlignment: AlignmentID {
-        static func defaultValue(in context: ViewDimensions) -> CGFloat {
-            context[VerticalAlignment.center]
-        }
-    }
-
-    static let midIndicator: Self = .init(MidIndicatorAlignment.self)
-}
-
-extension HorizontalAlignment {
-    struct LeadingBarIndicatorAlignment: AlignmentID {
-        static func defaultValue(in context: ViewDimensions) -> CGFloat {
-            context[HorizontalAlignment.center]
-        }
-    }
-
-    static let leadingBarIndicator: Self = .init(LeadingBarIndicatorAlignment.self)
 }
 
 #Preview {
+    @Previewable @State var lower: Double? = 0.0
+    @Previewable @State var upper: Double? = 1.0
+
     DoubleSliderView(
-        lowerSelectionRangeAsPercent: .constant(0.5),
-        upperSelectionRangeAsPercent: .constant(0.7),
+        lowerSelectionRangeAsPercent: $lower,
+        upperSelectionRangeAsPercent: $upper,
         lowerLabel: { Text("Lower") },
         upperLabel: { Text("High") }
     )
