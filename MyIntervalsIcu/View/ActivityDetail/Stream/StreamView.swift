@@ -39,6 +39,7 @@ struct StreamView: View {
                         Text(timeSeries.title)
                             .padding(.bottom, .spacingLarge)
                     }
+                    .scrollPosition(id: .constant(timeSeries.streamType), anchor: .center)
                 }
             }
             .padding(.top, .spacingLarge)

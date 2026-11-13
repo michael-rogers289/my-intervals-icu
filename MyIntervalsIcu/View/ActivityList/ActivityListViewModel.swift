@@ -36,7 +36,7 @@ final class ActivityListViewModel {
     private(set) var activities: [ActivityListViewData] = []
 
     // MARK: Init
-    
+
     init() {
         do {
             currentMonth = try calendarRepository.getRollingThirtyDays(from: Date())
@@ -59,7 +59,6 @@ final class ActivityListViewModel {
             .store(in: &cancellables)
     }
 
-
     func refreshActivitiesList() async {
         do {
             try await activityRepository.fetchActivitiesForDateRange(range: currentMonth)
@@ -71,7 +70,6 @@ final class ActivityListViewModel {
     // MARK: Private Methods
 
     private func refresh() {
-        let currentMonth = currentMonth
         refreshTask = Task { [weak self] in
             defer {
                 self?.refreshTask = nil

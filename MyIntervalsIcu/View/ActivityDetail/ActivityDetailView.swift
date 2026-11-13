@@ -11,6 +11,7 @@ import SwiftUI
 struct ActivityDetailView: View {
 
     @State private var viewModel = ActivityDetailViewModel()
+    @State private var scrollPosition = ScrollPosition(idType: TimeSeriesStreamType.self)
 
     var body: some View {
         ScrollView {
@@ -26,8 +27,16 @@ struct ActivityDetailView: View {
                 }
             }
         }
+        .environment(\.activityDetailScrollPosition, $scrollPosition)
+        .scrollPosition($scrollPosition)
         .padding(.spacingMedium)
         .onAppear { viewModel.startObservation() }
     }
 
+}
+
+extension EnvironmentValues {
+    @Entry var activityDetailScrollPosition: Binding<ScrollPosition> = .constant(
+        ScrollPosition(idType: TimeSeriesStreamType.self)
+    )
 }
