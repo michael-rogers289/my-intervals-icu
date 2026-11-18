@@ -115,7 +115,7 @@ enum TimeSeriesStreamType: Int, CaseIterable {
         self == .altitude || self == .cadence || self == .coreTemperature
     }
 
-    func measurementType(for value: Double) -> TimeSeriesStreamTypeMeasurement? {
+    func measurementType(for value: Double) -> ActivityMeasurement? {
         let measurement: Measurement<Dimension>? = switch self {
         case .watts: Measurement(value: value, unit: UnitPower.watts)
         case .cadence: Measurement(value: value, unit: UnitFrequency.rotationsPerMinute)
@@ -131,7 +131,7 @@ enum TimeSeriesStreamType: Int, CaseIterable {
 
         guard let measurement else { return nil }
 
-        return TimeSeriesStreamTypeMeasurement(measurement: measurement)
+        return ActivityMeasurement(measurement: measurement)
     }
 
     var color: Color {
@@ -173,13 +173,4 @@ enum TimeSeriesStreamType: Int, CaseIterable {
                 .skinTemperature: true
         }
     }
-}
-
-struct TimeSeriesStreamTypeMeasurement {
-    let measurement: Measurement<Dimension>
-    let format: Measurement<Dimension>.FormatStyle = Measurement<Dimension>.FormatStyle(
-        width: .narrow,
-        usage: .asProvided,
-        numberFormatStyle: .number.precision(.fractionLength(1))
-    )
 }

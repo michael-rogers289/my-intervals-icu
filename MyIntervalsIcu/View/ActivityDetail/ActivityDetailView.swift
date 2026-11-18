@@ -16,14 +16,16 @@ struct ActivityDetailView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: .spacingMedium) {
-                if let summaryInfo = viewModel.summaryInfo {
-                    ActivitySummaryInfoView(
-                        viewData: summaryInfo
+                if let overview = viewModel.overviewViewData {
+                    ActivityDetailHeaderView(
+                        viewData: overview
                     )
                     StreamMapView(detailViewModel: viewModel)
                     StreamView(selectedTimeRangeViewData: viewModel.timeRangeViewData)
                 } else {
-                    EmptyView()
+                    ProgressView {
+                        Text("Loading...")
+                    }
                 }
             }
         }

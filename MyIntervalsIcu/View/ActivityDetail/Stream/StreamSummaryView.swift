@@ -77,7 +77,7 @@ struct StreamSummaryView: View {
             )
             Text(
                 viewData.max.measurement,
-                format: viewData.average.format
+                format: viewData.max.format
             )
         }
         .font(.callout)

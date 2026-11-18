@@ -11,16 +11,38 @@ struct CascadingGridLayout: Layout {
 
     struct Cache {
 
+        struct RowItemSize {
+            let height: CGFloat
+            let width: CGFloat
+            let widthAdjustment: CGFloat
+
+            init(height: CGFloat, width: CGFloat, widthAdjustment: CGFloat = .zero) {
+                self.height = height
+                self.width = width
+                self.widthAdjustment = widthAdjustment
+            }
+        }
+
         struct Row {
             let rowNumber: Int
-            private(set)var sizes: [CGSize] = []
+            private(set)var sizes: [RowItemSize] = []
 
             var maxHeight: CGFloat {
                 return sizes.map { $0.height }.max() ?? .zero
             }
 
-            mutating func append(_ size: CGSize) {
+            mutating func append(_ size: RowItemSize) {
                 sizes.append(size)
+            }
+
+            mutating func adjustSizeWidths(by additionalSize: CGFloat) {
+                sizes = sizes.map {
+                    RowItemSize(
+                        height: $0.height,
+                        width: $0.width + additionalSize,
+                        widthAdjustment: additionalSize
+                    )
+                }
             }
         }
 
@@ -28,9 +50,17 @@ struct CascadingGridLayout: Layout {
     }
 
     let cellSpacing: CGFloat
+    let columns: Int
+    let fillsAvailableWidth: Bool
 
-    init(cellSpacing: CGFloat = .spacingSmall) {
+    init(
+        cellSpacing: CGFloat = .spacingSmall,
+        columns: Int = Int.max,
+        fillsAvailableWidth: Bool = false
+    ) {
         self.cellSpacing = cellSpacing
+        self.columns = columns
+        self.fillsAvailableWidth = fillsAvailableWidth
     }
 
     func makeCache(subviews: Subviews) -> Cache {
@@ -48,28 +78,47 @@ struct CascadingGridLayout: Layout {
         var currentRowWidth: CGFloat = proposedWidth
         var rows = [Cache.Row(rowNumber: 1)]
 
-        idealSizes.forEach { size in
+        idealSizes.enumerated().forEach { index, size in
 
             let computedWidth = size.width + cellSpacing * 2.0
 
             // Can the current row fit a view & the end spacing?
             currentRowWidth -= computedWidth
+            let lastIndex = rows.count - 1
 
-            if currentRowWidth <= .zero {
+            func fillAvailableWidthIfNeeded(addsBackWidth: Bool) {
+                guard fillsAvailableWidth else { return }
+                // Need to add back the removed width
+                let leftoverRowWidth = if addsBackWidth {
+                    currentRowWidth + computedWidth
+                } else {
+                    currentRowWidth
+                }
+                let additionalSizePerItem = leftoverRowWidth / rows[lastIndex].sizes.count.toDouble()
+                rows[lastIndex].adjustSizeWidths(by: additionalSizePerItem)
+            }
+
+            if currentRowWidth <= .zero || (rows[lastIndex].sizes.count == columns) {
+                // Check to fill space if we've run out
+                fillAvailableWidthIfNeeded(addsBackWidth: true)
+
                 // Start new row
-                let currentRowNumber = rows[rows.count - 1].rowNumber
+                let currentRowNumber = rows[lastIndex].rowNumber
                 rows.append(
-                    Cache.Row(rowNumber: currentRowNumber + 1, sizes: [size])
+                    Cache.Row(rowNumber: currentRowNumber + 1, sizes: [size.asRowItemSize])
                 )
 
                 // Reset state
                 currentRowWidth = proposedWidth - computedWidth
             } else {
-                let lastIndex = rows.count - 1
-                rows[lastIndex].append(size)
+
+                rows[lastIndex].append(size.asRowItemSize)
+
+                if index == subviews.count - 1 {
+                    fillAvailableWidthIfNeeded(addsBackWidth: false)
+                }
             }
         }
-
         cache.rows = rows
 
         let heightSpacing = CGFloat(rows.count + 1) * cellSpacing
@@ -108,7 +157,7 @@ struct CascadingGridLayout: Layout {
 
             subview.place(
                 at: CGPoint(
-                    x: originX,
+                    x: originX + computedSubview.1.widthAdjustment / 2.0,
                     y: originY,
                 ),
                 anchor: .topLeading,
@@ -121,4 +170,12 @@ struct CascadingGridLayout: Layout {
             originX += computedSubview.1.width + cellSpacing
         }
     }
+}
+
+private extension CGSize {
+
+    var asRowItemSize: CascadingGridLayout.Cache.RowItemSize {
+        .init(height: height, width: width)
+    }
+
 }

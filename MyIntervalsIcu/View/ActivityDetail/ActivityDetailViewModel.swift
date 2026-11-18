@@ -41,7 +41,7 @@ final class ActivityDetailViewModel {
 
     // MARK: Public Properties
 
-    private(set) var summaryInfo: ActivitySummaryInfoViewData?
+    private(set) var overviewViewData: ActivityOverviewViewData?
     private(set) var timeRangeViewData: TimeRangeViewData?
 
     // MARK: Public Methods
@@ -54,10 +54,10 @@ final class ActivityDetailViewModel {
                 self?.viewLogger.logError(message: "Error observing activity: \($0)")
             } onReceieveValue: { [weak self] activity in
                 guard let activity else {
-                    self?.summaryInfo = nil
+                    self?.overviewViewData = nil
                     return
                 }
-                self?.summaryInfo = self?.activityMapper.map(activity: activity)
+                self?.overviewViewData = self?.activityMapper.map(activity)
                 self?.currentActivity = activity
             }
             .store(in: &cancellables)

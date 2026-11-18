@@ -9,9 +9,9 @@ import Foundation
 
 struct StreamSummaryViewData {
     let type: TimeSeriesStreamType
-    let min: TimeSeriesStreamTypeMeasurement
-    let average: TimeSeriesStreamTypeMeasurement
-    let max: TimeSeriesStreamTypeMeasurement
+    let min: ActivityMeasurement
+    let average: ActivityMeasurement
+    let max: ActivityMeasurement
 
     init?(summary: StreamSummary, timeSeriesType: TimeSeriesStreamType) {
 
