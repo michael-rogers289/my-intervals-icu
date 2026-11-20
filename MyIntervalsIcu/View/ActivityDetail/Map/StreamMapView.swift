@@ -30,12 +30,11 @@ struct StreamMapView: View {
                             MapPolyline(points: viewModel.viewData.upperExcludedMapMarks)
                         }.stroke(.gray, lineWidth: 2.0)
                     }
-                    .disabled(true)
-                    .mapControlVisibility(.hidden)
+                    .mapControlVisibility(.automatic)
                 }
             }
             .aspectRatio(1.0 / 0.4, contentMode: .fill)
-            .clipShape(ConcentricRectangle())
+            .clipShape(RoundedRectangle(cornerSize: CGSize(width: 3.0, height: 3.0)))
             HStack(alignment: .center, spacing: .spacingMedium) {
                 DoubleSliderView(
                     lowerSelectionRangeAsPercent: $selectionViewmModel.firstSelectionRangeAsPercent,
