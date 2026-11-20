@@ -14,7 +14,6 @@ struct StreamChartView: View {
     @State private var selectionViewmModel: SelectionViewModel = Container.shared.selectionViewModel.resolve()
     private let viewData: StreamViewData.TimeSeries
     private let isAreaChart: Bool
-    @Environment(\.activityDetailScrollPosition) private var scrollPosition: Binding<ScrollPosition>
 
     init(
         viewData: StreamViewData.TimeSeries,
@@ -53,10 +52,6 @@ struct StreamChartView: View {
                             } else {
                                 selectionViewmModel.secondSelectionRangeAsPercent = updatedLocation
                             }
-
-                            withAnimation(.bouncy(duration: 0.1)) {
-                                scrollPosition.wrappedValue.scrollTo(id: viewData.streamType, anchor: .top)
-                            }
                         }
 
                         if let upperRange = selectionViewmModel.secondSelectionRangeAsPercent,
@@ -82,7 +77,6 @@ struct StreamChartView: View {
             }
             .onTapGesture {
                 selectionViewmModel.resetSelectionRange()
-                scrollPosition.wrappedValue.scrollTo(id: viewData.streamType, anchor: .top)
             }
     }
 }

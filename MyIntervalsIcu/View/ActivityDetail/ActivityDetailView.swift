@@ -29,16 +29,8 @@ struct ActivityDetailView: View {
                 }
             }
         }
-        .environment(\.activityDetailScrollPosition, $scrollPosition)
-        .scrollPosition($scrollPosition)
         .padding(.spacingMedium)
         .onAppear { viewModel.startObservation() }
     }
 
-}
-
-extension EnvironmentValues {
-    @Entry var activityDetailScrollPosition: Binding<ScrollPosition> = .constant(
-        ScrollPosition(idType: TimeSeriesStreamType.self)
-    )
 }
