@@ -124,7 +124,10 @@ struct DoubleSliderView<LowerLabel: View, UpperLabel: View>: View {
                 width: Constant.fullIndicatorSize,
                 height: Constant.indicatorSize
             )
-            .popover(isPresented: isLabelShown) { label() }
+            .popover(isPresented: isLabelShown) {
+                label()
+                    .presentationCompactAdaptation(.none)
+            }
             .contentShape(Rectangle())
             .gesture(
                 DragGesture()
