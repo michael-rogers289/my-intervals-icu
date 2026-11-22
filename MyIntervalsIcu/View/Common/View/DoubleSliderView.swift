@@ -79,6 +79,7 @@ struct DoubleSliderView<LowerLabel: View, UpperLabel: View>: View {
                 )
 
                 indicator(label: lowerLabel, isLabelShown: $isLowerLabelShown) { location in
+                    upperSelectionRangeAsPercent = upperSelectionRangeAsPercent ?? 1.0
                     lowerSelectionRangeAsPercent = max(
                         min(
                             (location + leadingLocation),
@@ -95,6 +96,7 @@ struct DoubleSliderView<LowerLabel: View, UpperLabel: View>: View {
                 }
 
                 indicator(label: upperLabel, isLabelShown: $isUpperLabelShown) { location in
+                    lowerSelectionRangeAsPercent =  lowerSelectionRangeAsPercent ?? 0.0
                     upperSelectionRangeAsPercent = max(
                         min(location + trailingLocation, proxyWidth),
                         leadingLocation + Constant.fullIndicatorSize

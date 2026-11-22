@@ -22,9 +22,6 @@ protocol SelectionViewModel: AnyObject {
      */
     var firstSelectionRangeAsPercent: Double? { get set }
 
-    /// A validated range encompasing the first and second selections
-    var selectionRangeAsPercent: AnyPublisher<Range<Double>?, Error> { get }
-
     var selectionRangeAsOrder: AnyPublisher<Range<Int>?, Never> { get }
 
     var currentSelectionRange: Range<Double>? { get }

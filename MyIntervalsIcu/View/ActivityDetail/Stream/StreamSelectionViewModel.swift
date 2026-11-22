@@ -47,8 +47,12 @@ final class StreamSelectionViewModel: SelectionViewModel {
 
     var secondSelectionRangeAsPercent: Double? {
         didSet {
-            if secondSelectionRangeAsPercent != nil && firstSelectionRangeAsPercent == nil {
-                firstSelectionRangeAsPercent = Constant.defaultRange.lowerBound
+            if let secondSelectionRangeAsPercent, firstSelectionRangeAsPercent == nil {
+                firstSelectionRangeAsPercent = max(
+                    Constant.defaultRange.lowerBound,
+                    secondSelectionRangeAsPercent - 0.01
+                )
+                return
             }
             validateRanges()
         }
@@ -56,8 +60,12 @@ final class StreamSelectionViewModel: SelectionViewModel {
 
     var firstSelectionRangeAsPercent: Double? {
         didSet {
-            if firstSelectionRangeAsPercent != nil && secondSelectionRangeAsPercent == nil {
-                secondSelectionRangeAsPercent = Constant.defaultRange.upperBound
+            if let firstSelectionRangeAsPercent, secondSelectionRangeAsPercent == nil {
+                secondSelectionRangeAsPercent = min(
+                    Constant.defaultRange.upperBound,
+                    firstSelectionRangeAsPercent + 0.01
+                )
+                return
             }
             validateRanges()
         }
@@ -68,18 +76,10 @@ final class StreamSelectionViewModel: SelectionViewModel {
         selectedRange
     }
 
-    // Used for UI work to compute frame sizes or placement of elements
-    var selectionRangeAsPercent: AnyPublisher<Range<Double>?, Error> {
-        $selectedRange
-            .removeDuplicates()
-            .debounce(for: .milliseconds(300), scheduler: DispatchQueue.main)
-            .setFailureType(to: Error.self)
-            .eraseToAnyPublisher()
-    }
-
     // Used to get ranges of various streams for the activity in the data layer
     var selectionRangeAsOrder: AnyPublisher<Range<Int>?, Never> {
         $_selectionRangeAsOrder
+            .debounce(for: .milliseconds(300), scheduler: DispatchQueue.main)
             .eraseToAnyPublisher()
     }
 

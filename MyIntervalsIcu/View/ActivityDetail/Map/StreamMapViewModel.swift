@@ -56,15 +56,14 @@ final class StreamMapViewModel {
 
         latLongCancellable = coordinateRepository
             .observeCoordinates(for: selectedActivityId)
-            .combineLatest(selectionViewModel.selectionRangeAsPercent) { coordinates, selection -> ViewData in
+            .combineLatest(
+                selectionViewModel.selectionRangeAsOrder.setFailureType(to: Error.self)
+            ) { coordinates, selection -> ViewData in
                 guard !coordinates.isEmpty else {
                     return ViewData()
                 }
-
-                let selectedRange = selection ?? 0.0..<1.0
-
-                let upperIndex = Int(selectedRange.upperBound * Double(coordinates.count))
-                let lowerIndex = Int(selectedRange.lowerBound * Double(coordinates.count))
+                let lowerIndex = selection?.lowerBound ?? 0
+                let upperIndex = selection?.upperBound ?? coordinates.count
 
                 let fullMapSelection = coordinates[lowerIndex..<upperIndex].toMkMapPoint()
                 let lowerExcluded = coordinates[0..<lowerIndex].toMkMapPoint()
