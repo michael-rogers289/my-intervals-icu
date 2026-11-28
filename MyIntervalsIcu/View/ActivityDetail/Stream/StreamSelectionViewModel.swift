@@ -79,7 +79,6 @@ final class StreamSelectionViewModel: SelectionViewModel {
     // Used to get ranges of various streams for the activity in the data layer
     var selectionRangeAsOrder: AnyPublisher<Range<Int>?, Never> {
         $_selectionRangeAsOrder
-            .debounce(for: .milliseconds(300), scheduler: DispatchQueue.main)
             .eraseToAnyPublisher()
     }
 

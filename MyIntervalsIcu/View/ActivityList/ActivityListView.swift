@@ -7,10 +7,14 @@
 
 import SwiftUI
 
+enum ActivityNavigationElement {
+    case detail
+}
+
 struct ActivityListView: View {
 
     @State private var viewModel = ActivityListViewModel()
-    @State private var navigationViewModel = ActivityNavigationViewModel()
+    @State private var navigationViewModel = NavigationViewModel()
 
     var body: some View {
         NavigationStack(path: $navigationViewModel.stack) {
@@ -21,7 +25,7 @@ struct ActivityListView: View {
                         .padding(.bottom, .spacingSmall)
                     ForEach(viewData.activities) { activity in
                         Button {
-                            navigationViewModel.pushDetail(with: activity.id)
+                            navigationViewModel.pushActivityDetail(with: activity.id)
                         } label: {
                             ActivityCellView(activity: activity)
                                 .foregroundStyle(.foreground)
@@ -41,6 +45,7 @@ struct ActivityListView: View {
             .navigationTitle("Activities")
         }
         .onAppear { viewModel.onViewAppeared() }
+        .environment(navigationViewModel)
     }
 
 }

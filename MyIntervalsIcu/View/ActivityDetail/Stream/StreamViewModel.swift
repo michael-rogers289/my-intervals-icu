@@ -126,6 +126,7 @@ final class StreamViewModel {
 
         selectedTimeRangeSummaryCancellable?.cancel()
         selectedTimeRangeSummaryCancellable = selectionViewModel.selectionRangeAsOrder
+            .debounce(for: .milliseconds(300), scheduler: DispatchQueue.main)
             .flatMap { [weak self] selectedRange -> AnyPublisher<[StreamSummary], Error> in
                 guard let self,
                     let selectedRange else {

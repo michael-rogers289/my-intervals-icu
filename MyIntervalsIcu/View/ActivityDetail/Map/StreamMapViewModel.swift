@@ -14,22 +14,6 @@ import SwiftUI
 @MainActor
 final class StreamMapViewModel {
 
-    struct ViewData {
-        let lowerExcludedMapMarks: [MKMapPoint]
-        let upperExcludedMapMarks: [MKMapPoint]
-        let selectedMapMarks: [MKMapPoint]
-
-        init(
-            lowerExcludedMapMarks: [MKMapPoint] = [],
-            upperExcludedMapMarks: [MKMapPoint] = [],
-            selectedMapMarks: [MKMapPoint] = []
-        ) {
-            self.lowerExcludedMapMarks = lowerExcludedMapMarks
-            self.upperExcludedMapMarks = upperExcludedMapMarks
-            self.selectedMapMarks = selectedMapMarks
-        }
-    }
-
     // MARK: Private Variables
 
     private let coordinateRepository = Container.shared.activityCoordinateRepository.resolve()
@@ -40,7 +24,7 @@ final class StreamMapViewModel {
 
     // MARK: Public Variables
 
-    private(set) var viewData = ViewData()
+    private(set) var viewData: MapViewData?
 
     // MARK: Life Cycle
 
@@ -58,9 +42,9 @@ final class StreamMapViewModel {
             .observeCoordinates(for: selectedActivityId)
             .combineLatest(
                 selectionViewModel.selectionRangeAsOrder.setFailureType(to: Error.self)
-            ) { coordinates, selection -> ViewData in
+            ) { coordinates, selection -> MapViewData? in
                 guard !coordinates.isEmpty else {
-                    return ViewData()
+                    return nil
                 }
                 let lowerIndex = selection?.lowerBound ?? 0
                 let upperIndex = selection?.upperBound ?? coordinates.count
@@ -69,7 +53,7 @@ final class StreamMapViewModel {
                 let lowerExcluded = coordinates[0..<lowerIndex].toMkMapPoint()
                 let upperExcluded = coordinates[upperIndex..<coordinates.count].toMkMapPoint()
 
-                return ViewData(
+                return MapViewData(
                     lowerExcludedMapMarks: lowerExcluded,
                     upperExcludedMapMarks: upperExcluded,
                     selectedMapMarks: fullMapSelection

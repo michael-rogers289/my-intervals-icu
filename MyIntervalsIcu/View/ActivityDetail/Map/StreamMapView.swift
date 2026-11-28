@@ -6,31 +6,43 @@
 //
 
 import FactoryKit
-import MapKit
 import SwiftUI
+
+enum ActivityDetailNavigationElement {
+    case mapDetail
+}
 
 struct StreamMapView: View {
 
-    @State private var viewModel = StreamMapViewModel()
+    @Namespace private var activityDetailNamespace
+
+    @State private var viewModel = Container.shared.mapViewModel.resolve()
     @State private var selectionViewmModel = Container.shared.selectionViewModel.resolve()
+    @Environment(NavigationViewModel.self) private var navigationViewModel
+
     let detailViewModel: ActivityDetailViewModel
 
     var body: some View {
         VStack {
             Group {
-                if viewModel.viewData.selectedMapMarks.isEmpty {
-                    ProgressView()
+                if let mapViewData = viewModel.viewData {
+                    ActivityMapView(viewData: mapViewData)
+                        .overlay(alignment: .bottomTrailing) {
+                            Button {
+                                navigationViewModel.push(ActivityDetailNavigationElement.mapDetail)
+                            } label: {
+                                Image(systemName: "arrow.up.left.and.arrow.down.right")
+                            }
+                            .tint(.white)
+                            .buttonStyle(GlassButtonStyle())
+                            .accessibilityLabel("Expand Map")
+                            .padding(.spacingMedium)
+                        }
+                        .matchedTransitionSource(id: "activity_map", in: activityDetailNamespace)
                 } else {
-                    Map {
-                        MapPolyline(points: viewModel.viewData.selectedMapMarks)
-                            .stroke(.blue, lineWidth: 5.0)
-
-                        Group {
-                            MapPolyline(points: viewModel.viewData.lowerExcludedMapMarks)
-                            MapPolyline(points: viewModel.viewData.upperExcludedMapMarks)
-                        }.stroke(.gray, lineWidth: 2.0)
+                    ProgressView {
+                        Text("Loading map...")
                     }
-                    .mapControlVisibility(.automatic)
                 }
             }
             .aspectRatio(1.0 / 0.4, contentMode: .fill)
@@ -66,6 +78,14 @@ struct StreamMapView: View {
                 )
             }
 
+        }
+        .navigationDestination(for: ActivityDetailNavigationElement.self) { element in
+            switch element {
+            case .mapDetail:
+                FullScreenMapView()
+                    .navigationTransition(.zoom(sourceID: "activity_map", in: activityDetailNamespace))
+
+            }
         }
     }
 }

@@ -5,29 +5,18 @@
 //  Created by Mike Rogers on 9/23/26.
 //
 
-import Foundation
+import FactoryKit
+import SwiftUI
 
 @MainActor
-protocol NavigationViewModel: AnyObject {
+@Observable
+final class NavigationViewModel: AnyObject {
 
-    associatedtype NavigationElement: Equatable
+    typealias Element = Hashable & Equatable
 
-    var stack: [NavigationElement] { get set }
+    var stack: NavigationPath = NavigationPath()
 
-    func push(_ element: NavigationElement)
-
-    func pop()
-
-    func pop(upTo element: NavigationElement) -> Bool
-
-    func popToRoot() -> Bool
-
-}
-
-@MainActor
-extension NavigationViewModel {
-
-    func push(_ element: NavigationElement) {
+    func push<E: Element>(_ element: E) {
         stack.append(element)
     }
 
@@ -35,19 +24,17 @@ extension NavigationViewModel {
         stack.removeLast()
     }
 
-    @discardableResult
-    func pop(upTo element: NavigationElement) -> Bool {
-        guard let lastIndex = stack.lastIndex(where: { $0 == element }) else {
-            return false
-        }
-        stack.removeSubrange(lastIndex...)
+    func popToRoot() -> Bool {
+        guard stack.count > 1 else { return false }
+        stack.removeLast(stack.count - 1)
         return true
     }
 
-    func popToRoot() -> Bool {
-        guard stack.count > 1 else { return false }
-        stack.removeSubrange(1...)
-        return true
+    func pushActivityDetail(with activityId: Activity.ActivityId) {
+        Container.shared.detailActivityIdSelector.register {
+            activityId
+        }
+        self.push(ActivityNavigationElement.detail)
     }
 
 }

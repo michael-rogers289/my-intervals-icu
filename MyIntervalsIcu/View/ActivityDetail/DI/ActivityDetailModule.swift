@@ -20,4 +20,11 @@ extension Container {
         }.shared
     }
 
+    @MainActor
+    var mapViewModel: Factory<StreamMapViewModel> {
+        self {
+            StreamMapViewModel()
+        }.shared
+    }
+
 }
